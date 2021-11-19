@@ -1,8 +1,5 @@
 package com.looseboxes.ratelimiter.javaee.web;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
@@ -11,7 +8,7 @@ import java.util.Map;
 @javax.inject.Singleton
 public class RequestToIdConverterRegistry {
 
-    private static final class DefaultRequestToIdConverter implements RequestToIdConverter{
+    private static final class DefaultRequestToIdConverter implements RequestToIdConverter<HttpServletRequest>{
         @Override
         public Object convert(HttpServletRequest request) {
             return request.getRequestURI();
