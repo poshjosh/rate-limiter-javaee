@@ -11,7 +11,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>rate-limiter-javaee</artifactId>
-    <version>0.0.1-DRAFT</version>
+    <version>0.0.903-DRAFT</version>
     <description>Light weight rate limiting library for javaee web apps, based on https://github.com/poshjosh/rate-limiter</description>
 
     <properties>
@@ -28,12 +28,13 @@
         <dependency>
             <groupId>com.looseboxes</groupId>
             <artifactId>rate-limiter</artifactId>
-            <version>0.0.3</version>
+            <version>0.0.4</version>
         </dependency>
         <dependency>
-            <groupId>org.glassfish.hk2</groupId>
-            <artifactId>hk2-locator</artifactId>
-            <version>2.5.0-b36</version>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>1.2.6</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>javax</groupId>

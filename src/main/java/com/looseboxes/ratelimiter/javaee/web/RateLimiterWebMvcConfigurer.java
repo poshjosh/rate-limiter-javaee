@@ -21,11 +21,14 @@ import javax.ws.rs.Path;
 import javax.ws.rs.container.DynamicFeature;
 import javax.ws.rs.container.ResourceInfo;
 import javax.ws.rs.core.FeatureContext;
+import javax.ws.rs.ext.Provider;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+
+@Provider
 public class RateLimiterWebMvcConfigurer implements DynamicFeature {
 
     private final Logger log = LoggerFactory.getLogger(RateLimiterWebMvcConfigurer.class);
@@ -52,12 +55,14 @@ public class RateLimiterWebMvcConfigurer implements DynamicFeature {
 
     @Override
     public void configure(ResourceInfo resourceInfo, FeatureContext featureContext) {
-
+        log.debug("Configuring: {}, {}", resourceInfo, featureContext);
         if (controllerPackages != null && !controllerPackages.isEmpty()) {
 
             RateLimitingInterceptorForRequest rateLimitingInterceptor = new RateLimitingInterceptorForRequest(
                     rateLimiterForClassLevelAnnotation(), rateLimiterForMethodLevelAnnotation()
             );
+
+            log.debug("Registering: {}", rateLimitingInterceptor);
 
             featureContext.register(rateLimitingInterceptor);
         }

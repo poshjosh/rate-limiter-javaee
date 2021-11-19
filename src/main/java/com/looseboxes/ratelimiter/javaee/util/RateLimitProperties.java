@@ -5,6 +5,7 @@ import com.looseboxes.ratelimiter.rates.Rates;
 
 import java.util.*;
 
+@javax.inject.Singleton
 public class RateLimitProperties {
 
     private String applicationPath = "";

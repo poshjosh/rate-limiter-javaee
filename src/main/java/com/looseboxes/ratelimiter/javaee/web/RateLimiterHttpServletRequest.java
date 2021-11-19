@@ -5,15 +5,15 @@ import com.looseboxes.ratelimiter.cache.RateCache;
 import com.looseboxes.ratelimiter.rates.Rate;
 import com.looseboxes.ratelimiter.rates.Rates;
 import com.looseboxes.ratelimiter.javaee.util.RateLimitProperties;
-import org.jvnet.hk2.annotations.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 
-@Service
+@Singleton
 public class RateLimiterHttpServletRequest implements RateLimiter<HttpServletRequest> {
 
     private static final Logger LOG = LoggerFactory.getLogger(RateLimiterHttpServletRequest.class);
