@@ -5,13 +5,9 @@ import com.looseboxes.ratelimiter.RateLimiter;
 import com.looseboxes.ratelimiter.RateSupplier;
 import com.looseboxes.ratelimiter.annotation.AnnotatedElementIdProvider;
 import com.looseboxes.ratelimiter.util.*;
-import com.looseboxes.ratelimiter.web.core.RateLimiterFromClassLevelAnnotations;
-import com.looseboxes.ratelimiter.web.core.RateLimiterFromMethodLevelAnnotations;
-import com.looseboxes.ratelimiter.web.core.RequestPathPatterns;
-import com.looseboxes.ratelimiter.web.core.RequestPathPatternsImpl;
+import com.looseboxes.ratelimiter.web.core.*;
+import com.looseboxes.ratelimiter.web.core.PathPatterns;
 import com.looseboxes.ratelimiter.web.core.util.RateLimitProperties;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import javax.ws.rs.Path;
@@ -27,8 +23,6 @@ import java.util.List;
 @Provider
 public class RateLimiterWebConfigurer implements DynamicFeature {
 
-    private final Logger log = LoggerFactory.getLogger(RateLimiterWebConfigurer.class);
-
     private final RateLimiter<String> rateLimiterForClassLevelAnnotations;
 
     private final RateLimiter<String> rateLimiterForMethodLevelAnnotations;
@@ -42,13 +36,13 @@ public class RateLimiterWebConfigurer implements DynamicFeature {
         final List<Class<?>> classes = getClasses(properties);
         final String applicationPath = getApplicationPath(properties);
 
-        this.rateLimiterForClassLevelAnnotations = classes.isEmpty() ? RateLimiter.NO_OP :
+        this.rateLimiterForClassLevelAnnotations = classes.isEmpty() ? RateLimiter.noop() :
                 new RateLimiterFromClassLevelAnnotations<>(
                         rateSupplier, rateExceededHandler, classes,
                         annotatedElementIdProviderForClass(applicationPath)
                 );
 
-        this.rateLimiterForMethodLevelAnnotations = classes.isEmpty() ? RateLimiter.NO_OP :
+        this.rateLimiterForMethodLevelAnnotations = classes.isEmpty() ? RateLimiter.noop() :
                 new RateLimiterFromMethodLevelAnnotations<>(
                         rateSupplier, rateExceededHandler, classes,
                         annotatedElementIdProviderForMethod(applicationPath)
@@ -57,7 +51,6 @@ public class RateLimiterWebConfigurer implements DynamicFeature {
 
     @Override
     public void configure(ResourceInfo resourceInfo, FeatureContext featureContext) {
-        log.debug("Configuring: {}, {}", resourceInfo, featureContext);
 
         ContainerRequestFilter containerRequestFilter = new ContainerRequestFilterImpl(
                 rateLimiterForClassLevelAnnotations, rateLimiterForMethodLevelAnnotations
@@ -82,15 +75,15 @@ public class RateLimiterWebConfigurer implements DynamicFeature {
         return classes;
     }
 
-    private AnnotatedElementIdProvider<Method, RequestPathPatterns<String>> annotatedElementIdProviderForMethod(String applicationPath) {
-        return new AnnotatedElementIdProviderForMethodPathPatterns(annotatedElementIdProviderForClass(applicationPath));
+    private AnnotatedElementIdProvider<Method, PathPatterns<String>> annotatedElementIdProviderForMethod(String applicationPath) {
+        return new AnnotatedElementIdProviderForMethod(annotatedElementIdProviderForClass(applicationPath));
     }
 
-    private AnnotatedElementIdProvider<Class<?>, RequestPathPatterns<String>> annotatedElementIdProviderForClass(String applicationPath) {
-        return new AnnotatedElementIdProviderForClassPathPatterns(getApplicationMapping(applicationPath));
+    private AnnotatedElementIdProvider<Class<?>, PathPatterns<String>> annotatedElementIdProviderForClass(String applicationPath) {
+        return new AnnotatedElementIdProviderForClass(getApplicationMapping(applicationPath));
     }
 
-    private RequestPathPatterns<String> getApplicationMapping(String applicationPath) {
-        return applicationPath == null ? RequestPathPatterns.none() : new RequestPathPatternsImpl(applicationPath);
+    private PathPatterns<String> getApplicationMapping(String applicationPath) {
+        return applicationPath == null ? PathPatterns.none() : new BasicClassPathPatterns(applicationPath);
     }
 }

@@ -11,7 +11,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>rate-limiter-javaee</artifactId>
-    <version>0.0.904-DRAFT</version>
+    <version>0.0.5</version>
     <name>${project.artifactId}</name>
     <description>Light weight rate limiting library for javaee web apps, based on https://github.com/poshjosh/rate-limiter</description>
 
@@ -19,6 +19,7 @@
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
         <javaee.version>7.0</javaee.version>
+        <spring.version>3.1.0.RELEASE</spring.version>
         <it.skip>true</it.skip>
         <tests.skip>false</tests.skip>
         <maven.failsafle.plugin.version>2.22.2</maven.failsafle.plugin.version>
@@ -29,7 +30,12 @@
         <dependency>
             <groupId>com.looseboxes</groupId>
             <artifactId>rate-limiter-web-core</artifactId>
-            <version>0.0.4</version>
+            <version>0.0.5</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-core</artifactId>
+            <version>${spring.version}</version>
         </dependency>
         <dependency>
             <groupId>ch.qos.logback</groupId>
