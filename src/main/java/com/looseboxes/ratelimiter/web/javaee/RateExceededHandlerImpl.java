@@ -1,8 +1,9 @@
-package com.looseboxes.ratelimiter.javaee.web.impl;
+package com.looseboxes.ratelimiter.web.javaee;
 
 import com.looseboxes.ratelimiter.RateExceededExceptionThrower;
 
-@javax.inject.Singleton
+import javax.inject.Singleton;
+
+@Singleton
 public class RateExceededHandlerImpl extends RateExceededExceptionThrower {
-    public RateExceededHandlerImpl() { }
 }

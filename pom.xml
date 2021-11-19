@@ -12,6 +12,7 @@
 
     <artifactId>rate-limiter-javaee</artifactId>
     <version>0.0.904-DRAFT</version>
+    <name>${project.artifactId}</name>
     <description>Light weight rate limiting library for javaee web apps, based on https://github.com/poshjosh/rate-limiter</description>
 
     <properties>
@@ -27,7 +28,7 @@
     <dependencies>
         <dependency>
             <groupId>com.looseboxes</groupId>
-            <artifactId>rate-limiter</artifactId>
+            <artifactId>rate-limiter-web-core</artifactId>
             <version>0.0.4</version>
         </dependency>
         <dependency>
