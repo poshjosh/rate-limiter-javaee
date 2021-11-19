@@ -2,9 +2,10 @@ package com.looseboxes.ratelimiter.javaee.web;
 
 import com.looseboxes.ratelimiter.*;
 import com.looseboxes.ratelimiter.cache.RateCache;
+import com.looseboxes.ratelimiter.javaee.util.RateLimitConfigList;
+import com.looseboxes.ratelimiter.javaee.util.RateLimitProperties;
 import com.looseboxes.ratelimiter.rates.Rate;
 import com.looseboxes.ratelimiter.rates.Rates;
-import com.looseboxes.ratelimiter.javaee.util.RateLimitProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,7 +35,7 @@ public class RateLimiterHttpServletRequest implements RateLimiter<HttpServletReq
             this.rateLimiters = new RateLimiter[0];
         }else {
 
-            final Map<String, List<Rate>> limitMap = properties.toRateLists();
+            final Map<String, List<Rate>> limitMap = toRateLists(properties);
 
             final int size = limitMap.size();
 
@@ -53,13 +54,31 @@ public class RateLimiterHttpServletRequest implements RateLimiter<HttpServletReq
                     );
                 }
                 List<Rate> limits = entry.getValue();
-                Rates.Logic logic = properties.getLogic(name);
+                Rates.Logic logic = properties.getRateLimitConfigs().get(name).getLogic();
                 RateLimiter rateLimiter = new RateLimiterImpl(rateCache, rateSupplier, logic, rateExceededHandler, limits.toArray(new Rate[0]));
                 LOG.debug("Request to id converter: {}, RateLimiter: {}", requestToIdConverter, rateLimiter);
 
                 ++i;
             }
         }
+    }
+
+    private Map<String, List<Rate>> toRateLists(RateLimitProperties properties) {
+        final Map<String, List<Rate>> rateMap;
+        final Map<String, RateLimitConfigList> rateLimitConfigs = properties.getRateLimitConfigs();
+        if(isDisabled(properties)) {
+            rateMap = Collections.emptyMap();
+        }else if(rateLimitConfigs == null || rateLimitConfigs.isEmpty()) {
+            rateMap = Collections.emptyMap();
+        }else {
+            Map<String, List<Rate>> temp = new LinkedHashMap<>(rateLimitConfigs.size());
+            rateLimitConfigs.forEach((name, rateLimitConfigList) -> {
+                List<Rate> rateList = rateLimitConfigList.toRateList();
+                temp.put(name, rateList);
+            });
+            rateMap = Collections.unmodifiableMap(temp);
+        }
+        return rateMap;
     }
 
     private boolean isDisabled(RateLimitProperties properties) {

@@ -11,7 +11,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>rate-limiter-javaee</artifactId>
-    <version>0.0.903-DRAFT</version>
+    <version>0.0.904-DRAFT</version>
     <description>Light weight rate limiting library for javaee web apps, based on https://github.com/poshjosh/rate-limiter</description>
 
     <properties>
