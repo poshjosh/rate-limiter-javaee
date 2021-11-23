@@ -11,7 +11,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>rate-limiter-javaee</artifactId>
-    <version>0.0.5</version>
+    <version>${rate-limiter.version}</version>
     <name>${project.artifactId}</name>
     <description>Light weight rate limiting library for javaee web apps, based on https://github.com/poshjosh/rate-limiter</description>
 
@@ -19,7 +19,9 @@
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
         <javaee.version>7.0</javaee.version>
-        <spring.version>3.1.0.RELEASE</spring.version>
+        <rate-limiter.version>0.0.6</rate-limiter.version>
+        <jersey.version>2.34</jersey.version>
+        <logback-classic.version>1.2.6</logback-classic.version>
         <it.skip>true</it.skip>
         <tests.skip>false</tests.skip>
         <maven.failsafle.plugin.version>2.22.2</maven.failsafle.plugin.version>
@@ -30,18 +32,12 @@
         <dependency>
             <groupId>com.looseboxes</groupId>
             <artifactId>rate-limiter-web-core</artifactId>
-            <version>0.0.5</version>
+            <version>${rate-limiter.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-core</artifactId>
-            <version>${spring.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-classic</artifactId>
-            <version>1.2.6</version>
-            <scope>provided</scope>
+            <groupId>org.glassfish.jersey.core</groupId>
+            <artifactId>jersey-common</artifactId>
+            <version>${jersey.version}</version>
         </dependency>
         <dependency>
             <groupId>javax</groupId>
@@ -50,12 +46,27 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>${logback-classic.version}</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.hamcrest</groupId>
-            <artifactId>hamcrest-core</artifactId>
+            <groupId>org.glassfish.jersey.test-framework.providers</groupId>
+            <artifactId>jersey-test-framework-provider-jdk-http</artifactId>
+            <version>${jersey.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.jersey.inject</groupId>
+            <artifactId>jersey-hk2</artifactId>
+            <version>${jersey.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 

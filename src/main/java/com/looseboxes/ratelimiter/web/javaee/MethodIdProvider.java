@@ -2,16 +2,17 @@ package com.looseboxes.ratelimiter.web.javaee;
 
 import com.looseboxes.ratelimiter.annotation.AnnotatedElementIdProvider;
 import com.looseboxes.ratelimiter.web.core.PathPatterns;
+import com.looseboxes.ratelimiter.web.javaee.uri.MethodLevelPathPatterns;
 
 import javax.ws.rs.Path;
 import java.lang.reflect.Method;
 import java.util.*;
 
-public class AnnotatedElementIdProviderForMethod implements AnnotatedElementIdProvider<Method, PathPatterns<String>> {
+public class MethodIdProvider implements AnnotatedElementIdProvider<Method, PathPatterns<String>> {
 
     private final AnnotatedElementIdProvider<Class<?>, PathPatterns<String>> annotatedElementIdProvider;
 
-    public AnnotatedElementIdProviderForMethod(AnnotatedElementIdProvider<Class<?>, PathPatterns<String>> annotatedElementIdProvider) {
+    public MethodIdProvider(AnnotatedElementIdProvider<Class<?>, PathPatterns<String>> annotatedElementIdProvider) {
         this.annotatedElementIdProvider = Objects.requireNonNull(annotatedElementIdProvider);
     }
 
@@ -32,6 +33,6 @@ public class AnnotatedElementIdProviderForMethod implements AnnotatedElementIdPr
         if(subPathPattern == null || subPathPattern.isEmpty()) {
             return PathPatterns.none();
         }
-        return pathPatterns.combine(new BasicMethodPathPatterns(subPathPattern));
+        return pathPatterns.combine(new MethodLevelPathPatterns(subPathPattern));
     }
 }

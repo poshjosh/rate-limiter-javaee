@@ -1,12 +1,9 @@
-package com.looseboxes.ratelimiter.web.javaee;
-
-import com.looseboxes.ratelimiter.web.core.PathPatterns;
+package com.looseboxes.ratelimiter.web.javaee.uri;
 
 import java.util.List;
 
 class Util {
-    static String[] combine(String [] pathPatterns, PathPatterns<String> other) {
-        final List<String> patternsToAdd = other.getPathPatterns();
+    static String[] combine(String [] pathPatterns, List<String> patternsToAdd) {
         final int size = patternsToAdd.size();
         final String [] all = new String[pathPatterns.length * size];
         int k = 0;

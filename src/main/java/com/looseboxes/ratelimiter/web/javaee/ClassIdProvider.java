@@ -2,18 +2,13 @@ package com.looseboxes.ratelimiter.web.javaee;
 
 import com.looseboxes.ratelimiter.annotation.AnnotatedElementIdProvider;
 import com.looseboxes.ratelimiter.web.core.PathPatterns;
+import com.looseboxes.ratelimiter.web.javaee.uri.ClassLevelPathPatterns;
 
 import javax.ws.rs.Path;
-import java.util.Objects;
 
-public class AnnotatedElementIdProviderForClass implements AnnotatedElementIdProvider<Class<?>, PathPatterns<String>> {
+public class ClassIdProvider implements AnnotatedElementIdProvider<Class<?>, PathPatterns<String>> {
 
-    private final PathPatterns<String> applicationPathPatterns;
-
-    public AnnotatedElementIdProviderForClass(
-            PathPatterns<String> applicationPathPatterns) {
-        this.applicationPathPatterns = Objects.requireNonNull(applicationPathPatterns);
-    }
+    public ClassIdProvider() { }
 
     @Override
     public PathPatterns<String> getId(Class<?> source) {
@@ -31,6 +26,6 @@ public class AnnotatedElementIdProviderForClass implements AnnotatedElementIdPro
             return PathPatterns.none();
         }
 
-        return applicationPathPatterns.combine(new BasicClassPathPatterns(path));
+        return new ClassLevelPathPatterns(path);
     }
 }
