@@ -1,4 +1,4 @@
-package com.looseboxes.ratelimiter.web.javaee.weblayer;
+package com.looseboxes.ratelimiter.web.javaee.weblayertests;
 
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.test.JerseyTest;

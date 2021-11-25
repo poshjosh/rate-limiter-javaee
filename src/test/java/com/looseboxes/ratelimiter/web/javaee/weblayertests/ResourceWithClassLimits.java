@@ -1,4 +1,4 @@
-package com.looseboxes.ratelimiter.web.javaee.weblayer;
+package com.looseboxes.ratelimiter.web.javaee.weblayertests;
 
 public class ResourceWithClassLimits extends ClassWithClassLimits {
 

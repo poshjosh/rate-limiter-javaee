@@ -1,4 +1,4 @@
-package com.looseboxes.ratelimiter.web.javaee.weblayer;
+package com.looseboxes.ratelimiter.web.javaee.weblayertests;
 
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;

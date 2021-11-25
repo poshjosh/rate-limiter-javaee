@@ -1,8 +1,8 @@
-package com.looseboxes.ratelimiter.web.javaee.weblayer;
+package com.looseboxes.ratelimiter.web.javaee.weblayertests;
 
 import com.looseboxes.ratelimiter.rates.Rates;
-import com.looseboxes.ratelimiter.web.core.util.RateConfig;
-import com.looseboxes.ratelimiter.web.core.util.RateLimitConfig;
+import com.looseboxes.ratelimiter.util.RateConfig;
+import com.looseboxes.ratelimiter.util.RateLimitConfig;
 import com.looseboxes.ratelimiter.web.core.util.RateLimitProperties;
 
 import java.util.Collections;

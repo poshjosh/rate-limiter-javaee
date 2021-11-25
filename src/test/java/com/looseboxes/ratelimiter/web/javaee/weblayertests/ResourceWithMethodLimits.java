@@ -1,4 +1,4 @@
-package com.looseboxes.ratelimiter.web.javaee.weblayer;
+package com.looseboxes.ratelimiter.web.javaee.weblayertests;
 
 import com.looseboxes.ratelimiter.annotation.RateLimit;
 import org.slf4j.Logger;

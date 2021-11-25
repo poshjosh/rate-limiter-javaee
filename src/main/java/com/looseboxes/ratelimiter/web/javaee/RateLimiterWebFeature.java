@@ -1,9 +1,7 @@
 package com.looseboxes.ratelimiter.web.javaee;
 
-import com.looseboxes.ratelimiter.RateExceededHandler;
-import com.looseboxes.ratelimiter.RateLimiter;
-import com.looseboxes.ratelimiter.RateSupplier;
-import com.looseboxes.ratelimiter.annotation.AnnotatedElementIdProvider;
+import com.looseboxes.ratelimiter.*;
+import com.looseboxes.ratelimiter.annotation.*;
 import com.looseboxes.ratelimiter.web.core.*;
 import com.looseboxes.ratelimiter.web.core.PathPatterns;
 import com.looseboxes.ratelimiter.web.core.util.RateLimitProperties;
@@ -27,24 +25,24 @@ public class RateLimiterWebFeature implements DynamicFeature {
 
     @Inject
     public RateLimiterWebFeature(
-            RateSupplier rateSupplier,
-            RateExceededHandler rateExceededHandler,
             RateLimiter<ContainerRequestContext> rateLimiter,
-            RequestToIdConverter<ContainerRequestContext> requestToIdConverter,
+            RateLimiterConfigurationRegistry<ContainerRequestContext> rateLimiterConfigurationRegistry,
             ResourceClassesSupplier resourceClassesSupplier,
             RateLimitProperties properties) {
 
         this.classes = resourceClassesSupplier.get();
 
+        RateLimiter<String> classRateLimiter = classes.isEmpty() ? RateLimiter.noop() : new ClassPatternsRateLimiter<>(
+                this.classes, rateLimiterConfigurationRegistry, classIdProvider());
+
+        RateLimiter<String> methodRateLimiter = classes.isEmpty() ? RateLimiter.noop() : new MethodPatternsRateLimiter<>(
+                this.classes, rateLimiterConfigurationRegistry, methodIdProvider());
+
         RateLimitHandler<ContainerRequestContext> rateLimitHandler = new RateLimitHandler<>(
                 properties,
-                rateSupplier,
-                rateExceededHandler,
                 rateLimiter,
-                requestToIdConverter,
-                annotatedElementIdProviderForClass(),
-                annotatedElementIdProviderForMethod(),
-                this.classes
+                rateLimiterConfigurationRegistry.getDefaultRequestToIdConverter(),
+                classRateLimiter, methodRateLimiter
         );
 
         this.containerRequestFilter = rateLimitHandler::handleRequest;
@@ -57,11 +55,11 @@ public class RateLimiterWebFeature implements DynamicFeature {
         }
     }
 
-    private AnnotatedElementIdProvider<Method, PathPatterns<String>> annotatedElementIdProviderForMethod() {
-        return new MethodIdProvider(annotatedElementIdProviderForClass());
+    private IdProvider<Method, PathPatterns<String>> methodIdProvider() {
+        return new MethodIdProvider(classIdProvider());
     }
 
-    private AnnotatedElementIdProvider<Class<?>, PathPatterns<String>> annotatedElementIdProviderForClass() {
+    private IdProvider<Class<?>, PathPatterns<String>> classIdProvider() {
         return new ClassIdProvider();
     }
 }
