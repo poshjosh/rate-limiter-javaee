@@ -26,7 +26,7 @@ public class RateLimiterWebFeature implements DynamicFeature {
     @Inject
     public RateLimiterWebFeature(
             RateLimiter<ContainerRequestContext> rateLimiter,
-            RateLimiterConfigurationRegistry<ContainerRequestContext> rateLimiterConfigurationRegistry,
+            RateLimiterConfigurationSource<ContainerRequestContext> rateLimiterConfigurationRegistry,
             ResourceClassesSupplier resourceClassesSupplier,
             RateLimitProperties properties) {
 

@@ -1,6 +1,6 @@
 package com.looseboxes.ratelimiter.web.javaee;
 
-import com.looseboxes.ratelimiter.web.core.RateLimiterConfigurationRegistry;
+import com.looseboxes.ratelimiter.web.core.RateLimiterConfigurationSource;
 import com.looseboxes.ratelimiter.web.core.util.RateLimitProperties;
 import com.looseboxes.ratelimiter.web.core.RateLimiterImpl;
 
@@ -9,12 +9,12 @@ import javax.inject.Singleton;
 import javax.ws.rs.container.ContainerRequestContext;
 
 @Singleton
-public class RateLimiterFromPropertiesImpl extends RateLimiterImpl<ContainerRequestContext> {
+public class RateLimiterFromProperties extends RateLimiterImpl<ContainerRequestContext> {
 
     @Inject
-    public RateLimiterFromPropertiesImpl(
+    public RateLimiterFromProperties(
             RateLimitProperties properties,
-            RateLimiterConfigurationRegistry<ContainerRequestContext> rateLimiterConfigurationRegistry) {
+            RateLimiterConfigurationSource<ContainerRequestContext> rateLimiterConfigurationRegistry) {
         super(properties.getRateLimitConfigs(), rateLimiterConfigurationRegistry);
     }
 }

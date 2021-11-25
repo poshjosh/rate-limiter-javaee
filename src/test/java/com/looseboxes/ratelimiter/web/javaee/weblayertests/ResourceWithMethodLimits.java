@@ -1,6 +1,8 @@
 package com.looseboxes.ratelimiter.web.javaee.weblayertests;
 
 import com.looseboxes.ratelimiter.annotation.RateLimit;
+import com.looseboxes.ratelimiter.annotation.RateLimitGroup;
+import com.looseboxes.ratelimiter.rates.Rates;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import javax.ws.rs.GET;
@@ -53,13 +55,14 @@ public class ResourceWithMethodLimits {
         return ApiEndpoints.LIMIT_1_OR_5;
     }
 
-//    @GET
-//    @Path(LIMIT_1_AND_5)
-//    @Produces("text/plan")
-//    @RateLimit(limit = Constants.LIMIT_1, duration = Constants.DURATION_SECONDS, timeUnit = TimeUnit.SECONDS)
-//    @RateLimit(limit = Constants.LIMIT_5, duration = Constants.DURATION_SECONDS, timeUnit = TimeUnit.SECONDS)
-//    public String limit_1_and_10(HttpServletRequest request) {
-//        log.debug("limit_1_and_10");
-//        return ApiEndpoints.LIMIT_1_AND_5;
-//    }
+    @GET
+    @Path(LIMIT_1_AND_5)
+    @Produces("text/plan")
+    @RateLimitGroup(logic = Rates.Logic.AND)
+    @RateLimit(limit = Constants.LIMIT_1, duration = Constants.DURATION_SECONDS, timeUnit = TimeUnit.SECONDS)
+    @RateLimit(limit = Constants.LIMIT_5, duration = Constants.DURATION_SECONDS, timeUnit = TimeUnit.SECONDS)
+    public String limit_1_and_10() {
+        log.debug("limit_1_and_10");
+        return ApiEndpoints.LIMIT_1_AND_5;
+    }
 }
