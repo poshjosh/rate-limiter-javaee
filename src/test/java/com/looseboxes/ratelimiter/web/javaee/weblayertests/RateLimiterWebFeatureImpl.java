@@ -14,7 +14,7 @@ public class RateLimiterWebFeatureImpl extends RateLimiterWebFeature {
     public RateLimiterWebFeatureImpl() {
         this(
                 new RateLimiterConfigurationSourceImpl(
-                        new RequestToIdConverterImpl(), new RateCacheImpl(), new RateSupplierImpl(),
+                        new RequestToIdConverterImpl(), new RateCacheImpl(), new RateFactoryImpl(),
                         new RateExceededExceptionThrower(), new RateLimiterConfigurerImpl()),
                 new RateLimitPropertiesImpl());
     }
@@ -23,13 +23,13 @@ public class RateLimiterWebFeatureImpl extends RateLimiterWebFeature {
             RateLimiterConfigurationSource<ContainerRequestContext> rateLimiterConfigurationRegistry,
             RateLimitProperties rateLimitProperties) {
         super(
+                rateLimitProperties,
                 new RateLimiterImpl<>(
                         rateLimitProperties.getRateLimitConfigs(),
                         rateLimiterConfigurationRegistry
                 ),
                 rateLimiterConfigurationRegistry,
-                new ResourceClassesSupplierImpl(rateLimitProperties),
-                rateLimitProperties
+                new ResourceClassesSupplierImpl(rateLimitProperties)
         );
     }
 }
