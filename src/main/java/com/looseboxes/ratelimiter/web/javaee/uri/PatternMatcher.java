@@ -1,6 +1,6 @@
 package com.looseboxes.ratelimiter.web.javaee.uri;
 
-public interface PatternMatcher {
+@FunctionalInterface
+interface PatternMatcher {
     boolean matches(String s);
-    String getPattern();
 }

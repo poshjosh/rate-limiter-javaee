@@ -6,10 +6,10 @@ import javax.inject.Singleton;
 import javax.ws.rs.container.ContainerRequestContext;
 
 @Singleton
-public class RequestToIdConverterImpl implements RequestToIdConverter<ContainerRequestContext> {
+public class RequestToUriConverter implements RequestToIdConverter<ContainerRequestContext, String> {
 
     @Override
-    public Object convert(ContainerRequestContext request) {
+    public String convert(ContainerRequestContext request) {
         final String path = request.getUriInfo().getPath();
         return path.startsWith("/") ? path : "/" + path;
     }

@@ -8,7 +8,7 @@ import java.util.Objects;
 import java.util.regex.MatchResult;
 import java.util.regex.Pattern;
 
-public final class PatternMatchers {
+final class PatternMatchers {
 
     private static final Logger LOG = LoggerFactory.getLogger(PatternMatchers.class);
 
@@ -43,7 +43,6 @@ public final class PatternMatchers {
             }
             return matches;
         }
-        @Override
         public String getPattern() {
             return rawPattern;
         }
@@ -84,7 +83,6 @@ public final class PatternMatchers {
             }
             return matches;
         }
-        @Override
         public String getPattern() {
             return rawPattern;
         }
@@ -105,7 +103,7 @@ public final class PatternMatchers {
         }
     }
 
-    public static PatternMatcher parent(String pattern) {
+    static PatternMatcher parent(String pattern) {
         if(pattern.endsWith("?")) {
             throw new IllegalArgumentException(pattern);
         }else if(pattern.endsWith("*")) {
@@ -115,7 +113,7 @@ public final class PatternMatchers {
         }
     }
 
-    public static PatternMatcher child(String pattern) {
+    static PatternMatcher child(String pattern) {
         final String doubleAsterisk = "/**";
         if(pattern.endsWith("?")) {
             if(hasPathVariable(pattern)) {

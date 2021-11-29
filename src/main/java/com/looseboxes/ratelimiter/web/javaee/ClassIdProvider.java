@@ -1,12 +1,12 @@
 package com.looseboxes.ratelimiter.web.javaee;
 
 import com.looseboxes.ratelimiter.annotation.IdProvider;
-import com.looseboxes.ratelimiter.web.core.PathPatterns;
+import com.looseboxes.ratelimiter.web.core.util.PathPatterns;
 import com.looseboxes.ratelimiter.web.javaee.uri.ClassLevelPathPatterns;
 
 import javax.ws.rs.Path;
 
-public class ClassIdProvider implements IdProvider<Class<?>, PathPatterns<String>> {
+public final class ClassIdProvider implements IdProvider<Class<?>, PathPatterns<String>> {
 
     public ClassIdProvider() { }
 

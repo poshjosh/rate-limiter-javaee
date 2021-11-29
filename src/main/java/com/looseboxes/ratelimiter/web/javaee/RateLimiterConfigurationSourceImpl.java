@@ -17,11 +17,13 @@ public class RateLimiterConfigurationSourceImpl extends
 
     @Inject
     public RateLimiterConfigurationSourceImpl(
-            RequestToIdConverter<ContainerRequestContext> defaultRequestToIdConverter,
+            RequestToIdConverter<ContainerRequestContext, String> requestToUriConverter,
             RateCache<Object> rateCache,
             RateFactory rateFactory,
             RateRecordedListener rateRecordedListener,
             RateLimiterConfigurer<ContainerRequestContext> rateLimiterConfigurer) {
-        super(defaultRequestToIdConverter, rateCache, rateFactory, rateRecordedListener, rateLimiterConfigurer);
+
+        super(requestToUriConverter, rateCache, rateFactory, rateRecordedListener, rateLimiterConfigurer,
+                new ClassIdProvider(), new MethodIdProvider());
     }
 }

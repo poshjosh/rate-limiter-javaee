@@ -1,8 +1,8 @@
 package com.looseboxes.ratelimiter.web.javaee.weblayertests;
 
 import com.looseboxes.ratelimiter.RateExceededExceptionThrower;
+import com.looseboxes.ratelimiter.annotation.AnnotationProcessor;
 import com.looseboxes.ratelimiter.web.core.RateLimiterConfigurationSource;
-import com.looseboxes.ratelimiter.web.core.RateLimiterImpl;
 import com.looseboxes.ratelimiter.web.core.util.RateLimitProperties;
 import com.looseboxes.ratelimiter.web.javaee.*;
 import com.looseboxes.ratelimiter.web.javaee.ResourceClassesSupplierImpl;
@@ -14,22 +14,22 @@ public class RateLimiterWebFeatureImpl extends RateLimiterWebFeature {
     public RateLimiterWebFeatureImpl() {
         this(
                 new RateLimiterConfigurationSourceImpl(
-                        new RequestToIdConverterImpl(), new RateCacheImpl(), new RateFactoryImpl(),
+                        new RequestToUriConverter(), new RateCacheImpl(), new RateFactoryImpl(),
                         new RateExceededExceptionThrower(), new RateLimiterConfigurerImpl()),
-                new RateLimitPropertiesImpl());
+                new RateLimitPropertiesImpl(),
+                new AnnotationProcessorImpl()
+        );
     }
 
     public RateLimiterWebFeatureImpl(
-            RateLimiterConfigurationSource<ContainerRequestContext> rateLimiterConfigurationRegistry,
-            RateLimitProperties rateLimitProperties) {
+            RateLimiterConfigurationSource<ContainerRequestContext> rateLimiterConfigurationSource,
+            RateLimitProperties rateLimitProperties,
+            AnnotationProcessor<Class<?>> annotationProcessor) {
         super(
                 rateLimitProperties,
-                new RateLimiterImpl<>(
-                        rateLimitProperties.getRateLimitConfigs(),
-                        rateLimiterConfigurationRegistry
-                ),
-                rateLimiterConfigurationRegistry,
-                new ResourceClassesSupplierImpl(rateLimitProperties)
+                rateLimiterConfigurationSource,
+                new ResourceClassesSupplierImpl(rateLimitProperties),
+                annotationProcessor
         );
     }
 }

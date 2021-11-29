@@ -42,7 +42,7 @@ public class ResourceWithMethodLimits {
     @RateLimit(limit = Constants.LIMIT_1, duration = Constants.DURATION_SECONDS, timeUnit = TimeUnit.SECONDS)
     public String limit_1() {
         log.debug("limit_1");
-        return ApiEndpoints.LIMIT_1;
+        return ApiEndpoints.METHOD_LIMIT_1;
     }
 
     @GET
@@ -50,9 +50,9 @@ public class ResourceWithMethodLimits {
     @Produces("text/plan")
     @RateLimit(limit = Constants.LIMIT_1, duration = Constants.DURATION_SECONDS, timeUnit = TimeUnit.SECONDS)
     @RateLimit(limit = Constants.LIMIT_5, duration = Constants.DURATION_SECONDS, timeUnit = TimeUnit.SECONDS)
-    public String limit_1_or_10() {
-        log.debug("limit_1_or_10");
-        return ApiEndpoints.LIMIT_1_OR_5;
+    public String limit_1_or_5() {
+        log.debug("limit_1_or_5");
+        return ApiEndpoints.METHOD_LIMIT_1_OR_5;
     }
 
     @GET
@@ -61,8 +61,8 @@ public class ResourceWithMethodLimits {
     @RateLimitGroup(logic = Logic.AND)
     @RateLimit(limit = Constants.LIMIT_1, duration = Constants.DURATION_SECONDS, timeUnit = TimeUnit.SECONDS)
     @RateLimit(limit = Constants.LIMIT_5, duration = Constants.DURATION_SECONDS, timeUnit = TimeUnit.SECONDS)
-    public String limit_1_and_10() {
-        log.debug("limit_1_and_10");
-        return ApiEndpoints.LIMIT_1_AND_5;
+    public String limit_1_and_5() {
+        log.debug("limit_1_and_5");
+        return ApiEndpoints.METHOD_LIMIT_1_AND_5;
     }
 }

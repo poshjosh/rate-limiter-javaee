@@ -1,6 +1,6 @@
 package com.looseboxes.ratelimiter.web.javaee.uri;
 
-import com.looseboxes.ratelimiter.web.core.PathPatterns;
+import com.looseboxes.ratelimiter.web.core.util.PathPatterns;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,6 +19,6 @@ abstract class AbstractPathPatternsTestBase {
         PathPatterns<String> pathPatterns = pathPatterns("/numbers");
         PathPatterns<String> result =  pathPatterns.combine(new MethodLevelPathPatterns("/1/**", "/2/*"));
         PathPatterns<String> expected = new MethodLevelPathPatterns("/numbers/1/**", "/numbers/2/*");
-        assertEqual(result.getPathPatterns(), expected.getPathPatterns());
+        assertEqual(result.getPatterns(), expected.getPatterns());
     }
 }

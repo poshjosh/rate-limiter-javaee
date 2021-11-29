@@ -1,25 +1,29 @@
 package com.looseboxes.ratelimiter.web.javaee;
 
 import com.looseboxes.ratelimiter.annotation.IdProvider;
-import com.looseboxes.ratelimiter.web.core.PathPatterns;
+import com.looseboxes.ratelimiter.web.core.util.PathPatterns;
 import com.looseboxes.ratelimiter.web.javaee.uri.MethodLevelPathPatterns;
 
 import javax.ws.rs.Path;
 import java.lang.reflect.Method;
 import java.util.*;
 
-public class MethodIdProvider implements IdProvider<Method, PathPatterns<String>> {
+public final class MethodIdProvider implements IdProvider<Method, PathPatterns<String>> {
 
-    private final IdProvider<Class<?>, PathPatterns<String>> idProvider;
+    private final IdProvider<Class<?>, PathPatterns<String>> classIdProvider;
 
-    public MethodIdProvider(IdProvider<Class<?>, PathPatterns<String>> idProvider) {
-        this.idProvider = Objects.requireNonNull(idProvider);
+    public MethodIdProvider() {
+        this(new ClassIdProvider());
+    }
+
+    public MethodIdProvider(IdProvider<Class<?>, PathPatterns<String>> classIdProvider) {
+        this.classIdProvider = Objects.requireNonNull(classIdProvider);
     }
 
     @Override
     public PathPatterns<String> getId(Method method) {
 
-        final PathPatterns<String> classLevelPathPatterns = idProvider.getId(method.getDeclaringClass());
+        final PathPatterns<String> classLevelPathPatterns = classIdProvider.getId(method.getDeclaringClass());
 
         if (method.getAnnotation(Path.class) != null) {
             return buildPathPatterns(classLevelPathPatterns, method.getAnnotation(Path.class).value());
