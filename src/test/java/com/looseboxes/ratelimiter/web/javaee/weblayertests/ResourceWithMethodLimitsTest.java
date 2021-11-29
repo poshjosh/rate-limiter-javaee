@@ -63,8 +63,7 @@ public class ResourceWithMethodLimitsTest extends AbstractResourceTest {
         assertThrows(Exception.class, () -> shouldReturnDefaultResult(endpoint));
     }
 
-// @TODO Fix this
-//    @Test
+    @Test
     public void andLimitGroupShouldSucceedWhenOneOfManyLimitsIsExceeded() {
 
         final String endpoint = ApiEndpoints.METHOD_LIMIT_1_AND_5;
@@ -74,8 +73,7 @@ public class ResourceWithMethodLimitsTest extends AbstractResourceTest {
         shouldReturnDefaultResult(endpoint);
     }
 
-// @TODO Fix this
-//    @Test
+    @Test
     public void andLimitGroupShouldFailWhenAllOfManyLimitsIsExceeded() throws Exception {
 
         final String endpoint = ApiEndpoints.METHOD_LIMIT_1_AND_5;
