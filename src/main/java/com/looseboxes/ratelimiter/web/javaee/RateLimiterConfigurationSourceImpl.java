@@ -1,6 +1,6 @@
 package com.looseboxes.ratelimiter.web.javaee;
 
-import com.looseboxes.ratelimiter.RateRecordedListener;
+import com.looseboxes.ratelimiter.RateExceededListener;
 import com.looseboxes.ratelimiter.RateFactory;
 import com.looseboxes.ratelimiter.cache.RateCache;
 import com.looseboxes.ratelimiter.web.core.RateLimiterConfigurationSource;
@@ -20,10 +20,10 @@ public class RateLimiterConfigurationSourceImpl extends
             RequestToIdConverter<ContainerRequestContext, String> requestToUriConverter,
             RateCache<Object> rateCache,
             RateFactory rateFactory,
-            RateRecordedListener rateRecordedListener,
+            RateExceededListener rateExceededListener,
             RateLimiterConfigurer<ContainerRequestContext> rateLimiterConfigurer) {
 
-        super(requestToUriConverter, rateCache, rateFactory, rateRecordedListener, rateLimiterConfigurer,
+        super(requestToUriConverter, rateCache, rateFactory, rateExceededListener, rateLimiterConfigurer,
                 new ClassIdProvider(), new MethodIdProvider());
     }
 }
