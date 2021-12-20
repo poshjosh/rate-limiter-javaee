@@ -14,8 +14,10 @@ public class RateLimiterWebFeatureImpl extends RateLimiterWebFeature {
     public RateLimiterWebFeatureImpl() {
         this(
                 new RateLimiterConfigurationSourceImpl(
-                        new RequestToUriConverter(), new RateCacheImpl(), new RateFactoryImpl(),
-                        new RateExceededExceptionThrower(), new RateLimiterConfigurerImpl()),
+                        new RequestToUriConverter(), new RateCacheImpl(),
+                        new RateFactoryImpl(), new RateExceededExceptionThrower(),
+                        new RateLimiterProviderImpl(), new RateLimiterConfigurerImpl()
+                ),
                 new RateLimitPropertiesImpl(),
                 new AnnotationProcessorImpl()
         );
