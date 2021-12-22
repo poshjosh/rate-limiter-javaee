@@ -5,7 +5,7 @@ import com.looseboxes.ratelimiter.RateFactory;
 import com.looseboxes.ratelimiter.cache.RateCache;
 import com.looseboxes.ratelimiter.web.core.RateLimiterConfigurationSource;
 import com.looseboxes.ratelimiter.web.core.RateLimiterConfigurer;
-import com.looseboxes.ratelimiter.web.core.RateLimiterProvider;
+import com.looseboxes.ratelimiter.web.core.RateLimiterFactory;
 import com.looseboxes.ratelimiter.web.core.RequestToIdConverter;
 
 import javax.inject.Inject;
@@ -22,10 +22,10 @@ public class RateLimiterConfigurationSourceImpl extends
             RateCache<Object> rateCache,
             RateFactory rateFactory,
             RateExceededListener rateExceededListener,
-            RateLimiterProvider rateLimiterProvider,
+            RateLimiterFactory rateLimiterFactory,
             RateLimiterConfigurer<ContainerRequestContext> rateLimiterConfigurer) {
 
-        super(requestToUriConverter, rateCache, rateFactory, rateExceededListener, rateLimiterProvider,
+        super(requestToUriConverter, rateCache, rateFactory, rateExceededListener, rateLimiterFactory,
                 rateLimiterConfigurer, new ClassIdProvider(), new MethodIdProvider());
     }
 }

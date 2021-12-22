@@ -16,7 +16,7 @@ public class RateLimiterWebFeatureImpl extends RateLimiterWebFeature {
                 new RateLimiterConfigurationSourceImpl(
                         new RequestToUriConverter(), new RateCacheImpl(),
                         new RateFactoryImpl(), new RateExceededExceptionThrower(),
-                        new RateLimiterProviderImpl(), new RateLimiterConfigurerImpl()
+                        new RateLimiterFactoryImpl(), new RateLimiterConfigurerImpl()
                 ),
                 new RateLimitPropertiesImpl(),
                 new AnnotationProcessorImpl()
