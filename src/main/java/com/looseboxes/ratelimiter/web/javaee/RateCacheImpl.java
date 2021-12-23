@@ -1,10 +1,9 @@
 package com.looseboxes.ratelimiter.web.javaee;
 
-import com.looseboxes.ratelimiter.cache.InMemoryRateCache;
+import com.looseboxes.ratelimiter.cache.MapRateCache;
 
 import javax.inject.Singleton;
-import java.io.Serializable;
 
 @Singleton
-public class RateCacheImpl extends InMemoryRateCache<Serializable, Serializable> {
+public class RateCacheImpl extends MapRateCache<Object, Object> {
 }

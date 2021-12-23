@@ -2,7 +2,7 @@ package com.looseboxes.ratelimiter.web.javaee.weblayertests;
 
 import com.looseboxes.ratelimiter.rates.Logic;
 import com.looseboxes.ratelimiter.util.RateConfig;
-import com.looseboxes.ratelimiter.util.RateLimitConfig;
+import com.looseboxes.ratelimiter.util.RateConfigList;
 import com.looseboxes.ratelimiter.web.core.util.RateLimitProperties;
 
 import java.util.Collections;
@@ -19,7 +19,7 @@ public class RateLimitPropertiesImpl implements RateLimitProperties {
 
     private final Boolean disabled;
 
-    private final Map<String, RateLimitConfig> rateLimitConfigs;
+    private final Map<String, RateConfigList> rateLimitConfigs;
 
     public RateLimitPropertiesImpl() {
         this.resourcePackages = Collections.singletonList(ResourceWithMethodLimits.class.getPackage().getName());
@@ -27,11 +27,11 @@ public class RateLimitPropertiesImpl implements RateLimitProperties {
         this.rateLimitConfigs = Collections.singletonMap(DEFAULT_CONFIG_NAME, getRateLimitConfigList());
     }
 
-    private RateLimitConfig getRateLimitConfigList() {
-        RateLimitConfig rateLimitConfig = new RateLimitConfig();
-        rateLimitConfig.setLimits(getRateLimits());
-        rateLimitConfig.setLogic(Logic.OR);
-        return rateLimitConfig;
+    private RateConfigList getRateLimitConfigList() {
+        RateConfigList rateConfigList = new RateConfigList();
+        rateConfigList.setLimits(getRateLimits());
+        rateConfigList.setLogic(Logic.OR);
+        return rateConfigList;
     }
 
     private List<RateConfig> getRateLimits() {
@@ -50,7 +50,7 @@ public class RateLimitPropertiesImpl implements RateLimitProperties {
         return disabled;
     }
 
-    @Override public Map<String, RateLimitConfig> getRateLimitConfigs() {
+    @Override public Map<String, RateConfigList> getRateLimitConfigs() {
         return rateLimitConfigs;
     }
 

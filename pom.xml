@@ -20,6 +20,7 @@
         <maven.compiler.target>8</maven.compiler.target>
         <javaee.version>7.0</javaee.version>
         <rate-limiter.version>0.0.707-DRAFT</rate-limiter.version>
+        <bucket4j.version>6.4.1</bucket4j.version>
         <jersey.version>2.34</jersey.version>
         <logback-classic.version>1.2.6</logback-classic.version>
         <it.skip>true</it.skip>
@@ -33,6 +34,12 @@
             <groupId>com.looseboxes</groupId>
             <artifactId>rate-limiter-web-core</artifactId>
             <version>${rate-limiter.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.vladimir-bukhtoyarov</groupId>
+            <artifactId>bucket4j-core</artifactId>
+            <version>${bucket4j.version}</version>
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>org.glassfish.jersey.core</groupId>
