@@ -46,24 +46,12 @@ class GreetingResource {
 
 __5. Add some properties (Optional)__
 
-You can configure rate limiting from the properties file.
+Define rate limit properties as described in the [rate-limiter-web-core documentation](https://github.com/poshjosh/rate-limiter-web-core).
 
-```yaml
-rate-limiter:
-  resource-packages: com.myapplicatioon.web.rest
-  rate-limit-configs:
-    com.myapplicatioon.web.rest.MyResource: # This is the group name
-      limits:
-        -
-          limit: 25
-          duration: 1
-          timeout: SECONDS
-```
+When defining properties, we could configure rate limiting for specific resources by using the fully qualified class 
+name as the group name.
 
-By using the fully qualified class name as the group name we can configure rate limiting
-of specific resources from application configuration properties.
-
-We could also narrow the specified properties to a specific method. For example, in this case,
+We could also narrow the specified configuration to a specific method. For example, in this case,
 by using `com.myapplicatioon.web.rest.MyResource.greet(java.lang.String)` as the group name.
 
 __6. Configure rate limiting__
