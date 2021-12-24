@@ -9,9 +9,9 @@ import com.looseboxes.ratelimiter.web.javaee.*;
 
 import javax.ws.rs.container.ContainerRequestContext;
 
-public class TestRateLimiterWebFeature extends RateLimiterWebFeature {
+public class TestRateLimiterDynamicFeature extends RateLimiterDynamicFeature {
 
-    public TestRateLimiterWebFeature() {
+    public TestRateLimiterDynamicFeature() {
         this(
                 new RateLimitPropertiesImpl(),
                 new RateLimiterConfigurationSourceImpl(
@@ -23,7 +23,7 @@ public class TestRateLimiterWebFeature extends RateLimiterWebFeature {
         );
     }
 
-    public TestRateLimiterWebFeature(
+    public TestRateLimiterDynamicFeature(
             RateLimitProperties rateLimitProperties,
             RateLimiterConfigurationSource<ContainerRequestContext> rateLimiterConfigurationSource,
             AnnotationProcessor<Class<?>> annotationProcessor) {
@@ -35,19 +35,18 @@ public class TestRateLimiterWebFeature extends RateLimiterWebFeature {
         );
     }
 
-    public TestRateLimiterWebFeature(
+    public TestRateLimiterDynamicFeature(
             RateLimitProperties rateLimitProperties,
             RateLimiterConfigurationSource<ContainerRequestContext> rateLimiterConfigurationSource,
             ResourceClassesSupplier resourceClassesSupplier,
             AnnotationProcessor<Class<?>> annotationProcessor) {
         super(
                 new ContainerRequestContextRateLimiter(
-                    rateLimitProperties,
-                    rateLimiterConfigurationSource,
-                    resourceClassesSupplier,
-                    annotationProcessor
+                        rateLimitProperties,
+                        rateLimiterConfigurationSource,
+                        resourceClassesSupplier,
+                        annotationProcessor
                 ),
                 resourceClassesSupplier
         );
-    }
-}
+    }}

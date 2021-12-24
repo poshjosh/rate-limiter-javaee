@@ -15,7 +15,7 @@ public abstract class AbstractResourceTest extends JerseyTest {
     @Override
     protected Application configure() {
         return ResourceConfig.forApplicationClass(TestApplication.class, getResourceOrProviderClasses())
-                .register(RateLimiterWebFeatureImpl.class);
+                .register(TestRateLimiterDynamicFeature.class);
     }
 
     void shouldFailWhenMaxLimitIsExceeded(String endpoint, int maxLimit) throws Exception {

@@ -10,13 +10,13 @@ import javax.ws.rs.container.ResourceInfo;
 import javax.ws.rs.core.FeatureContext;
 import java.util.*;
 
-public class RateLimiterWebFeature implements DynamicFeature {
+public class RateLimiterDynamicFeature implements DynamicFeature {
 
     private final ContainerRequestFilter containerRequestFilter;
 
     private final List<Class<?>> resourceClasses;
 
-    public RateLimiterWebFeature(
+    public RateLimiterDynamicFeature(
             RateLimiter<ContainerRequestContext> rateLimiter,
             ResourceClassesSupplier resourceClassesSupplier) {
 
