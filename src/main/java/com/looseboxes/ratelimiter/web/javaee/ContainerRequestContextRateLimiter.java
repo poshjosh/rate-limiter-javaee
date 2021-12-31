@@ -1,12 +1,12 @@
 package com.looseboxes.ratelimiter.web.javaee;
 
-import com.looseboxes.ratelimiter.annotation.AnnotationProcessor;
-import com.looseboxes.ratelimiter.web.core.RateLimiterConfigurationSource;
-import com.looseboxes.ratelimiter.web.core.ResourceClassesSupplier;
+import com.looseboxes.ratelimiter.util.Nullable;
+import com.looseboxes.ratelimiter.web.core.RateLimiterConfigurer;
 import com.looseboxes.ratelimiter.web.core.WebRequestRateLimiter;
 import com.looseboxes.ratelimiter.web.core.util.RateLimitProperties;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 import javax.inject.Singleton;
 import javax.ws.rs.container.ContainerRequestContext;
 
@@ -14,13 +14,15 @@ import javax.ws.rs.container.ContainerRequestContext;
 public class ContainerRequestContextRateLimiter extends WebRequestRateLimiter<ContainerRequestContext> {
 
     @Inject
-    public ContainerRequestContextRateLimiter(
-            RateLimitProperties properties,
-            RateLimiterConfigurationSource<ContainerRequestContext> rateLimiterConfigurationSource,
-            ResourceClassesSupplier resourceClassesSupplier,
-            // TODO - This is marked as an ambiguous bean (having multiple matching instances)- Resolve this ambiguity.
-            AnnotationProcessor<Class<?>> annotationProcessor) {
+    public ContainerRequestContextRateLimiter(RateLimitProperties properties,
+                                              @Nullable Provider<RateLimiterConfigurer> rateLimiterConfigurerProvider) {
+        this(properties, new RateLimiterConfiguration(), rateLimiterConfigurerProvider == null ? null : rateLimiterConfigurerProvider.get());
+    }
 
-        super(properties, rateLimiterConfigurationSource, resourceClassesSupplier.get(), annotationProcessor);
+    private ContainerRequestContextRateLimiter(RateLimitProperties properties,
+                                              RateLimiterConfiguration rateLimiterConfiguration,
+                                              @Nullable RateLimiterConfigurer<ContainerRequestContext> rateLimiterConfigurer) {
+        super(properties, rateLimiterConfiguration.rateLimiterConfigurationSource(rateLimiterConfigurer, null),
+                rateLimiterConfiguration.resourceClassesSupplier(properties).get(), rateLimiterConfiguration.annotationProcessor());
     }
 }
