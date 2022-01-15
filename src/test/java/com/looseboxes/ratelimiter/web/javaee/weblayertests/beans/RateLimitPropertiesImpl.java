@@ -1,9 +1,11 @@
-package com.looseboxes.ratelimiter.web.javaee.weblayertests;
+package com.looseboxes.ratelimiter.web.javaee.weblayertests.beans;
 
 import com.looseboxes.ratelimiter.rates.Logic;
 import com.looseboxes.ratelimiter.util.RateConfig;
 import com.looseboxes.ratelimiter.util.RateConfigList;
 import com.looseboxes.ratelimiter.web.core.util.RateLimitProperties;
+import com.looseboxes.ratelimiter.web.javaee.weblayertests.Constants;
+import com.looseboxes.ratelimiter.web.javaee.weblayertests.ResourceWithMethodLimits;
 
 import java.time.Duration;
 import java.util.Collections;

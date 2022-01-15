@@ -7,35 +7,33 @@ Please first read the [rate-limiter-web-core documentation](https://github.com/p
 
 ### Usage
 
-__1. Extend `RateLimiterDynamicFeature`__
-
-```java
-import com.looseboxes.ratelimiter.RateLimiter;
-import com.looseboxes.ratelimiter.web.core.ResourceClassesSupplier;
-import com.looseboxes.ratelimiter.web.javaee.*;
-
-import javax.inject.Inject;
-import javax.ws.rs.container.ContainerRequestContext;
-import javax.ws.rs.ext.Provider;
-
-@Provider
-public class MyRateLimiterDynamicFeature extends RateLimiterDynamicFeature {
-
-    @Inject
-    public MyRateLimiterDynamicFeature(RateLimiter<ContainerRequestContext> rateLimiter, ResourceClassesSupplier resourceClassesSupplier) {
-        super(rateLimiter, resourceClassesSupplier);
-    }
-}
-```
-
-A `RateLimiter` bean is provided by default. Therefore, you could alternatively
-implement your own `WebMvcConfigurer` and use the `RateLimiter` bean as you see fit.
-
-__2. Implement injectables__
+__1. Implement java beans__
 
 - `com.looseboxes.ratelimiter.web.core.util.RateLimitProperties`
 
 - `com.looseboxes.ratelimiter.web.core.RateLimiterConfigurer` (optional)
+
+__2. Implement `DynamicFeature`__
+
+```java
+import com.looseboxes.ratelimiter.RateLimiter;
+import com.looseboxes.ratelimiter.web.core.util.RateLimitProperties;
+import com.looseboxes.ratelimiter.web.javaee.RateLimiterDynamicFeature;
+
+import javax.ws.rs.container.ContainerRequestContext;
+
+@javax.ws.rs.ext.Provider
+public class MyRateLimiterDynamicFeature extends RateLimiterDynamicFeature {
+
+  @javax.inject.Inject
+  public MyRateLimiterDynamicFeature(RateLimitProperties properties, RateLimiter<ContainerRequestContext> rateLimiter) {
+    super(properties, rateLimiter);
+  }
+}
+```
+
+A `RateLimiter` bean is provided by default. Therefore, you could alternatively
+implement your own `DynamicFeature` and use the `RateLimiter` bean as you see fit.
 
 __3. Add required rate-limiter properties__
 
@@ -46,11 +44,7 @@ rate-limiter:
   resource-packages: com.myapplicatioon.web.rest
 ```
 
-__4. Handle RateExceededException.__
-
-TODO
-
-__5. Annotate classes and/or methods.__
+__4. Annotate classes and/or methods.__
 
 ```java
 import com.looseboxes.ratelimiter.annotation.RateLimit;
@@ -69,22 +63,19 @@ class GreetingResource {
 }
 ```
 
-__6. Configure rate limiting__
+__5. Configure rate limiting__
 
 Configure rate limiting as described in the [rate-limiter-web-core documentation](https://github.com/poshjosh/rate-limiter-web-core).
 
 __Notes:__
 
-When you configure rate limiting from the `RateLimitProperties` you implement:
+When you configure rate limiting from the `RateLimitProperties` you implement, you could:
 
-- By using the fully qualified class name as the group name we can configure rate limiting
-  of specific resources from application configuration properties.
+- Configure rate limiting of specific resources from application properties by using the 
+  fully qualified class name as the rate-limit group name.
 
-- You could also narrow the specified properties to a specific method. For example, in this case,
-  by using `com.myapplicatioon.web.rest.MyResource.greet(java.lang.String)` as the group name.
-
-If you create a `org.springframework.cache.Cache` named `com.looseboxes.ratelimiter.web.spring.cache`
-(the default cache name), it will be used to create the default `RateCache`.
+- Narrow the specified properties to a specific method. For example, in this case, by using
+  `com.myapplicatioon.web.rest.MyResource.greet(java.lang.String)` as the group name.
 
 Enjoy! :wink:
 
