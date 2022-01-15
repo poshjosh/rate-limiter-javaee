@@ -1,7 +1,7 @@
 package com.looseboxes.ratelimiter.web.javaee;
 
 import com.looseboxes.ratelimiter.RateLimiter;
-import com.looseboxes.ratelimiter.web.core.*;
+import com.looseboxes.ratelimiter.web.core.util.RateLimitProperties;
 
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
@@ -16,19 +16,22 @@ public class RateLimiterDynamicFeature implements DynamicFeature {
 
     private final List<Class<?>> resourceClasses;
 
-    public RateLimiterDynamicFeature(
-            RateLimiter<ContainerRequestContext> rateLimiter,
-            ResourceClassesSupplier resourceClassesSupplier) {
+    @javax.inject.Inject
+    public RateLimiterDynamicFeature(RateLimitProperties properties, RateLimiter<ContainerRequestContext> rateLimiter) {
 
-        this.resourceClasses = resourceClassesSupplier.get();
+        this.resourceClasses = new ResourceClassesSupplierImpl(properties).get();
 
-        this.containerRequestFilter = rateLimiter::increment;
+        this.containerRequestFilter = new RequestRateLimitingFilter(rateLimiter);
     }
 
     @Override
     public void configure(ResourceInfo resourceInfo, FeatureContext featureContext) {
-        if(resourceClasses.contains(resourceInfo.getResourceClass())) {
+        if(isTargetedResource(resourceInfo.getResourceMethod().getDeclaringClass())) {
             featureContext.register(containerRequestFilter);
         }
+    }
+
+    private boolean isTargetedResource(Class<?> clazz) {
+        return resourceClasses.contains(clazz);
     }
 }

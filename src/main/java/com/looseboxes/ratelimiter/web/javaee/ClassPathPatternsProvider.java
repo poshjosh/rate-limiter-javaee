@@ -6,9 +6,9 @@ import com.looseboxes.ratelimiter.web.javaee.uri.ClassLevelPathPatterns;
 
 import javax.ws.rs.Path;
 
-public final class ClassIdProvider implements IdProvider<Class<?>, PathPatterns<String>> {
+public class ClassPathPatternsProvider implements IdProvider<Class<?>, PathPatterns<String>> {
 
-    public ClassIdProvider() { }
+    public ClassPathPatternsProvider() { }
 
     @Override
     public PathPatterns<String> getId(Class<?> source) {

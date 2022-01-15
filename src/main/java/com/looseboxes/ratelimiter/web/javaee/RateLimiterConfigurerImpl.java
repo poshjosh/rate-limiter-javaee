@@ -1,4 +1,4 @@
-package com.looseboxes.ratelimiter.web.javaee.weblayertests;
+package com.looseboxes.ratelimiter.web.javaee;
 
 import com.looseboxes.ratelimiter.web.core.RateLimiterConfigurer;
 
