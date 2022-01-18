@@ -34,9 +34,7 @@ public class MethodPathPatternsProvider implements IdProvider<Method, PathPatter
 
     private PathPatterns<String> composePathPatterns(PathPatterns<String> pathPatterns, String subPathPattern) {
         if(subPathPattern == null || subPathPattern.isEmpty()) {
-            // This is a method patterns provider, so even if the class has some patterns, as long as the method has
-            // no patterns we return none.
-            return PathPatterns.none();
+            return pathPatterns;
         }
         return pathPatterns.combine(new MethodLevelPathPatterns(subPathPattern));
     }
