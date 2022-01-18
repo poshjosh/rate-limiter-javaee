@@ -9,16 +9,16 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import java.util.concurrent.TimeUnit;
 
-@Path(ResourceWithoutClassPatterns.Endpoints.ROOT)
-public class ResourceWithoutClassPatterns {
+@Path(ResourceWithoutMethodPatterns.Endpoints.ROOT)
+public class ResourceWithoutMethodPatterns {
 
-    private final Logger log = LoggerFactory.getLogger(ResourceWithoutClassPatterns.class);
+    private final Logger log = LoggerFactory.getLogger(ResourceWithoutMethodPatterns.class);
 
-    private static final String LIMIT_1 = "/limit_1";
+    private static final String LIMIT_1 = ""; // No method pattern
 
     interface Endpoints{
-        String ROOT = ""; // No class pattern
-        String LIMIT_1 = ROOT + ResourceWithoutClassPatterns.LIMIT_1;
+        String ROOT = "/no-method-patterns";
+        String LIMIT_1 = ROOT + ResourceWithoutMethodPatterns.LIMIT_1;
     }
 
     @GET
@@ -27,6 +27,6 @@ public class ResourceWithoutClassPatterns {
     @RateLimit(limit = Constants.LIMIT_1, duration = Constants.DURATION_SECONDS, timeUnit = TimeUnit.SECONDS)
     public String limit_1() {
         log.debug("limit_1");
-        return ApiEndpoints.NO_CLASS_PATTERNS_LIMIT_1;
+        return ApiEndpoints.NO_METHOD_PATTERNS_LIMIT_1;
     }
 }
