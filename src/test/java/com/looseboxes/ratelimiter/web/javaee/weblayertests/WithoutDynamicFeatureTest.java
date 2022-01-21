@@ -20,7 +20,7 @@ public class WithoutDynamicFeatureTest extends AbstractResourceTest {
     }
 
     @Test
-    public void shouldNotFailWhenLimitIsExceeded() {
+    public void shouldSucceedWhenLimitIsExceeded() {
 
         final String endpoint = ApiEndpoints.NO_CLASS_PATTERNS_LIMIT_1;
 

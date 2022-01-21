@@ -26,8 +26,8 @@ public class RateLimiterDynamicFeature implements DynamicFeature {
 
     @Override
     public void configure(ResourceInfo resourceInfo, FeatureContext featureContext) {
-        if(isTargetedResource(resourceInfo.getResourceMethod().getDeclaringClass())) {
-            featureContext.register(containerRequestFilter);
+        if(isTargetedResource(resourceInfo.getResourceClass())) {
+            featureContext.register(containerRequestFilter, 0);
         }
     }
 

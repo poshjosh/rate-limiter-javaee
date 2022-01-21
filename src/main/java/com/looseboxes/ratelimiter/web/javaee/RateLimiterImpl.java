@@ -1,7 +1,9 @@
 package com.looseboxes.ratelimiter.web.javaee;
 
 import com.looseboxes.ratelimiter.annotation.ClassAnnotationProcessor;
+import com.looseboxes.ratelimiter.web.core.RateLimiterConfigurationSource;
 import com.looseboxes.ratelimiter.web.core.RateLimiterConfigurer;
+import com.looseboxes.ratelimiter.web.core.RateLimiterNodeContext;
 import com.looseboxes.ratelimiter.web.core.WebRequestRateLimiter;
 import com.looseboxes.ratelimiter.web.core.util.RateLimitProperties;
 
@@ -13,11 +15,20 @@ public class RateLimiterImpl extends WebRequestRateLimiter<ContainerRequestConte
 
     @Inject
     public RateLimiterImpl(RateLimitProperties properties,
-                           RateLimiterConfigurer<ContainerRequestContext> rateLimiterConfigurer) {
+            RateLimiterConfigurer<ContainerRequestContext> rateLimiterConfigurer) {
+        this(properties, new RateLimiterConfigurationSourceImpl(rateLimiterConfigurer));
+    }
+
+    private RateLimiterImpl(RateLimitProperties properties,
+                           RateLimiterConfigurationSource<ContainerRequestContext> rateLimiterConfigurationSource) {
         super(
                 properties,
-                new RateLimiterConfigurationSourceImpl(rateLimiterConfigurer),
-                new ResourceClassesSupplierImpl(properties).get(),
-                new ClassAnnotationProcessor());
+                rateLimiterConfigurationSource,
+                new RateLimiterNodeContext<>(
+                        properties, rateLimiterConfigurationSource,
+                        new ResourceClassesSupplierImpl(properties).get(),
+                        new ClassAnnotationProcessor()
+                )
+        );
     }
 }
