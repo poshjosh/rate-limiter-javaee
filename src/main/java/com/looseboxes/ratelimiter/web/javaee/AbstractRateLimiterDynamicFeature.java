@@ -11,24 +11,22 @@ import javax.ws.rs.container.DynamicFeature;
 import javax.ws.rs.container.ResourceInfo;
 import javax.ws.rs.core.FeatureContext;
 import java.util.*;
-import java.util.stream.Collectors;
 
-public class RateLimiterDynamicFeature implements DynamicFeature {
+public abstract class AbstractRateLimiterDynamicFeature implements DynamicFeature {
 
-    private final Logger log = LoggerFactory.getLogger(RateLimiterDynamicFeature.class);
+    private final Logger log = LoggerFactory.getLogger(AbstractRateLimiterDynamicFeature.class);
 
     private final ContainerRequestFilter containerRequestFilter;
 
     private final List<Class<?>> resourceClasses;
 
-    @javax.inject.Inject
-    public RateLimiterDynamicFeature(RateLimitProperties properties, RateLimiter<ContainerRequestContext> rateLimiter) {
+    protected AbstractRateLimiterDynamicFeature(RateLimitProperties properties, RateLimiter<ContainerRequestContext> rateLimiter) {
 
         this.resourceClasses = new ResourceClassesSupplierImpl(properties).get();
 
         this.containerRequestFilter = new RequestRateLimitingFilter(rateLimiter);
 
-        log.info("Resources: {}", resourceClasses.stream().map(Class::getName).collect(Collectors.joining(", ")));
+        log.info("Completed automatic setup of rate limiting");
     }
 
     @Override
@@ -41,7 +39,11 @@ public class RateLimiterDynamicFeature implements DynamicFeature {
         }
     }
 
-    private boolean isTargetedResource(Class<?> clazz) {
+    protected boolean isTargetedResource(Class<?> clazz) {
         return resourceClasses.contains(clazz);
+    }
+
+    protected ContainerRequestFilter getContainerRequestFilter() {
+        return containerRequestFilter;
     }
 }

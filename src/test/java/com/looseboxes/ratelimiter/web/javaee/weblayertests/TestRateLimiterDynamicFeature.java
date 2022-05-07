@@ -9,7 +9,7 @@ import com.looseboxes.ratelimiter.web.javaee.weblayertests.beans.RateLimitProper
 import javax.ws.rs.container.ContainerRequestContext;
 
 @javax.ws.rs.ext.Provider
-public class TestRateLimiterDynamicFeature extends RateLimiterDynamicFeature {
+public class TestRateLimiterDynamicFeature extends AbstractRateLimiterDynamicFeature {
 
     public TestRateLimiterDynamicFeature() {
         this(new RateLimitPropertiesImpl(), new RateLimiterConfigurerImpl());

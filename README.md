@@ -16,17 +16,21 @@ __1. Implement java beans__
 __2. Implement `DynamicFeature`__
 
 ```java
+import javax.inject.Named;
+
 import com.looseboxes.ratelimiter.RateLimiter;
 import com.looseboxes.ratelimiter.web.core.util.RateLimitProperties;
+import com.looseboxes.ratelimiter.web.javaee.AbstractRateLimiterDynamicFeature;
 import com.looseboxes.ratelimiter.web.javaee.RateLimiterDynamicFeature;
 
 import javax.ws.rs.container.ContainerRequestContext;
 
 @javax.ws.rs.ext.Provider
-public class MyRateLimiterDynamicFeature extends RateLimiterDynamicFeature {
+public class RateLimiterDynamicFeature extends AbstractRateLimiterDynamicFeature {
 
   @javax.inject.Inject
-  public MyRateLimiterDynamicFeature(RateLimitProperties properties, RateLimiter<ContainerRequestContext> rateLimiter) {
+  public MyRateLimiterDynamicFeature(RateLimitProperties properties,
+                                     @Named("RateLimiter") RateLimiter<ContainerRequestContext> rateLimiter) {
     super(properties, rateLimiter);
   }
 }
