@@ -2,16 +2,20 @@ package com.looseboxes.ratelimiter.web.javaee;
 
 import com.looseboxes.ratelimiter.RateLimiter;
 import com.looseboxes.ratelimiter.web.core.util.RateLimitProperties;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import javax.ws.rs.Priorities;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.container.DynamicFeature;
 import javax.ws.rs.container.ResourceInfo;
 import javax.ws.rs.core.FeatureContext;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class RateLimiterDynamicFeature implements DynamicFeature {
+
+    private final Logger log = LoggerFactory.getLogger(RateLimiterDynamicFeature.class);
 
     private final ContainerRequestFilter containerRequestFilter;
 
@@ -23,6 +27,8 @@ public class RateLimiterDynamicFeature implements DynamicFeature {
         this.resourceClasses = new ResourceClassesSupplierImpl(properties).get();
 
         this.containerRequestFilter = new RequestRateLimitingFilter(rateLimiter);
+
+        log.info("Resources: {}", resourceClasses.stream().map(Class::getName).collect(Collectors.joining(", ")));
     }
 
     @Override

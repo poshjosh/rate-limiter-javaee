@@ -11,6 +11,7 @@ import javax.inject.Inject;
 import javax.ws.rs.container.ContainerRequestContext;
 
 @javax.inject.Singleton
+@javax.inject.Named("RateLimiter")
 public class RateLimiterImpl extends WebRequestRateLimiter<ContainerRequestContext> {
 
     @Inject
