@@ -1,6 +1,7 @@
 package com.looseboxes.ratelimiter.web.javaee;
 
 import com.looseboxes.ratelimiter.RateLimiter;
+import com.looseboxes.ratelimiter.web.core.RateLimiterConfigurer;
 import com.looseboxes.ratelimiter.web.core.util.RateLimitProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,6 +20,15 @@ public abstract class AbstractRateLimiterDynamicFeature implements DynamicFeatur
     private final ContainerRequestFilter containerRequestFilter;
 
     private final List<Class<?>> resourceClasses;
+
+    protected AbstractRateLimiterDynamicFeature(RateLimitProperties properties) {
+        this(properties, new RateLimiterImpl(properties, (RateLimiterConfigurer<ContainerRequestContext>)null));
+    }
+
+    protected AbstractRateLimiterDynamicFeature(RateLimitProperties properties,
+                                                RateLimiterConfigurer<ContainerRequestContext> rateLimiterConfigurer) {
+        this(properties, new RateLimiterImpl(properties, rateLimiterConfigurer));
+    }
 
     protected AbstractRateLimiterDynamicFeature(RateLimitProperties properties, RateLimiter<ContainerRequestContext> rateLimiter) {
 

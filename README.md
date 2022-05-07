@@ -7,13 +7,9 @@ Please first read the [rate-limiter-web-core documentation](https://github.com/p
 
 ### Usage
 
-__1. Implement java beans__
+__1a. Extend `AbstractRateLimiterDynamicFeature`__
 
-- `com.looseboxes.ratelimiter.web.core.util.RateLimitProperties`
-
-- `com.looseboxes.ratelimiter.web.core.RateLimiterConfigurer` (optional)
-
-__2. Implement `DynamicFeature`__
+This way a rate limiter will be created an automatically applied based on rate limiter related properties and annotations. 
 
 ```java
 import javax.inject.Named;
@@ -29,17 +25,18 @@ import javax.ws.rs.container.ContainerRequestContext;
 public class RateLimiterDynamicFeature extends AbstractRateLimiterDynamicFeature {
 
   @javax.inject.Inject
-  public MyRateLimiterDynamicFeature(RateLimitProperties properties,
-                                     @Named("RateLimiter") RateLimiter<ContainerRequestContext> rateLimiter) {
-    super(properties, rateLimiter);
+  public RateLimiterDynamicFeature(RateLimitProperties properties) {
+    super(properties);
   }
 }
+
 ```
 
-A `RateLimiter` bean is provided by default. Therefore, you could alternatively
-implement your own `DynamicFeature` and use the `RateLimiter` bean as you see fit.
+__1a. Alternatively, extend `com.looseboxes.ratelimiter.web.javaee.RateLimiterImpl`__
 
-__3. Add required rate-limiter properties__
+This way you use the `RateLimiter` as you see fit.
+
+__2. Add required rate-limiter properties__
 
 ```yaml
 rate-limiter:
@@ -61,8 +58,8 @@ class GreetingResource {
     @GET
     @Path("/greet")
     @Produces("text/plan")
-    String greet() {
-        return "Hello World!";
+    String greet(String name) {
+        return "Hello " + name;
     }
 }
 ```
@@ -79,7 +76,7 @@ When you configure rate limiting from the `RateLimitProperties` you implement, y
   fully qualified class name as the rate-limit group name.
 
 - Narrow the specified properties to a specific method. For example, in this case, by using
-  `com.myapplicatioon.web.rest.MyResource.greet(java.lang.String)` as the group name.
+  `com.myapplicatioon.web.rest.GreetingResource.greet(java.lang.String)` as the group name.
 
 Enjoy! :wink:
 
