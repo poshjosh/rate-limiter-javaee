@@ -3,6 +3,7 @@ package com.looseboxes.ratelimiter.web.javaee;
 import com.looseboxes.ratelimiter.RateLimiter;
 import com.looseboxes.ratelimiter.web.core.util.RateLimitProperties;
 
+import javax.ws.rs.Priorities;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.container.DynamicFeature;
@@ -27,7 +28,10 @@ public class RateLimiterDynamicFeature implements DynamicFeature {
     @Override
     public void configure(ResourceInfo resourceInfo, FeatureContext featureContext) {
         if(isTargetedResource(resourceInfo.getResourceClass())) {
-            featureContext.register(containerRequestFilter, 0);
+            // final int priority = Integer.MIN_VALUE; // Set rate limiting to highest possible priority
+            // final int priority = Priorities.AUTHENTICATION - 1; // Set rate limiting just before authentication
+            final int priority = -1; // We can easily see a situation where there are multiple zero priority components
+            featureContext.register(containerRequestFilter, priority);
         }
     }
 
