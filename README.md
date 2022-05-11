@@ -9,25 +9,20 @@ Please first read the [rate-limiter-web-core documentation](https://github.com/p
 
 __1a. Extend `AbstractRateLimiterDynamicFeature`__
 
-This way a rate limiter will be created an automatically applied based on rate limiter related properties and annotations. 
+This way a rate limiter will be created an automatically applied based on rate limiter related properties and annotations.
 
 ```java
-import javax.inject.Named;
 
-import com.looseboxes.ratelimiter.RateLimiter;
+
 import com.looseboxes.ratelimiter.web.core.util.RateLimitProperties;
-import com.looseboxes.ratelimiter.web.javaee.AbstractRateLimiterDynamicFeature;
-import com.looseboxes.ratelimiter.web.javaee.RateLimiterDynamicFeature;
-
-import javax.ws.rs.container.ContainerRequestContext;
 
 @javax.ws.rs.ext.Provider
-public class RateLimiterDynamicFeature extends AbstractRateLimiterDynamicFeature {
+public class RateLimiterDynamicFeature extends com.looseboxes.ratelimiter.web.javaee.RateLimiterDynamicFeature {
 
-  @javax.inject.Inject
-  public RateLimiterDynamicFeature(RateLimitProperties properties) {
-    super(properties);
-  }
+    @javax.inject.Inject
+    public RateLimiterDynamicFeature(RateLimitProperties properties) {
+        super(properties);
+    }
 }
 
 ```

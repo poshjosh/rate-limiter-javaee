@@ -29,7 +29,6 @@ public class RateLimiterImpl extends WebRequestRateLimiter<ContainerRequestConte
     public RateLimiterImpl(RateLimitProperties properties,
                            RateLimiterConfigurationSource<ContainerRequestContext> rateLimiterConfigurationSource) {
         super(
-                properties,
                 rateLimiterConfigurationSource,
                 new RateLimiterNodeContext<>(
                         properties,

@@ -19,7 +19,7 @@ public class RateLimitPropertiesImpl implements RateLimitProperties {
 
     private final List<String> resourcePackages;
 
-    private final Boolean disabled;
+    private Boolean disabled;
 
     private final Map<String, RateConfigList> rateLimitConfigs;
 
@@ -45,6 +45,10 @@ public class RateLimitPropertiesImpl implements RateLimitProperties {
 
     @Override public List<String> getResourcePackages() {
         return resourcePackages;
+    }
+
+    public void setDisabled(Boolean disabled) {
+        this.disabled = disabled;
     }
 
     @Override public Boolean getDisabled() {

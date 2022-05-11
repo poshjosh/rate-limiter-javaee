@@ -1,5 +1,6 @@
 package com.looseboxes.ratelimiter.web.javaee.weblayertests;
 
+import com.looseboxes.ratelimiter.web.javaee.RateLimiterDynamicFeature;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.test.JerseyTest;
 
@@ -14,8 +15,7 @@ public abstract class AbstractResourceTest extends JerseyTest {
 
     @Override
     protected Application configure() {
-        return ResourceConfig.forApplicationClass(TestApplication.class, getResourceOrProviderClasses())
-                .register(TestRateLimiterDynamicFeature.class);
+        return ResourceConfig.forApplicationClass(TestApplication.class, getResourceOrProviderClasses());//.register(RateLimiterDynamicFeature.class);
     }
 
     void shouldFailWhenMaxLimitIsExceeded(String endpoint, int maxLimit) throws Exception {

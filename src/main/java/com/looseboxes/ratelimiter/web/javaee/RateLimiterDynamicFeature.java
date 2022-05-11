@@ -13,24 +13,25 @@ import javax.ws.rs.container.ResourceInfo;
 import javax.ws.rs.core.FeatureContext;
 import java.util.*;
 
-public abstract class AbstractRateLimiterDynamicFeature implements DynamicFeature {
+@javax.ws.rs.ext.Provider
+public class RateLimiterDynamicFeature implements DynamicFeature {
 
-    private final Logger log = LoggerFactory.getLogger(AbstractRateLimiterDynamicFeature.class);
+    private final Logger log = LoggerFactory.getLogger(RateLimiterDynamicFeature.class);
 
     private final ContainerRequestFilter containerRequestFilter;
 
     private final List<Class<?>> resourceClasses;
 
-    protected AbstractRateLimiterDynamicFeature(RateLimitProperties properties) {
-        this(properties, new RateLimiterImpl(properties, (RateLimiterConfigurer<ContainerRequestContext>)null));
-    }
+    private final Boolean disabled;
 
-    protected AbstractRateLimiterDynamicFeature(RateLimitProperties properties,
-                                                RateLimiterConfigurer<ContainerRequestContext> rateLimiterConfigurer) {
+    public RateLimiterDynamicFeature(RateLimitProperties properties,
+                                     RateLimiterConfigurer<ContainerRequestContext> rateLimiterConfigurer) {
         this(properties, new RateLimiterImpl(properties, rateLimiterConfigurer));
     }
 
-    protected AbstractRateLimiterDynamicFeature(RateLimitProperties properties, RateLimiter<ContainerRequestContext> rateLimiter) {
+    private RateLimiterDynamicFeature(RateLimitProperties properties, RateLimiter<ContainerRequestContext> rateLimiter) {
+
+        this.disabled = properties.getDisabled();
 
         this.resourceClasses = new ResourceClassesSupplierImpl(properties).get();
 
@@ -41,7 +42,7 @@ public abstract class AbstractRateLimiterDynamicFeature implements DynamicFeatur
 
     @Override
     public void configure(ResourceInfo resourceInfo, FeatureContext featureContext) {
-        if(isTargetedResource(resourceInfo.getResourceClass())) {
+        if((disabled == null || Boolean.FALSE.equals(disabled)) && isTargetedResource(resourceInfo.getResourceClass())) {
             // final int priority = Integer.MIN_VALUE; // Set rate limiting to highest possible priority
             // final int priority = Priorities.AUTHENTICATION - 1; // Set rate limiting just before authentication
             final int priority = -1; // We can easily see a situation where there are multiple zero priority components
@@ -49,11 +50,7 @@ public abstract class AbstractRateLimiterDynamicFeature implements DynamicFeatur
         }
     }
 
-    protected boolean isTargetedResource(Class<?> clazz) {
+    private boolean isTargetedResource(Class<?> clazz) {
         return resourceClasses.contains(clazz);
-    }
-
-    protected ContainerRequestFilter getContainerRequestFilter() {
-        return containerRequestFilter;
     }
 }
