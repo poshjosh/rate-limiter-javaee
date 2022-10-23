@@ -23,7 +23,7 @@ public class ResourceWithoutClassPatterns {
 
     @GET
     @Path(LIMIT_1)
-    @Produces("text/plan")
+    @Produces("text/plain")
     @RateLimit(limit = Constants.LIMIT_1, duration = Constants.DURATION_SECONDS, timeUnit = TimeUnit.SECONDS)
     public String limit_1() {
         log.debug("limit_1");

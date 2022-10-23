@@ -7,31 +7,7 @@ Please first read the [rate-limiter-web-core documentation](https://github.com/p
 
 ### Usage
 
-__1a. Extend `AbstractRateLimiterDynamicFeature`__
-
-This way a rate limiter will be created an automatically applied based on rate limiter related properties and annotations.
-
-```java
-
-
-import com.looseboxes.ratelimiter.web.core.util.RateLimitProperties;
-
-@javax.ws.rs.ext.Provider
-public class RateLimiterDynamicFeature extends com.looseboxes.ratelimiter.web.javaee.RateLimiterDynamicFeature {
-
-    @javax.inject.Inject
-    public RateLimiterDynamicFeature(RateLimitProperties properties) {
-        super(properties);
-    }
-}
-
-```
-
-__1a. Alternatively, extend `com.looseboxes.ratelimiter.web.javaee.RateLimiterImpl`__
-
-This way you use the `RateLimiter` as you see fit.
-
-__2. Add required rate-limiter properties__
+__1. Add required rate-limiter properties__
 
 ```yaml
 rate-limiter:
@@ -40,7 +16,32 @@ rate-limiter:
   resource-packages: com.myapplicatioon.web.rest
 ```
 
-__4. Annotate classes and/or methods.__
+__2. Extend `AbstractRateLimiterDynamicFeature`__
+
+This way a rate limiter will be created an automatically applied based on rate limiter related properties and annotations.
+
+```java
+import com.looseboxes.ratelimiter.web.core.util.RateLimitProperties;
+import com.looseboxes.ratelimiter.web.javaee.AbstractRateLimiterDynamicFeature;
+
+@javax.ws.rs.ext.Provider
+public class RateLimiterDynamicFeature extends com.looseboxes.ratelimiter.web.javaee.AbstractRateLimiterDynamicFeature {
+
+  @javax.inject.Inject
+  public RateLimiterDynamicFeature(RateLimitProperties properties) {
+    super(properties);
+  }
+}
+
+```
+
+__2b. Alternatively, extend `com.looseboxes.ratelimiter.web.javaee.RateLimiterImpl`__
+
+This way you use the `RateLimiter` as you see fit.
+
+At this point, your application is ready to enjoy the benefits of rate limiting.
+
+__3. Annotate classes and/or methods.__
 
 ```java
 import com.looseboxes.ratelimiter.annotation.RateLimit;
@@ -52,14 +53,14 @@ class GreetingResource {
     @RateLimit(limit = 99, duration = 1, timeUnit = TimeUnit.MINUTES)
     @GET
     @Path("/greet")
-    @Produces("text/plan")
+    @Produces("text/plain")
     String greet(String name) {
         return "Hello " + name;
     }
 }
 ```
 
-__5. Configure rate limiting__
+__4. Further configure rate limiting__
 
 Configure rate limiting as described in the [rate-limiter-web-core documentation](https://github.com/poshjosh/rate-limiter-web-core).
 

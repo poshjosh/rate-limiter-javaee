@@ -1,10 +1,7 @@
 package com.looseboxes.ratelimiter.web.javaee.weblayertests;
 
-import com.looseboxes.ratelimiter.web.core.util.RateLimitProperties;
-import com.looseboxes.ratelimiter.web.javaee.weblayertests.beans.RateLimitPropertiesImpl;
 import org.junit.Test;
 
-import javax.inject.Inject;
 import java.util.Collections;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -18,29 +15,9 @@ public class ResourceWithMethodLimitsTest extends AbstractResourceTest {
         return Collections.singleton(ResourceWithMethodLimits.class);
     }
 
-    @Inject
-    private RateLimitPropertiesImpl properties;
-
-    @Test
-    public void shouldSucceedWhenDisabled() {
-        Boolean disabled = properties.getDisabled();
-        try {
-            properties.setDisabled(Boolean.TRUE);
-            final String endpoint = ApiEndpoints.METHOD_LIMIT_1;
-            shouldReturnDefaultResult(endpoint); // 1 of 1
-            shouldReturnDefaultResult(endpoint); // 2 of 1 - Should throw exception if rate limiting is disabled
-        }finally{
-            properties.setDisabled(disabled);
-        }
-    }
-
     @Test
     public void homePageShouldReturnDefaultResult() {
-        final String endpoint = ApiEndpoints.METHOD_LIMITS_HOME;
-        String response = target(endpoint).request().get(String.class);
-        if(!endpoint.equals(response)) {
-            throw new AssertionError();
-        }
+        shouldReturnDefaultResult(ApiEndpoints.METHOD_LIMITS_HOME);
     }
 
     @Test

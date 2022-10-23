@@ -30,7 +30,7 @@ public class ResourceWithMethodLimits {
 
     @GET
     @Path(HOME)
-    @Produces("text/plan")
+    @Produces("text/plain")
     public String home() {
         log.debug("home");
         return ApiEndpoints.METHOD_LIMITS_HOME;
@@ -38,7 +38,7 @@ public class ResourceWithMethodLimits {
 
     @GET
     @Path(LIMIT_1)
-    @Produces("text/plan")
+    @Produces("text/plain")
     @RateLimit(limit = Constants.LIMIT_1, duration = Constants.DURATION_SECONDS, timeUnit = TimeUnit.SECONDS)
     public String limit_1() {
         log.debug("limit_1");
@@ -47,7 +47,7 @@ public class ResourceWithMethodLimits {
 
     @GET
     @Path(LIMIT_1_OR_5)
-    @Produces("text/plan")
+    @Produces("text/plain")
     @RateLimit(limit = Constants.LIMIT_1, duration = Constants.DURATION_SECONDS, timeUnit = TimeUnit.SECONDS)
     @RateLimit(limit = Constants.LIMIT_5, duration = Constants.DURATION_SECONDS, timeUnit = TimeUnit.SECONDS)
     public String limit_1_or_5() {
@@ -57,7 +57,7 @@ public class ResourceWithMethodLimits {
 
     @GET
     @Path(LIMIT_1_AND_5)
-    @Produces("text/plan")
+    @Produces("text/plain")
     @RateLimitGroup(logic = Logic.AND)
     @RateLimit(limit = Constants.LIMIT_1, duration = Constants.DURATION_SECONDS, timeUnit = TimeUnit.SECONDS)
     @RateLimit(limit = Constants.LIMIT_5, duration = Constants.DURATION_SECONDS, timeUnit = TimeUnit.SECONDS)

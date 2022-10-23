@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 @javax.inject.Singleton
-public class RateLimitPropertiesImpl implements RateLimitProperties {
+public class TestRateLimitProperties implements RateLimitProperties {
 
     public static final String DEFAULT_CONFIG_NAME = "default";
 
@@ -23,7 +23,7 @@ public class RateLimitPropertiesImpl implements RateLimitProperties {
 
     private final Map<String, RateConfigList> rateLimitConfigs;
 
-    public RateLimitPropertiesImpl() {
+    public TestRateLimitProperties() {
         this.resourcePackages = Collections.singletonList(ResourceWithMethodLimits.class.getPackage().getName());
         this.disabled = Boolean.FALSE;
         this.rateLimitConfigs = Collections.singletonMap(DEFAULT_CONFIG_NAME, getRateLimitConfigList());
@@ -61,7 +61,7 @@ public class RateLimitPropertiesImpl implements RateLimitProperties {
 
     @Override
     public String toString() {
-        return "RateLimitPropertiesImpl{" +
+        return "TestRateLimitProperties{" +
                 "resourcePackages=" + resourcePackages +
                 ", disabled=" + disabled +
                 ", rateLimitConfigs=" + rateLimitConfigs +
