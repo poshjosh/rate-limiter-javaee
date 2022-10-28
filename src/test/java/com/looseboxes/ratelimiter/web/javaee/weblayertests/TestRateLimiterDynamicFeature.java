@@ -2,10 +2,10 @@ package com.looseboxes.ratelimiter.web.javaee.weblayertests;
 
 import com.looseboxes.ratelimiter.RateRecordedListener;
 import com.looseboxes.ratelimiter.rates.Rate;
-import com.looseboxes.ratelimiter.web.core.RateLimiterConfigurationRegistry;
+import com.looseboxes.ratelimiter.web.core.RateLimiterRegistry;
 import com.looseboxes.ratelimiter.web.core.RateLimiterConfigurer;
 import com.looseboxes.ratelimiter.web.core.util.RateLimitProperties;
-import com.looseboxes.ratelimiter.web.javaee.AbstractRateLimiterDynamicFeature;
+import com.looseboxes.ratelimiter.web.javaee.RateLimiterDynamicFeature;
 import com.looseboxes.ratelimiter.web.javaee.weblayertests.beans.TestRateLimitProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,14 +16,14 @@ import javax.ws.rs.core.Response;
 import java.util.Collection;
 
 @javax.ws.rs.ext.Provider
-public class TestRateLimiterDynamicFeature extends AbstractRateLimiterDynamicFeature {
+public class TestRateLimiterDynamicFeature extends RateLimiterDynamicFeature {
 
     private static final class TestRateLimiterConfigurer implements RateLimiterConfigurer<ContainerRequestContext>{
 
         private final Logger log = LoggerFactory.getLogger(TestRateLimiterConfigurer.class);
 
         @Override
-        public void configure(RateLimiterConfigurationRegistry<ContainerRequestContext> registry) {
+        public void configure(RateLimiterRegistry<ContainerRequestContext> registry) {
 
             registry.registerRateRecordedListener(new RateRecordedListener() {
                 @Override

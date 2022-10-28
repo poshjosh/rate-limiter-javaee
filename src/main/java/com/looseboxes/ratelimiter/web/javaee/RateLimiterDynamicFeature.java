@@ -3,6 +3,8 @@ package com.looseboxes.ratelimiter.web.javaee;
 import com.looseboxes.ratelimiter.RateLimiter;
 import com.looseboxes.ratelimiter.util.Nullable;
 import com.looseboxes.ratelimiter.web.core.RateLimiterConfigurer;
+import com.looseboxes.ratelimiter.web.core.impl.WebRequestRateLimiter;
+import com.looseboxes.ratelimiter.web.core.WebRequestRateLimiterConfig;
 import com.looseboxes.ratelimiter.web.core.util.RateLimitProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,9 +16,23 @@ import javax.ws.rs.container.ResourceInfo;
 import javax.ws.rs.core.FeatureContext;
 import java.util.*;
 
-public class AbstractRateLimiterDynamicFeature implements DynamicFeature {
+public class RateLimiterDynamicFeature implements DynamicFeature {
 
-    private final Logger log = LoggerFactory.getLogger(AbstractRateLimiterDynamicFeature.class);
+    private final Logger log = LoggerFactory.getLogger(RateLimiterDynamicFeature.class);
+
+    private static class RequestRateLimitingFilter implements ContainerRequestFilter {
+
+        private final RateLimiter<ContainerRequestContext> rateLimiter;
+
+        public RequestRateLimitingFilter(RateLimiter<ContainerRequestContext> rateLimiter) {
+            this.rateLimiter = Objects.requireNonNull(rateLimiter);
+        }
+
+        @Override
+        public void filter(ContainerRequestContext requestContext) {
+            this.rateLimiter.increment(requestContext);
+        }
+    }
 
     private final ContainerRequestFilter containerRequestFilter;
 
@@ -24,28 +40,26 @@ public class AbstractRateLimiterDynamicFeature implements DynamicFeature {
 
     private final RateLimitProperties properties;
 
-    public AbstractRateLimiterDynamicFeature(RateLimitProperties properties) {
-        this(properties, (RateLimiterConfigurer<ContainerRequestContext>)null);
+    public RateLimiterDynamicFeature(RateLimitProperties properties) {
+        this(properties, null);
     }
 
-    public AbstractRateLimiterDynamicFeature(RateLimitProperties properties,
-                                             @Nullable RateLimiterConfigurer<ContainerRequestContext> rateLimiterConfigurer) {
-        this(properties, new RateLimiterImpl(properties, rateLimiterConfigurer));
+    public RateLimiterDynamicFeature(
+            RateLimitProperties properties,
+            @Nullable RateLimiterConfigurer<ContainerRequestContext> rateLimiterConfigurer) {
+        this(new WebRequestRateLimiterConfigBuilder().properties(properties).configurer(rateLimiterConfigurer).build());
     }
 
-    public AbstractRateLimiterDynamicFeature(RateLimitProperties properties,
-                                             RateLimiter<ContainerRequestContext> rateLimiter) {
-        this(properties, new RequestRateLimitingFilter(rateLimiter));
-    }
+    public RateLimiterDynamicFeature(
+            WebRequestRateLimiterConfig<ContainerRequestContext> webRequestRateLimiterConfig) {
 
-    public AbstractRateLimiterDynamicFeature(RateLimitProperties properties,
-                                             RequestRateLimitingFilter requestRateLimitingFilter) {
+        this.properties = webRequestRateLimiterConfig.getProperties();
 
-        this.properties = properties;
+        this.resourceClasses = webRequestRateLimiterConfig.getResourceClassesSupplier().get();
 
-        this.resourceClasses = new ResourceClassesSupplierImpl(properties).get();
-
-        this.containerRequestFilter = requestRateLimitingFilter;
+        this.containerRequestFilter = new RequestRateLimitingFilter(
+                new WebRequestRateLimiter<>(webRequestRateLimiterConfig)
+        );
 
         log.info("Completed automatic setup of rate limiting");
     }
