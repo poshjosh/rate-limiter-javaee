@@ -70,7 +70,7 @@ public class ResourceWithMethodLimitsTest extends AbstractResourceTest {
     }
 
     @Test
-    public void andLimitGroupShouldFailWhenAllOfManyLimitsIsExceeded() throws Exception {
+    public void andLimitGroupShouldFailWhenAllLimitsAreExceeded() throws Exception {
 
         final String endpoint = ApiEndpoints.METHOD_LIMIT_1_AND_5;
         shouldFailWhenMaxLimitIsExceeded(endpoint, Constants.LIMIT_5);

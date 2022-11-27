@@ -1,8 +1,8 @@
 package com.looseboxes.ratelimiter.web.javaee.weblayertests.beans;
 
 import com.looseboxes.ratelimiter.rates.Logic;
-import com.looseboxes.ratelimiter.util.RateConfig;
-import com.looseboxes.ratelimiter.util.RateConfigList;
+import com.looseboxes.ratelimiter.web.core.util.RateConfig;
+import com.looseboxes.ratelimiter.web.core.util.RateLimitConfig;
 import com.looseboxes.ratelimiter.web.core.util.RateLimitProperties;
 import com.looseboxes.ratelimiter.web.javaee.weblayertests.Constants;
 import com.looseboxes.ratelimiter.web.javaee.weblayertests.ResourceWithMethodLimits;
@@ -21,7 +21,7 @@ public class TestRateLimitProperties implements RateLimitProperties {
 
     private Boolean disabled;
 
-    private final Map<String, RateConfigList> rateLimitConfigs;
+    private final Map<String, RateLimitConfig> rateLimitConfigs;
 
     public TestRateLimitProperties() {
         this.resourcePackages = Collections.singletonList(ResourceWithMethodLimits.class.getPackage().getName());
@@ -29,11 +29,11 @@ public class TestRateLimitProperties implements RateLimitProperties {
         this.rateLimitConfigs = Collections.singletonMap(DEFAULT_CONFIG_NAME, getRateLimitConfigList());
     }
 
-    private RateConfigList getRateLimitConfigList() {
-        RateConfigList rateConfigList = new RateConfigList();
-        rateConfigList.setLimits(getRateLimits());
-        rateConfigList.setLogic(Logic.OR);
-        return rateConfigList;
+    private RateLimitConfig getRateLimitConfigList() {
+        RateLimitConfig rateLimitConfig = new RateLimitConfig();
+        rateLimitConfig.setLimits(getRateLimits());
+        rateLimitConfig.setLogic(Logic.OR);
+        return rateLimitConfig;
     }
 
     private List<RateConfig> getRateLimits() {
@@ -54,7 +54,7 @@ public class TestRateLimitProperties implements RateLimitProperties {
         return disabled;
     }
 
-    @Override public Map<String, RateConfigList> getRateLimitConfigs() {
+    @Override public Map<String, RateLimitConfig> getRateLimitConfigs() {
         return rateLimitConfigs;
     }
 
