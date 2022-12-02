@@ -30,7 +30,7 @@ public class RateLimiterDynamicFeature implements DynamicFeature {
 
         @Override
         public void filter(ContainerRequestContext requestContext) {
-            this.rateLimiter.increment(requestContext);
+            this.rateLimiter.consume(requestContext);
         }
     }
 

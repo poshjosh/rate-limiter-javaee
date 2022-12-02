@@ -27,7 +27,7 @@ public class TestRateLimiterDynamicFeature extends RateLimiterDynamicFeature {
 
             registry.registerRateRecordedListener(new RateRecordedListener() {
                 @Override
-                public void onRateExceeded(Object resource, Object resourceId, int recordedHits, Collection<Rate> exceededLimits) {
+                public void onRateExceeded(Object context, Object resourceId, int recordedHits, Collection<Rate> exceededLimits) {
 
                     log.warn("Too many requests for: {}, limits: {}", resourceId, exceededLimits);
 
