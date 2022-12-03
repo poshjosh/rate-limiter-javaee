@@ -1,6 +1,5 @@
 package com.looseboxes.ratelimiter.web.javaee.weblayertests;
 
-import com.looseboxes.ratelimiter.RateExceededException;
 import com.looseboxes.ratelimiter.web.javaee.weblayertests.beans.TestRateLimitProperties;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.test.JerseyTest;
@@ -14,7 +13,7 @@ import javax.ws.rs.core.Response;
 import java.net.URI;
 import java.util.Set;
 
-import static com.looseboxes.ratelimiter.web.javaee.Assertions.assertThrows;
+import static com.looseboxes.ratelimiter.web.javaee.Assertions.assertEqual;
 
 public abstract class AbstractResourceTest extends JerseyTest {
 
@@ -49,7 +48,7 @@ public abstract class AbstractResourceTest extends JerseyTest {
     void shouldFailWhenMaxLimitIsExceeded(String endpoint, int maxLimit) throws Exception {
         for(int i=0; i<maxLimit + 1; i++) {
             if(i == maxLimit) {
-                assertThrows(Exception.class, () -> shouldReturnDefaultResult(endpoint));
+                shouldReturnStatusOfTooManyRequests(endpoint);
             }else{
                 shouldReturnDefaultResult(endpoint);
             }
@@ -60,29 +59,39 @@ public abstract class AbstractResourceTest extends JerseyTest {
         shouldReturnResult(endpoint, endpoint);
     }
 
-    <T> void shouldReturnResult(String endpoint, T expectedResult) {
+    void shouldReturnStatusOfTooManyRequests(String endpoint) {
+        shouldReturnStatus(endpoint, Response.Status.TOO_MANY_REQUESTS);
+    }
+
+    void shouldReturnStatus(String endpoint, Response.Status expectedStatus) {
+        final Response response = request(endpoint);
+        final Response.StatusType statusType = response.getStatusInfo();
+        assertEqual(statusType.toEnum(), expectedStatus);
+    }
+
+    void shouldReturnResult(String endpoint, Object expectedResult) {
+        final Response response = request(endpoint);
+        final Response.StatusType statusType = response.getStatusInfo();
+        assertEqual(statusType.getFamily(), Response.Status.Family.SUCCESSFUL);
+        final Object responseEntity = response.readEntity(expectedResult.getClass());
+        assertEqual(responseEntity, expectedResult);
+    }
+
+    private Response request(String endpoint) {
         final WebTarget webTarget = target(endpoint);
         final Invocation.Builder invocationBuilder = webTarget.request("text/plain");
         final Response response = invocationBuilder.get();
-        final T responseEntity = (T)response.readEntity(expectedResult.getClass());
         final Response.StatusType statusType = response.getStatusInfo();
-        log.info("Request: {}, response: {}, code: {}, type: {}", endpoint, responseEntity,
+        log.info("Request: {}, code: {}, type: {}", endpoint,
                 statusType.getStatusCode(), statusType.getFamily());
-        if(debugResponse) {
-            debug(response);
-        }
-        if (!Response.Status.Family.SUCCESSFUL.equals(statusType.getFamily())) {
-            if (Response.Status.TOO_MANY_REQUESTS.equals(statusType)) {
-                throw new RateExceededException(statusType.toString());
-            }
-            throw new RuntimeException(statusType.toString());
-        }
-        if (!expectedResult.equals(responseEntity)) {
-            throw new AssertionError("Expected: " + expectedResult + ", found: " + responseEntity);
-        }
+        debug(response);
+        return response;
     }
 
     private void debug(Response response) {
+        if(!debugResponse) {
+            return;
+        }
         log.debug("Response type: {}, response: {}", response.getClass(), response);
         log.debug("Response status: {}", response.getStatusInfo());
         log.debug("Response links: {}", response.getLinks());

@@ -18,7 +18,7 @@ import java.util.*;
 
 public class RateLimiterDynamicFeature implements DynamicFeature {
 
-    private final Logger log = LoggerFactory.getLogger(RateLimiterDynamicFeature.class);
+    private static final Logger LOG = LoggerFactory.getLogger(RateLimiterDynamicFeature.class);
 
     private static class RequestRateLimitingFilter implements ContainerRequestFilter {
 
@@ -31,6 +31,11 @@ public class RateLimiterDynamicFeature implements DynamicFeature {
         @Override
         public void filter(ContainerRequestContext requestContext) {
             this.rateLimiter.consume(requestContext);
+            // To better control what happens when a limit is exceeded, implement and expose an
+            // instance of com.looseboxes.ratelimiter.web.core.RateLimiterConfigurer
+            //if (!this.rateLimiter.consume(requestContext)) {
+            //    requestContext.abortWith(Response.status(Response.Status.TOO_MANY_REQUESTS).build());
+            //}
         }
     }
 
@@ -47,7 +52,11 @@ public class RateLimiterDynamicFeature implements DynamicFeature {
     public RateLimiterDynamicFeature(
             RateLimitProperties properties,
             @Nullable RateLimiterConfigurer<ContainerRequestContext> rateLimiterConfigurer) {
-        this(new WebRequestRateLimiterConfigBuilder().properties(properties).configurer(rateLimiterConfigurer).build());
+    this(
+        WebRequestRateLimiterConfigJavaee.builder()
+            .properties(properties)
+            .configurer(rateLimiterConfigurer)
+            .build());
     }
 
     public RateLimiterDynamicFeature(
@@ -61,15 +70,11 @@ public class RateLimiterDynamicFeature implements DynamicFeature {
                 new WebRequestRateLimiter<>(webRequestRateLimiterConfig)
         );
 
-        log.info("Completed automatic setup of rate limiting");
+        LOG.info("Completed automatic setup of rate limiting");
     }
 
     @Override
     public void configure(ResourceInfo resourceInfo, FeatureContext featureContext) {
-        if (log.isTraceEnabled()) {
-            log.trace("Enabled: {}, rate limited: {}, class: {}", isEnabled(properties),
-                    isTargetedResource(resourceInfo.getResourceClass()), resourceInfo.getResourceClass());
-        }
         if(isEnabled(properties) && isTargetedResource(resourceInfo.getResourceClass())) {
             // final int priority = Integer.MIN_VALUE; // Set rate limiting to highest possible priority
             // final int priority = Priorities.AUTHENTICATION - 1; // Set rate limiting just before authentication

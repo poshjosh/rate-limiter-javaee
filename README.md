@@ -23,10 +23,12 @@ This way a rate limiter will be created an automatically applied based on rate l
 ```java
 import com.looseboxes.ratelimiter.web.core.util.RateLimitProperties;
 
-@javax.ws.rs.ext.Provider public class RateLimiterDynamicFeature
+@javax.ws.rs.ext.Provider 
+public class RateLimiterDynamicFeature
         extends com.looseboxes.ratelimiter.web.javaee.RateLimiterDynamicFeature {
 
-  @javax.inject.Inject public RateLimiterDynamicFeature(RateLimitProperties properties) {
+  @javax.inject.Inject 
+  public RateLimiterDynamicFeature(RateLimitProperties properties) {
     super(properties);
   }
 }
@@ -38,13 +40,13 @@ __2b. Alternatively, manually create a RateLimiter `__
 ```java
 
 import com.looseboxes.ratelimiter.web.core.impl.WebRequestRateLimiter;
-import com.looseboxes.ratelimiter.web.javaee.WebRequestRateLimiterConfigBuilder;
+import com.looseboxes.ratelimiter.web.javaee.WebRequestRateLimiterConfigJavaee;
 
 public class RateLimiterProvider {
 
   public RateLimiter<R> createRateLimiter(RateLimiterProperties properties) {
     return new WebRequestRateLimiter<>(
-            new WebRequestRateLimiterConfigBuilder().properties(properties).build());
+            WebRequestRateLimiterConfigJavaee.builder().properties(properties).build());
   }
 }
 ```

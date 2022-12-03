@@ -5,8 +5,6 @@ import org.junit.Test;
 import java.util.Collections;
 import java.util.Set;
 
-import static com.looseboxes.ratelimiter.web.javaee.Assertions.assertThrows;
-
 public class ResourceWithoutMethodPatternsTest extends AbstractResourceTest {
 
     @Override
@@ -26,6 +24,6 @@ public class ResourceWithoutMethodPatternsTest extends AbstractResourceTest {
 
         shouldReturnDefaultResult(endpoint);
 
-        assertThrows(Exception.class, () -> shouldReturnDefaultResult(endpoint));
+        shouldReturnStatusOfTooManyRequests(endpoint);
     }
 }

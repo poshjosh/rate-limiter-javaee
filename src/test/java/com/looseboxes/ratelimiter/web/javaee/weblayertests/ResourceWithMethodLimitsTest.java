@@ -6,8 +6,6 @@ import java.util.Collections;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-import static com.looseboxes.ratelimiter.web.javaee.Assertions.assertThrows;
-
 public class ResourceWithMethodLimitsTest extends AbstractResourceTest {
 
     @Override
@@ -32,7 +30,7 @@ public class ResourceWithMethodLimitsTest extends AbstractResourceTest {
 
         shouldReturnDefaultResult(endpoint);
 
-        assertThrows(Exception.class, () -> shouldReturnDefaultResult(endpoint));
+        shouldReturnStatusOfTooManyRequests(endpoint);
     }
 
     @Test
@@ -42,7 +40,7 @@ public class ResourceWithMethodLimitsTest extends AbstractResourceTest {
 
         shouldReturnDefaultResult(endpoint);
 
-        assertThrows(Exception.class, () -> shouldReturnDefaultResult(endpoint));
+        shouldReturnStatusOfTooManyRequests(endpoint);
     }
 
     @Test
@@ -56,7 +54,7 @@ public class ResourceWithMethodLimitsTest extends AbstractResourceTest {
 
         shouldReturnDefaultResult(endpoint);
 
-        assertThrows(Exception.class, () -> shouldReturnDefaultResult(endpoint));
+        shouldReturnStatusOfTooManyRequests(endpoint);
     }
 
     @Test
