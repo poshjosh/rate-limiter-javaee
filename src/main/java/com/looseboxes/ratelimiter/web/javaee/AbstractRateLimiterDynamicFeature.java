@@ -16,9 +16,9 @@ import javax.ws.rs.container.ResourceInfo;
 import javax.ws.rs.core.FeatureContext;
 import java.util.*;
 
-public class RateLimiterDynamicFeature implements DynamicFeature {
+public abstract class AbstractRateLimiterDynamicFeature implements DynamicFeature {
 
-    private static final Logger LOG = LoggerFactory.getLogger(RateLimiterDynamicFeature.class);
+    private static final Logger LOG = LoggerFactory.getLogger(AbstractRateLimiterDynamicFeature.class);
 
     private static class RequestRateLimitingFilter implements ContainerRequestFilter {
 
@@ -45,11 +45,11 @@ public class RateLimiterDynamicFeature implements DynamicFeature {
 
     private final RateLimitProperties properties;
 
-    public RateLimiterDynamicFeature(RateLimitProperties properties) {
+    protected AbstractRateLimiterDynamicFeature(RateLimitProperties properties) {
         this(properties, null);
     }
 
-    public RateLimiterDynamicFeature(
+    protected AbstractRateLimiterDynamicFeature(
             RateLimitProperties properties,
             @Nullable RateLimiterConfigurer<ContainerRequestContext> rateLimiterConfigurer) {
     this(
@@ -59,7 +59,7 @@ public class RateLimiterDynamicFeature implements DynamicFeature {
             .build());
     }
 
-    public RateLimiterDynamicFeature(
+    protected AbstractRateLimiterDynamicFeature(
             WebRequestRateLimiterConfig<ContainerRequestContext> webRequestRateLimiterConfig) {
 
         this.properties = webRequestRateLimiterConfig.getProperties();

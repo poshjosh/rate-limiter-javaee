@@ -1,11 +1,11 @@
 package com.looseboxes.ratelimiter.web.javaee.weblayertests;
 
 import com.looseboxes.ratelimiter.RateRecordedListener;
-import com.looseboxes.ratelimiter.rates.Rate;
+import com.looseboxes.ratelimiter.rates.Limit;
 import com.looseboxes.ratelimiter.web.core.RateLimiterRegistry;
 import com.looseboxes.ratelimiter.web.core.RateLimiterConfigurer;
 import com.looseboxes.ratelimiter.web.core.util.RateLimitProperties;
-import com.looseboxes.ratelimiter.web.javaee.RateLimiterDynamicFeature;
+import com.looseboxes.ratelimiter.web.javaee.AbstractRateLimiterDynamicFeature;
 import com.looseboxes.ratelimiter.web.javaee.weblayertests.beans.TestRateLimitProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,10 +13,9 @@ import org.slf4j.LoggerFactory;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.Response;
-import java.util.Collection;
 
 @javax.ws.rs.ext.Provider
-public class TestRateLimiterDynamicFeature extends RateLimiterDynamicFeature {
+public class TestRateLimiterDynamicFeature extends AbstractRateLimiterDynamicFeature {
 
     private static final class TestRateLimiterConfigurer implements RateLimiterConfigurer<ContainerRequestContext>{
 
@@ -27,9 +26,9 @@ public class TestRateLimiterDynamicFeature extends RateLimiterDynamicFeature {
 
             registry.registerRateRecordedListener(new RateRecordedListener() {
                 @Override
-                public void onRateExceeded(Object context, Object resourceId, int recordedHits, Collection<Rate> exceededLimits) {
+                public void onRateExceeded(Object context, Object resourceId, int recordedHits, Limit limit, Object rate) {
 
-                    log.warn("Too many requests for: {}, limits: {}", resourceId, exceededLimits);
+                    log.warn("Too many requests for: {}, limits: {}", resourceId, limit);
 
                     throw new WebApplicationException("Too may requests for: " + resourceId, Response.Status.TOO_MANY_REQUESTS);
                 }

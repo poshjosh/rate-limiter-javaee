@@ -22,15 +22,16 @@ This way a rate limiter will be created an automatically applied based on rate l
 
 ```java
 import com.looseboxes.ratelimiter.web.core.util.RateLimitProperties;
+import com.looseboxes.ratelimiter.web.javaee.AbstractRateLimiterDynamicFeature;
 
-@javax.ws.rs.ext.Provider 
+@javax.ws.rs.ext.Provider
 public class RateLimiterDynamicFeature
-        extends com.looseboxes.ratelimiter.web.javaee.RateLimiterDynamicFeature {
+        extends com.looseboxes.ratelimiter.web.javaee.AbstractRateLimiterDynamicFeature {
 
-  @javax.inject.Inject 
-  public RateLimiterDynamicFeature(RateLimitProperties properties) {
-    super(properties);
-  }
+    @javax.inject.Inject
+    public RateLimiterDynamicFeature(RateLimitProperties properties) {
+        super(properties);
+    }
 }
 
 ```
