@@ -1,6 +1,6 @@
 package com.looseboxes.ratelimiter.web.javaee.weblayertests.beans;
 
-import com.looseboxes.ratelimiter.rates.Logic;
+import com.looseboxes.ratelimiter.util.Operator;
 import com.looseboxes.ratelimiter.web.core.util.RateConfig;
 import com.looseboxes.ratelimiter.web.core.util.RateLimitConfig;
 import com.looseboxes.ratelimiter.web.core.util.RateLimitProperties;
@@ -32,7 +32,7 @@ public class TestRateLimitProperties implements RateLimitProperties {
     private RateLimitConfig getRateLimitConfigList() {
         RateLimitConfig rateLimitConfig = new RateLimitConfig();
         rateLimitConfig.setLimits(getRateLimits());
-        rateLimitConfig.setLogic(Logic.OR);
+        rateLimitConfig.setLogic(Operator.OR);
         return rateLimitConfig;
     }
 

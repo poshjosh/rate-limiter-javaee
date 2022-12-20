@@ -30,10 +30,10 @@ public abstract class AbstractRateLimiterDynamicFeature implements DynamicFeatur
 
         @Override
         public void filter(ContainerRequestContext requestContext) {
-            this.rateLimiter.consume(requestContext);
+            this.rateLimiter.tryConsume(requestContext);
             // To better control what happens when a limit is exceeded, implement and expose an
             // instance of com.looseboxes.ratelimiter.web.core.RateLimiterConfigurer
-            //if (!this.rateLimiter.consume(requestContext)) {
+            //if (!this.rateLimiter.tryConsume(requestContext)) {
             //    requestContext.abortWith(Response.status(Response.Status.TOO_MANY_REQUESTS).build());
             //}
         }

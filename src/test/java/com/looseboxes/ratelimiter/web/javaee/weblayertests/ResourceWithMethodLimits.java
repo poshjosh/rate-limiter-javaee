@@ -2,7 +2,7 @@ package com.looseboxes.ratelimiter.web.javaee.weblayertests;
 
 import com.looseboxes.ratelimiter.annotation.RateLimit;
 import com.looseboxes.ratelimiter.annotation.RateLimitGroup;
-import com.looseboxes.ratelimiter.rates.Logic;
+import com.looseboxes.ratelimiter.util.Operator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import javax.ws.rs.GET;
@@ -58,7 +58,7 @@ public class ResourceWithMethodLimits {
     @GET
     @Path(LIMIT_1_AND_5)
     @Produces("text/plain")
-    @RateLimitGroup(logic = Logic.AND)
+    @RateLimitGroup(logic = Operator.AND)
     @RateLimit(limit = Constants.LIMIT_1, duration = Constants.DURATION_SECONDS, timeUnit = TimeUnit.SECONDS)
     @RateLimit(limit = Constants.LIMIT_5, duration = Constants.DURATION_SECONDS, timeUnit = TimeUnit.SECONDS)
     public String limit_1_and_5() {

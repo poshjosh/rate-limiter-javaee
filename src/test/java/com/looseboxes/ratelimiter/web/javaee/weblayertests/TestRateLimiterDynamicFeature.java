@@ -1,8 +1,8 @@
 package com.looseboxes.ratelimiter.web.javaee.weblayertests;
 
 import com.looseboxes.ratelimiter.RateRecordedListener;
-import com.looseboxes.ratelimiter.rates.Limit;
-import com.looseboxes.ratelimiter.web.core.RateLimiterRegistry;
+import com.looseboxes.ratelimiter.util.CompositeRate;
+import com.looseboxes.ratelimiter.web.core.Registries;
 import com.looseboxes.ratelimiter.web.core.RateLimiterConfigurer;
 import com.looseboxes.ratelimiter.web.core.util.RateLimitProperties;
 import com.looseboxes.ratelimiter.web.javaee.AbstractRateLimiterDynamicFeature;
@@ -22,11 +22,11 @@ public class TestRateLimiterDynamicFeature extends AbstractRateLimiterDynamicFea
         private final Logger log = LoggerFactory.getLogger(TestRateLimiterConfigurer.class);
 
         @Override
-        public void configure(RateLimiterRegistry<ContainerRequestContext> registry) {
+        public void configure(Registries<ContainerRequestContext> registry) {
 
-            registry.registerRateRecordedListener(new RateRecordedListener() {
+            registry.listeners().register(new RateRecordedListener() {
                 @Override
-                public void onRateExceeded(Object context, Object resourceId, int recordedHits, Limit limit, Object rate) {
+                public void onRateExceeded(Object context, Object resourceId, int recordedHits, CompositeRate limit, Object rate) {
 
                     log.warn("Too many requests for: {}, limits: {}", resourceId, limit);
 

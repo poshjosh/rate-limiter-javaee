@@ -1,7 +1,6 @@
 package com.looseboxes.ratelimiter.web.javaee;
 
 import com.looseboxes.ratelimiter.web.core.WebRequestRateLimiterConfig;
-import com.looseboxes.ratelimiter.web.core.WebRequestRateLimiterConfigBuilder;
 import com.looseboxes.ratelimiter.web.core.impl.DefaultWebRequestRateLimiterConfigBuilder;
 
 import javax.ws.rs.Path;
@@ -20,7 +19,7 @@ public interface WebRequestRateLimiterConfigJavaee
         }
     }
 
-    static WebRequestRateLimiterConfigBuilder<ContainerRequestContext> builder() {
+    static Builder<ContainerRequestContext> builder() {
         return new WebRequestRateLimiterConfigBuilderJavaee();
     }
 }
