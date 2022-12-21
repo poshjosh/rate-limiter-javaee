@@ -26,7 +26,7 @@ public class TestRateLimiterDynamicFeature extends AbstractRateLimiterDynamicFea
 
             registry.listeners().register(new RateRecordedListener() {
                 @Override
-                public void onRateExceeded(Object context, Object resourceId, int recordedHits, CompositeRate limit, Object rate) {
+                public void onRateExceeded(Object context, Object resourceId, int recordedHits, CompositeRate limit) {
 
                     log.warn("Too many requests for: {}, limits: {}", resourceId, limit);
 
