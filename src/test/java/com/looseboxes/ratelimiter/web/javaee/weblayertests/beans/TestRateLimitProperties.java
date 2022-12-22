@@ -32,7 +32,7 @@ public class TestRateLimitProperties implements RateLimitProperties {
     private RateLimitConfig getRateLimitConfigList() {
         RateLimitConfig rateLimitConfig = new RateLimitConfig();
         rateLimitConfig.setLimits(getRateLimits());
-        rateLimitConfig.setLogic(Operator.OR);
+        rateLimitConfig.setOperator(Operator.OR);
         return rateLimitConfig;
     }
 
