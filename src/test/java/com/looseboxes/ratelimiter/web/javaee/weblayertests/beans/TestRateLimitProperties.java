@@ -1,8 +1,8 @@
 package com.looseboxes.ratelimiter.web.javaee.weblayertests.beans;
 
 import com.looseboxes.ratelimiter.util.Operator;
-import com.looseboxes.ratelimiter.web.core.util.RateConfig;
-import com.looseboxes.ratelimiter.web.core.util.RateLimitConfig;
+import com.looseboxes.ratelimiter.util.Rate;
+import com.looseboxes.ratelimiter.util.Rates;
 import com.looseboxes.ratelimiter.web.core.util.RateLimitProperties;
 import com.looseboxes.ratelimiter.web.javaee.weblayertests.Constants;
 import com.looseboxes.ratelimiter.web.javaee.weblayertests.ResourceWithMethodLimits;
@@ -21,7 +21,7 @@ public class TestRateLimitProperties implements RateLimitProperties {
 
     private Boolean disabled;
 
-    private final Map<String, RateLimitConfig> rateLimitConfigs;
+    private final Map<String, Rates> rateLimitConfigs;
 
     public TestRateLimitProperties() {
         this.resourcePackages = Collections.singletonList(ResourceWithMethodLimits.class.getPackage().getName());
@@ -29,17 +29,14 @@ public class TestRateLimitProperties implements RateLimitProperties {
         this.rateLimitConfigs = Collections.singletonMap(DEFAULT_CONFIG_NAME, getRateLimitConfigList());
     }
 
-    private RateLimitConfig getRateLimitConfigList() {
-        RateLimitConfig rateLimitConfig = new RateLimitConfig();
-        rateLimitConfig.setLimits(getRateLimits());
-        rateLimitConfig.setOperator(Operator.OR);
-        return rateLimitConfig;
+    private Rates getRateLimitConfigList() {
+        return Rates.of(Operator.OR, getRateLimits());
     }
 
-    private List<RateConfig> getRateLimits() {
-        RateConfig config = RateConfig.of(
+    private Rate[] getRateLimits() {
+        Rate config = Rate.of(
                 Constants.OVERALL_LIMIT, Duration.ofSeconds(Constants.OVERALL_DURATION_SECONDS));
-        return Collections.singletonList(config);
+        return new Rate[]{config};
     }
 
     @Override public List<String> getResourcePackages() {
@@ -54,7 +51,7 @@ public class TestRateLimitProperties implements RateLimitProperties {
         return disabled;
     }
 
-    @Override public Map<String, RateLimitConfig> getRateLimitConfigs() {
+    @Override public Map<String, Rates> getRateLimitConfigs() {
         return rateLimitConfigs;
     }
 
