@@ -1,7 +1,7 @@
 package com.looseboxes.ratelimiter.web.javaee;
 
 import com.looseboxes.ratelimiter.RateLimiter;
-import com.looseboxes.ratelimiter.util.Nullable;
+import com.looseboxes.ratelimiter.annotations.Nullable;
 import com.looseboxes.ratelimiter.web.core.RateLimiterConfigurer;
 import com.looseboxes.ratelimiter.web.core.impl.WebRequestRateLimiter;
 import com.looseboxes.ratelimiter.web.core.WebRequestRateLimiterConfig;
@@ -45,6 +45,8 @@ public abstract class AbstractRateLimiterDynamicFeature implements DynamicFeatur
 
     private final RateLimitProperties properties;
 
+    private final WebRequestRateLimiterConfig<ContainerRequestContext> webRequestRateLimiterConfig;
+
     protected AbstractRateLimiterDynamicFeature(RateLimitProperties properties) {
         this(properties, null);
     }
@@ -61,6 +63,8 @@ public abstract class AbstractRateLimiterDynamicFeature implements DynamicFeatur
 
     protected AbstractRateLimiterDynamicFeature(
             WebRequestRateLimiterConfig<ContainerRequestContext> webRequestRateLimiterConfig) {
+
+        this.webRequestRateLimiterConfig = webRequestRateLimiterConfig;
 
         this.properties = webRequestRateLimiterConfig.getProperties();
 
@@ -90,5 +94,9 @@ public abstract class AbstractRateLimiterDynamicFeature implements DynamicFeatur
 
     public boolean isTargetedResource(Class<?> clazz) {
         return resourceClasses.contains(clazz);
+    }
+
+    public WebRequestRateLimiterConfig<ContainerRequestContext> getWebRequestRateLimiterConfig() {
+        return webRequestRateLimiterConfig;
     }
 }

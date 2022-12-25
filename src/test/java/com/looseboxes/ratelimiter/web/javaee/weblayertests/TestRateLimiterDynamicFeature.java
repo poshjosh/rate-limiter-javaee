@@ -1,12 +1,10 @@
 package com.looseboxes.ratelimiter.web.javaee.weblayertests;
 
 import com.looseboxes.ratelimiter.RateRecordedListener;
-import com.looseboxes.ratelimiter.bandwidths.Bandwidths;
 import com.looseboxes.ratelimiter.web.core.Registries;
 import com.looseboxes.ratelimiter.web.core.RateLimiterConfigurer;
 import com.looseboxes.ratelimiter.web.core.util.RateLimitProperties;
 import com.looseboxes.ratelimiter.web.javaee.AbstractRateLimiterDynamicFeature;
-import com.looseboxes.ratelimiter.web.javaee.weblayertests.beans.TestRateLimitProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

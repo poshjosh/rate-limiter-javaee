@@ -1,6 +1,6 @@
 package com.looseboxes.ratelimiter.web.javaee.weblayertests;
 
-import com.looseboxes.ratelimiter.web.javaee.weblayertests.beans.TestRateLimitProperties;
+import com.looseboxes.ratelimiter.BandwidthFactory;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.test.JerseyTest;
 import org.slf4j.Logger;
@@ -16,6 +16,14 @@ import java.util.Set;
 import static com.looseboxes.ratelimiter.web.javaee.Assertions.assertEqual;
 
 public abstract class AbstractResourceTest extends JerseyTest {
+
+    static {
+        final String threadName = Thread.currentThread().getName();
+        final String bandwidthFactoryClass = BandwidthFactory.AllOrNothingBursty.class.getName();
+        System.out.printf("%s [%s] INFO  c.l.r.w.s.w.AbstractResourceTest - Using BandwidthFactory: %s\n",
+                java.time.LocalTime.now(), threadName, bandwidthFactoryClass);
+        System.setProperty("bandwidth-factory-class", bandwidthFactoryClass);
+    }
 
     private final boolean debugResponse = false;
 

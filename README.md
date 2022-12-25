@@ -58,7 +58,7 @@ At this point, your application is ready to enjoy the benefits of rate limiting.
 __3. Annotate classes and/or methods.__
 
 ```java
-import com.looseboxes.ratelimiter.annotation.RateLimit;
+import com.looseboxes.ratelimiter.annotations.RateLimit;
 
 @Path("/api")
 class GreetingResource {
