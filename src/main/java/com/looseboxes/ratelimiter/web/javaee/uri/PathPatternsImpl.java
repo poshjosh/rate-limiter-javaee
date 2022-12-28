@@ -77,8 +77,6 @@ class PathPatternsImpl implements PathPatterns<String> {
 
     @Override
     public String toString() {
-        return "PathPatternsImpl{" +
-                "patternMatchers=" + Arrays.toString(patternMatchers) +
-                '}';
+        return "PathPatternsImpl{" + Arrays.toString(patternMatchers) + '}';
     }
 }

@@ -15,25 +15,22 @@ import static com.looseboxes.ratelimiter.web.javaee.Assertions.assertTrue;
 
 public class DisabledRateLimitingTest extends AbstractResourceTest {
 
-    @Path(Resource.ROOT)
+    @Path(Resource._ROOT)
     @RateLimit(limit = 1, duration = 1, timeUnit = TimeUnit.SECONDS)
     public static class Resource { // Has to be public for tests to succeed
 
-        private static final String ROOT = "/disabled-rate-limiting-test";
-
-        private static final class InternalEndpoints {
-            private static final String HOME = ROOT + "/home";
-        }
+        private static final String _ROOT = "/disabled-rate-limiting-test";
+        private static final String _HOME = _ROOT + "/home";
 
         interface Endpoints {
-            String CLASS_LIMITS_HOME = ApiEndpoints.API + InternalEndpoints.HOME;
+            String HOME = ApiEndpoints.API + _HOME;
         }
 
         @GET
         @Path("/home")
         @Produces("text/plain")
         public String home() {
-            return InternalEndpoints.HOME;
+            return _HOME;
         }
     }
 
@@ -57,9 +54,9 @@ public class DisabledRateLimitingTest extends AbstractResourceTest {
         assertFalse(originallyDisabled);
         assertTrue(getDynamicFeature().getProperties().getDisabled());
         try {
-            final String endpoint = Resource.Endpoints.CLASS_LIMITS_HOME;
+            final String endpoint = Resource.Endpoints.HOME;
             shouldReturnDefaultResult(endpoint); // 1 of 1
-            shouldReturnDefaultResult(endpoint); // 2 of 1 - Should succeed if rate limiting is originallyDisabled
+            shouldReturnDefaultResult(endpoint); // 2 of 1 - Should succeed if rate limiting is disabled
         }finally{
             getDynamicFeature().getProperties().setDisabled(originallyDisabled);
         }

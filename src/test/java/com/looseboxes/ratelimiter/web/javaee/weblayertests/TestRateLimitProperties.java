@@ -25,8 +25,11 @@ public class TestRateLimitProperties implements RateLimitProperties {
     public TestRateLimitProperties() {
         this.resourcePackages = Collections.singletonList(AbstractResourceTest.class.getPackage().getName());
         this.disabled = Boolean.FALSE;
-        this.rateLimitConfigs = Collections.singletonMap(
-                IdProvider.ofClass().getId(PropertiesBoundLimitTest.Resource.class), getRateLimitConfigList());
+        this.rateLimitConfigs = Collections.singletonMap(getResourceBoundToPropertyRates(), getRateLimitConfigList());
+    }
+
+    public static String getResourceBoundToPropertyRates() {
+        return IdProvider.ofClass().getId(PropertiesBoundLimitTest.Resource.class);
     }
 
     private Rates getRateLimitConfigList() {
@@ -34,8 +37,7 @@ public class TestRateLimitProperties implements RateLimitProperties {
     }
 
     private Rate[] getRateLimits() {
-        Rate config = Rate.of(LIMIT, Duration.ofSeconds(DURATION_SECONDS));
-        return new Rate[]{config};
+        return new Rate[]{Rate.of(LIMIT, Duration.ofSeconds(DURATION_SECONDS))};
     }
 
     @Override public List<String> getResourcePackages() {

@@ -73,7 +73,7 @@ public class ResourceWithMethodLimitsTest extends AbstractResourceTest {
         @GET
         @Path(LIMIT_1_AND_5)
         @Produces("text/plain")
-        @RateLimitGroup(logic = Operator.AND)
+        @RateLimitGroup(operator = Operator.AND)
         @RateLimit(limit = 1, duration = 3, timeUnit = TimeUnit.SECONDS)
         @RateLimit(limit = LIMIT_5, duration = 3, timeUnit = TimeUnit.SECONDS)
         public String limit_1_and_5() {
