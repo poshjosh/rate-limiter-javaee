@@ -34,10 +34,10 @@ public class MethodLevelPathPatternsTest extends AbstractPathPatternsTestBase {
     public void shouldMatchSingleAsterix() {
         LOG.debug("#shouldMatchSingleAsterix()");
         PathPatterns<String> pathPatterns = pathPatterns("/*");
-        // TODO - Make this test pass
+        // TODO Issue #1 - Make this test case pass
         //assertTrue( pathPatterns.matches("/"));
         assertTrue( pathPatterns.matches("/numbers"));
-        // TODO - Make this test pass
+        // TODO Issue #1 - Make this test case pass
         //assertFalse( pathPatterns.matches("/numbers/1"));
     }
 
