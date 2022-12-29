@@ -36,18 +36,18 @@ public class RateLimiterDynamicFeature
 
 ```
 
-__2b. Alternatively, manually create a RateLimiter `__
+__2b. Alternatively, manually create a ResourceLimiter `__
 
 ```java
 
-import com.looseboxes.ratelimiter.web.core.impl.WebRequestRateLimiter;
-import com.looseboxes.ratelimiter.web.javaee.WebRequestRateLimiterConfigJavaee;
+import com.looseboxes.ratelimiter.web.core.impl.WebResourceLimiter;
+import com.looseboxes.ratelimiter.web.javaee.WebResourceLimiterConfigJavaee;
 
-public class RateLimiterProvider {
+public class ResourceLimiterProvider {
 
-  public RateLimiter<R> createRateLimiter(RateLimiterProperties properties) {
-    return new WebRequestRateLimiter<>(
-            WebRequestRateLimiterConfigJavaee.builder().properties(properties).build());
+  public RateLimiter<R> createResourceLimiter(RateLimiterProperties properties) {
+    return new WebResourceLimiter<>(
+            WebResourceLimiterConfigJavaee.builder().properties(properties).build());
   }
 }
 ```
@@ -58,19 +58,18 @@ At this point, your application is ready to enjoy the benefits of rate limiting.
 __3. Annotate classes and/or methods.__
 
 ```java
-import com.looseboxes.ratelimiter.annotations.RateLimit;
+
 
 @Path("/api")
 class GreetingResource {
 
-    // Only 99 calls to this path is allowed per minute
-    @RateLimit(limit = 99, duration = 1, timeUnit = TimeUnit.MINUTES)
-    @GET
-    @Path("/greet")
-    @Produces("text/plain")
-    String greet(String name) {
-        return "Hello " + name;
-    }
+  // Only 99 calls to this path is allowed per minute
+  @GET
+  @Path("/greet")
+  @Produces("text/plain")
+  String greet(String name) {
+    return "Hello " + name;
+  }
 }
 ```
 
