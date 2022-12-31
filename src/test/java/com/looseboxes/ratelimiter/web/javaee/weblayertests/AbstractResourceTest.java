@@ -30,11 +30,11 @@ public abstract class AbstractResourceTest extends JerseyTest {
 
     protected abstract Set<Class<?>> getResourceOrProviderClasses();
 
-    private TestRateLimiterDynamicFeature testRateLimiterDynamicFeature;
+    private TestResourceLimitingDynamicFeature testRateLimiterDynamicFeature;
 
 // Initializing this in the constructor did not work
 //    public AbstractResourceTest() {
-//        this.testRateLimiterDynamicFeature = new TestRateLimiterDynamicFeature();
+//        this.testRateLimiterDynamicFeature = new TestResourceLimitingDynamicFeature();
 //    }
 
     @Override
@@ -45,10 +45,10 @@ public abstract class AbstractResourceTest extends JerseyTest {
     }
 
     void init() {
-        this.testRateLimiterDynamicFeature = new TestRateLimiterDynamicFeature(new TestRateLimitProperties());
+        this.testRateLimiterDynamicFeature = new TestResourceLimitingDynamicFeature(new TestRateLimitProperties());
     }
 
-    public TestRateLimiterDynamicFeature getDynamicFeature() {
+    public TestResourceLimitingDynamicFeature getDynamicFeature() {
         return this.testRateLimiterDynamicFeature;
     }
 

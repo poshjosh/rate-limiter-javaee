@@ -9,11 +9,41 @@ Please first read the [rate-limiter-web-core documentation](https://github.com/p
 
 __1. Add required rate-limiter properties__
 
-```yaml
-rate-limiter:
-  # If using annotations, you have to specify the list packages where resources 
-  # that may contain the rate-limit related annotations should be scanned for.
-  resource-packages: com.myapplicatioon.web.rest
+```java
+import com.looseboxes.ratelimiter.util.Rate;
+import com.looseboxes.ratelimiter.util.Rates;
+import com.looseboxes.ratelimiter.web.core.util.RateLimitProperties;
+
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+public class RateLimitPropertiesImpl implements RateLimitProperties {
+
+  // If not using annotations, return an empty list
+  @Override
+  public List<String> getResourcePackages() {
+    return Collections.singletonList("com.myapplicatioon.web.rest");
+  }
+
+  // If not using properties, return an empty map
+  @Override
+  public Map<String, Rates> getRateLimitConfigs() {
+    Map<String, Rates> ratesMap = new HashMap<>();
+
+    // Accept only 2 tasks per second
+    ratesMap.put("task_queue", Rates.of(Rate.ofSeconds(2)));
+
+    // # Cap streaming of video to 5kb per second
+    ratesMap.put("video_download", Rates.of(Rate.ofSeconds(5_000)));
+
+    // # Limit requests to this resource to 10 per minute
+    ratesMap.put(IdProvider.ofClass().getId(MyResource.class), Rates.of(Rate.ofMinutes(10)));
+
+    return ratesMap;
+  }
+}
 ```
 
 __2. Extend `AbstractRateLimiterDynamicFeature`__
@@ -22,21 +52,72 @@ This way a rate limiter will be created an automatically applied based on rate l
 
 ```java
 import com.looseboxes.ratelimiter.web.core.util.RateLimitProperties;
-import com.looseboxes.ratelimiter.web.javaee.AbstractRateLimiterDynamicFeature;
+import com.looseboxes.ratelimiter.web.javaee.ResourceLimitingDynamicFeature;
 
-@javax.ws.rs.ext.Provider
-public class RateLimiterDynamicFeature
-        extends com.looseboxes.ratelimiter.web.javaee.AbstractRateLimiterDynamicFeature {
+@javax.ws.rs.ext.Provider 
+public class MyResourceLimiterDynamicFeature extends ResourceLimitingDynamicFeature {
 
-    @javax.inject.Inject
-    public RateLimiterDynamicFeature(RateLimitProperties properties) {
-        super(properties);
-    }
+  @javax.inject.Inject 
+  public MyResourceLimiterDynamicFeature(RateLimitProperties properties) {
+    super(properties);
+  }
 }
 
 ```
 
-__2b. Alternatively, manually create a ResourceLimiter `__
+At this point, your application is ready to enjoy the benefits of rate limiting.
+
+__3. Annotate classes and/or methods.__
+
+```java
+
+
+@Path("/api")
+class MyResource {
+
+  // Only 99 calls to this path is allowed per minute
+  @GET
+  @Path("/greet")
+  @Produces("text/plain")
+  String greet(String name) {
+    return "Hello " + name;
+  }
+}
+```
+
+### Fine-grained configuration of rate limiting
+
+Configure rate limiting as described in the [rate-limiter-web-core documentation](https://github.com/poshjosh/rate-limiter-web-core).
+
+When you configure rate limiting using properties, you could:
+
+- Rate limit a class from properties by using the class ID.
+  
+- Rate limit a method from properties by using the method ID.
+
+```java
+public class RateLimitPropertiesImpl implements RateLimitProperties {
+  
+    final String classId = IdProvider.ofClass().getId(MyResource.class);
+  final String methodId = IdProvider.ofClass().getId(MyResource.class.getMethod("greet", String.class));
+  
+  @Override
+  public Map<String, Rates> getRateLimitConfigs() {
+    
+    Map<String, Rates> ratesMap = new HashMap<>();
+    
+    // Rate limit a class
+    ratesMap.put(methodId, Rates.of(Rate.ofMinutes(10)));
+    
+    // Rate limit a method
+    ratesMap.put(classId, Rates.of(Rate.ofMinutes(10)));
+    
+    return ratesMap;
+  }
+}
+```
+
+### Manually create and use a ResourceLimiter
 
 ```java
 
@@ -51,41 +132,11 @@ public class ResourceLimiterProvider {
   }
 }
 ```
-This way you use the `RateLimiter` as you see fit.
+This way you use the `ResourceLimiter` as you see fit.
 
-At this point, your application is ready to enjoy the benefits of rate limiting.
+### Annotation Specifications
 
-__3. Annotate classes and/or methods.__
-
-```java
-
-
-@Path("/api")
-class GreetingResource {
-
-  // Only 99 calls to this path is allowed per minute
-  @GET
-  @Path("/greet")
-  @Produces("text/plain")
-  String greet(String name) {
-    return "Hello " + name;
-  }
-}
-```
-
-__4. Further configure rate limiting__
-
-Configure rate limiting as described in the [rate-limiter-web-core documentation](https://github.com/poshjosh/rate-limiter-web-core).
-
-__Notes:__
-
-When you configure rate limiting from the `RateLimitProperties` you implement, you could:
-
-- Configure rate limiting of specific resources from application properties by using the 
-  fully qualified class name as the rate-limit group name.
-
-- Narrow the specified properties to a specific method. For example, in this case, by using
-  `com.myapplicatioon.web.rest.GreetingResource.greet(java.lang.String)` as the group name.
+Please read the [annotation specs](https://github.com/poshjosh/rate-limiter-annotation/blob/main/docs/ANNOTATION_SPECS.md). It is concise.
 
 Enjoy! :wink:
 

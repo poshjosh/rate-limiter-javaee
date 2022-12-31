@@ -6,7 +6,6 @@ import com.looseboxes.ratelimiter.util.Rate;
 import com.looseboxes.ratelimiter.util.Rates;
 import com.looseboxes.ratelimiter.web.core.util.RateLimitProperties;
 
-import java.time.Duration;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -37,7 +36,7 @@ public class TestRateLimitProperties implements RateLimitProperties {
     }
 
     private Rate[] getRateLimits() {
-        return new Rate[]{Rate.of(LIMIT, Duration.ofSeconds(DURATION_SECONDS))};
+        return new Rate[]{Rate.ofSeconds(LIMIT)};
     }
 
     @Override public List<String> getResourcePackages() {

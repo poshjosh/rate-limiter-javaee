@@ -35,7 +35,7 @@ public class WithoutDynamicFeatureTest extends AbstractResourceTest {
         @GET
         @Path(_LIMIT_1)
         @Produces("text/plain")
-        @RateLimit(limit = 1, duration = 3, timeUnit = TimeUnit.SECONDS)
+        @RateLimit(permits = 1, duration = 3, timeUnit = TimeUnit.SECONDS)
         public String limit_1() {
             log.debug("limit_1");
             return Resource.Endpoints.LIMIT_1;

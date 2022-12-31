@@ -54,7 +54,7 @@ public class ResourceWithMethodLimitsTest extends AbstractResourceTest {
         @GET
         @Path(LIMIT_1)
         @Produces("text/plain")
-        @RateLimit(limit = 1, duration = 3, timeUnit = TimeUnit.SECONDS)
+        @RateLimit(permits = 1, duration = 3, timeUnit = TimeUnit.SECONDS)
         public String limit_1() {
             log.debug("limit_1");
             return Endpoints.METHOD_LIMIT_1;
@@ -63,8 +63,8 @@ public class ResourceWithMethodLimitsTest extends AbstractResourceTest {
         @GET
         @Path(LIMIT_1_OR_5)
         @Produces("text/plain")
-        @RateLimit(limit = 1, duration = 3, timeUnit = TimeUnit.SECONDS)
-        @RateLimit(limit = LIMIT_5, duration = 3, timeUnit = TimeUnit.SECONDS)
+        @RateLimit(permits = 1, duration = 3, timeUnit = TimeUnit.SECONDS)
+        @RateLimit(permits = LIMIT_5, duration = 3, timeUnit = TimeUnit.SECONDS)
         public String limit_1_or_5() {
             log.debug("limit_1_or_5");
             return Endpoints.METHOD_LIMIT_1_OR_5;
@@ -74,8 +74,8 @@ public class ResourceWithMethodLimitsTest extends AbstractResourceTest {
         @Path(LIMIT_1_AND_5)
         @Produces("text/plain")
         @RateLimitGroup(operator = Operator.AND)
-        @RateLimit(limit = 1, duration = 3, timeUnit = TimeUnit.SECONDS)
-        @RateLimit(limit = LIMIT_5, duration = 3, timeUnit = TimeUnit.SECONDS)
+        @RateLimit(permits = 1, duration = 3, timeUnit = TimeUnit.SECONDS)
+        @RateLimit(permits = LIMIT_5, duration = 3, timeUnit = TimeUnit.SECONDS)
         public String limit_1_and_5() {
             log.debug("limit_1_and_5");
             return Endpoints.METHOD_LIMIT_1_AND_5;
