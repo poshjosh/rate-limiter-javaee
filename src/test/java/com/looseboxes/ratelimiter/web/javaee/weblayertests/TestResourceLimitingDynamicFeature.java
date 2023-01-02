@@ -29,7 +29,7 @@ public class TestResourceLimitingDynamicFeature extends ResourceLimitingDynamicF
 
         registries.listeners().register(new ResourceUsageListener() {
             @Override
-            public void onRejected(Object context, Object resourceId, int hits, Object limit) {
+            public void onRejected(Object resource, Object resourceId, int hits, Object limit) {
 
                 log.warn("Too many requests for: {}, limits: {}", resourceId, limit);
 
