@@ -1,6 +1,6 @@
 package com.looseboxes.ratelimiter.web.javaee.weblayertests;
 
-import com.looseboxes.ratelimiter.ResourceUsageListener;
+import com.looseboxes.ratelimiter.UsageListener;
 import com.looseboxes.ratelimiter.web.core.Registries;
 import com.looseboxes.ratelimiter.web.core.util.RateLimitProperties;
 import com.looseboxes.ratelimiter.web.javaee.ResourceLimitingDynamicFeature;
@@ -27,15 +27,29 @@ public class TestResourceLimitingDynamicFeature extends ResourceLimitingDynamicF
     @Override
     public void configure(Registries<ContainerRequestContext> registries) {
 
-        registries.listeners().register(new ResourceUsageListener() {
+        // Option A - here we don't have access to the container request context
+        // See Option B below
+        //
+        registries.listeners().register(new UsageListener() {
             @Override
-            public void onRejected(Object resource, Object resourceId, int hits, Object limit) {
+            public void onRejected(Object resource, int hits, Object limit) {
 
-                log.warn("Too many requests for: {}, limits: {}", resourceId, limit);
+                log.warn("onRejected, too many requests for: {}, limits: {}", resource, limit);
 
-                throw new WebApplicationException("Too may requests for: " + resourceId, Response.Status.TOO_MANY_REQUESTS);
+                throw new WebApplicationException(Response.Status.TOO_MANY_REQUESTS);
             }
         });
+    }
+
+    // Option B - here we have access to the container request context
+    // See Option A above
+    //
+    @Override
+    protected void onLimitExceeded(ContainerRequestContext requestContext) {
+
+        //log.warn("onLimitsExceeded, too many requests for: {}", requestContext.getUriInfo());
+
+        //requestContext.abortWith(Response.status(Response.Status.TOO_MANY_REQUESTS).build());
     }
 
     public TestRateLimitProperties getProperties() {
