@@ -1,6 +1,6 @@
 package com.looseboxes.ratelimiter.web.javaee.weblayertests;
 
-import com.looseboxes.ratelimiter.annotation.IdProvider;
+import com.looseboxes.ratelimiter.annotation.ElementId;
 import com.looseboxes.ratelimiter.util.Operator;
 import com.looseboxes.ratelimiter.util.Rate;
 import com.looseboxes.ratelimiter.util.Rates;
@@ -28,7 +28,7 @@ public class TestRateLimitProperties implements RateLimitProperties {
     }
 
     public static String getResourceBoundToPropertyRates() {
-        return IdProvider.ofClass().getId(PropertiesBoundLimitTest.Resource.class);
+        return ElementId.of(PropertiesBoundLimitTest.Resource.class);
     }
 
     private Rates getRateLimitConfigList() {

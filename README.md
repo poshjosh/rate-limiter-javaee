@@ -10,6 +10,8 @@ Please first read the [rate-limiter-web-core documentation](https://github.com/p
 __1. Add required rate-limiter properties__
 
 ```java
+import com.looseboxes.ratelimiter.annotation.ElementId;
+import com.looseboxes.ratelimiter.annotation.NodeId;
 import com.looseboxes.ratelimiter.util.Rate;
 import com.looseboxes.ratelimiter.util.Rates;
 import com.looseboxes.ratelimiter.web.core.util.RateLimitProperties;
@@ -21,28 +23,26 @@ import java.util.Map;
 
 public class RateLimitPropertiesImpl implements RateLimitProperties {
 
-  // If not using annotations, return an empty list
-  @Override
-  public List<String> getResourcePackages() {
-    return Collections.singletonList("com.myapplicatioon.web.rest");
-  }
+    // If not using annotations, return an empty list
+    @Override public List<String> getResourcePackages() {
+        return Collections.singletonList("com.myapplicatioon.web.rest");
+    }
 
-  // If not using properties, return an empty map
-  @Override
-  public Map<String, Rates> getRateLimitConfigs() {
-    Map<String, Rates> ratesMap = new HashMap<>();
+    // If not using properties, return an empty map
+    @Override public Map<String, Rates> getRateLimitConfigs() {
+        Map<String, Rates> ratesMap = new HashMap<>();
 
-    // Accept only 2 tasks per second
-    ratesMap.put("task_queue", Rates.of(Rate.ofSeconds(2)));
+        // Accept only 2 tasks per second
+        ratesMap.put("task_queue", Rates.of(Rate.ofSeconds(2)));
 
-    // # Cap streaming of video to 5kb per second
-    ratesMap.put("video_download", Rates.of(Rate.ofSeconds(5_000)));
+        // # Cap streaming of video to 5kb per second
+        ratesMap.put("video_download", Rates.of(Rate.ofSeconds(5_000)));
 
-    // # Limit requests to this resource to 10 per minute
-    ratesMap.put(IdProvider.ofClass().getId(MyResource.class), Rates.of(Rate.ofMinutes(10)));
+        // # Limit requests to this resource to 10 per minute
+        ratesMap.put(ElementId.of(MyResource.class), Rates.of(Rate.ofMinutes(10)));
 
-    return ratesMap;
-  }
+        return ratesMap;
+    }
 }
 ```
 
@@ -97,9 +97,7 @@ When you configure rate limiting using properties, you could:
 
 ```java
 public class RateLimitPropertiesImpl implements RateLimitProperties {
-  
-    final String classId = IdProvider.ofClass().getId(MyResource.class);
-  final String methodId = IdProvider.ofClass().getId(MyResource.class.getMethod("greet", String.class));
+  final String methodId = NodeId.of(MyResource.class.getMethod("greet", String.class));
   
   @Override
   public Map<String, Rates> getRateLimitConfigs() {
@@ -107,10 +105,10 @@ public class RateLimitPropertiesImpl implements RateLimitProperties {
     Map<String, Rates> ratesMap = new HashMap<>();
     
     // Rate limit a class
-    ratesMap.put(methodId, Rates.of(Rate.ofMinutes(10)));
+    ratesMap.put(NodeId.of(MyResource.class), Rates.of(Rate.ofMinutes(10)));
     
     // Rate limit a method
-    ratesMap.put(classId, Rates.of(Rate.ofMinutes(10)));
+    ratesMap.put(NodeId.of(MyResource.class.getMethod("greet", String.class)), Rates.of(Rate.ofMinutes(10)));
     
     return ratesMap;
   }
@@ -121,15 +119,16 @@ public class RateLimitPropertiesImpl implements RateLimitProperties {
 
 ```java
 
-import com.looseboxes.ratelimiter.web.core.impl.WebResourceLimiter;
-import com.looseboxes.ratelimiter.web.javaee.WebResourceLimiterConfigJavaee;
+import com.looseboxes.ratelimiter.web.core.AbstractResourceLimiterRegistry;
+import com.looseboxes.ratelimiter.web.javaee.WebResourceLimiterConfigJaveee;
 
 public class ResourceLimiterProvider {
 
-  public RateLimiter<R> createResourceLimiter(RateLimiterProperties properties) {
-    return new WebResourceLimiter<>(
-            WebResourceLimiterConfigJavaee.builder().properties(properties).build());
-  }
+    public RateLimiter<R> createResourceLimiter(RateLimiterProperties properties) {
+        return AbstractResourceLimiterRegistry
+                .of(WebResourceLimiterConfigJaveee.builder().properties(properties).build())
+                .createResourceLimiter();
+    }
 }
 ```
 This way you use the `ResourceLimiter` as you see fit.

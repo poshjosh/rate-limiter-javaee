@@ -1,9 +1,9 @@
 package com.looseboxes.ratelimiter.web.javaee;
 
+import com.looseboxes.ratelimiter.ResourceLimiter;
 import com.looseboxes.ratelimiter.web.core.Registries;
 import com.looseboxes.ratelimiter.web.core.ResourceLimiterConfigurer;
 import com.looseboxes.ratelimiter.web.core.WebResourceLimiterConfig;
-import com.looseboxes.ratelimiter.web.core.impl.WebResourceLimiter;
 import com.looseboxes.ratelimiter.web.core.util.RateLimitProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,10 +28,10 @@ public abstract class ResourceLimitingDynamicFeature implements DynamicFeature,
 
     private final WebResourceLimiterConfig<ContainerRequestContext> webResourceLimiterConfig;
 
-    private final WebResourceLimiter<ContainerRequestContext> resourceLimiter;
+    private final ResourceLimiter<ContainerRequestContext> resourceLimiter;
 
     protected ResourceLimitingDynamicFeature(RateLimitProperties properties) {
-        this(WebResourceLimiterConfigJavaee.builder().properties(properties));
+        this(WebResourceLimiterConfigJaveee.builder().properties(properties));
     }
 
     private ResourceLimitingDynamicFeature(
@@ -41,9 +41,9 @@ public abstract class ResourceLimitingDynamicFeature implements DynamicFeature,
 
         this.properties = webResourceLimiterConfig.getProperties();
 
-        this.resourceClasses = webResourceLimiterConfig.getResourceClassesSupplier().get();
+        this.resourceClasses = webResourceLimiterConfig.getResourceClasses();
 
-        this.resourceLimiter = new WebResourceLimiter<>(webResourceLimiterConfig);
+        this.resourceLimiter = ResourceLimiterRegistry.of(webResourceLimiterConfig).createResourceLimiter();
 
         this.containerRequestFilter = requestContext -> {
             if (!resourceLimiter.tryConsume(requestContext)) {
@@ -98,7 +98,7 @@ public abstract class ResourceLimitingDynamicFeature implements DynamicFeature,
      *                   rate limiting
      */
     @Override
-    public void configure(Registries<ContainerRequestContext> registries) { }
+    public abstract void configure(Registries<ContainerRequestContext> registries);
 
     /**
      * Called when a limit is exceeded.
@@ -126,7 +126,7 @@ public abstract class ResourceLimitingDynamicFeature implements DynamicFeature,
         return resourceClasses.contains(clazz);
     }
 
-    public WebResourceLimiter<ContainerRequestContext> getResourceLimiter() {
+    public ResourceLimiter<ContainerRequestContext> getResourceLimiter() {
         return resourceLimiter;
     }
 

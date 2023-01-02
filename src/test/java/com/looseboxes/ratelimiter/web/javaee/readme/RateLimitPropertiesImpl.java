@@ -1,6 +1,6 @@
 package com.looseboxes.ratelimiter.web.javaee.readme;
 
-import com.looseboxes.ratelimiter.annotation.IdProvider;
+import com.looseboxes.ratelimiter.annotation.ElementId;
 import com.looseboxes.ratelimiter.util.Rate;
 import com.looseboxes.ratelimiter.util.Rates;
 import com.looseboxes.ratelimiter.web.core.util.RateLimitProperties;
@@ -30,7 +30,7 @@ public class RateLimitPropertiesImpl implements RateLimitProperties {
         ratesMap.put("video_download", Rates.of(Rate.ofSeconds(5_000)));
 
         // # Limit requests to this resource to 10 per minute
-        ratesMap.put(IdProvider.ofClass().getId(MyResource.class), Rates.of(Rate.ofMinutes(10)));
+        ratesMap.put(ElementId.of(MyResource.class), Rates.of(Rate.ofMinutes(10)));
 
         return ratesMap;
     }
