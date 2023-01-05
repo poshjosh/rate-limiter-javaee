@@ -13,7 +13,7 @@ import java.util.concurrent.TimeUnit;
 public class ResourceWithClassLimitTest extends AbstractResourceTest {
 
     @Path(Resource.ROOT)
-    @Rate(permits = 1, duration = 1, timeUnit = TimeUnit.SECONDS)
+    @Rate(permits = 1, timeUnit = TimeUnit.SECONDS)
     public static class Resource { // Has to be public for tests to succeed
 
         private static final String ROOT = "/resource-with-class-limit-test";
