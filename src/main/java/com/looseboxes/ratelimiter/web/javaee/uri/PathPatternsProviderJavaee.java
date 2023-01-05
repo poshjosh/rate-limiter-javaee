@@ -7,7 +7,7 @@ import com.looseboxes.ratelimiter.web.core.util.PathPatternsProvider;
 import javax.ws.rs.Path;
 import java.util.Optional;
 
-public class JavaeePathPatternsProvider implements PathPatternsProvider {
+public class PathPatternsProviderJavaee implements PathPatternsProvider {
 
     @Override
     public PathPatterns<String> get(Element source) {
@@ -50,4 +50,5 @@ public class JavaeePathPatternsProvider implements PathPatternsProvider {
             return pathPatterns;
         }
         return pathPatterns.combine(new MethodLevelPathPatterns(subPathPattern));
-    }}
+    }
+}
