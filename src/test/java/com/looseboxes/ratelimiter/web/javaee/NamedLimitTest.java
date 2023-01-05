@@ -1,10 +1,8 @@
 package com.looseboxes.ratelimiter.web.javaee;
 
-import com.looseboxes.ratelimiter.annotation.ElementId;
-import com.looseboxes.ratelimiter.annotations.RateLimit;
+import com.looseboxes.ratelimiter.annotations.Rate;
 import com.looseboxes.ratelimiter.util.Rates;
-import com.looseboxes.ratelimiter.web.core.Registries;
-import com.looseboxes.ratelimiter.web.core.WebResourceLimiterConfig;
+import com.looseboxes.ratelimiter.web.core.ResourceLimiterConfig;
 import com.looseboxes.ratelimiter.web.core.util.RateLimitProperties;
 import org.junit.Before;
 import org.junit.Test;
@@ -15,21 +13,20 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.*;
 
 public class NamedLimitTest {
 
     final static String NAME = "rate-limiter-name";
 
     @Path("/named-resource-limiter-test")
-    @RateLimit(name = NAME)
+    @Rate(name = NAME)
     public static class Resource{
         @Path("/home")
         public void home() {}
     }
 
-    Registries<ContainerRequestContext> registries;
+    ResourceLimiterRegistry registries;
 
     @Before
     public void setupRateLimiting() {
@@ -41,11 +38,11 @@ public class NamedLimitTest {
                 return Collections.emptyMap();
             }
         };
-        WebResourceLimiterConfig<ContainerRequestContext> config =
-                WebResourceLimiterConfigJaveee.builder()
+        ResourceLimiterConfig<ContainerRequestContext> config =
+                ResourceLimiterConfigJaveee.builder()
                 .properties(props)
                 .build();
-        registries = ResourceLimiterRegistry.of(config).init();
+        registries = ResourceLimiterRegistry.of(config);
     }
 
     @Test
@@ -54,8 +51,7 @@ public class NamedLimitTest {
     }
 
     @Test
-    public void shouldNotHaveAResourceLimiterRegisteredForDefaultName() {
-        String defaultName = ElementId.of(Resource.class);
-        assertNull(registries.limiters().getOrDefault(defaultName, null));
+    public void shouldBeRateLimited() {
+        assertTrue(registries.isRateLimited(NAME));
     }
 }

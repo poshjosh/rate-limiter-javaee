@@ -3,7 +3,7 @@ package com.looseboxes.ratelimiter.web.javaee;
 import com.looseboxes.ratelimiter.ResourceLimiter;
 import com.looseboxes.ratelimiter.web.core.Registries;
 import com.looseboxes.ratelimiter.web.core.ResourceLimiterConfigurer;
-import com.looseboxes.ratelimiter.web.core.WebResourceLimiterConfig;
+import com.looseboxes.ratelimiter.web.core.ResourceLimiterConfig;
 import com.looseboxes.ratelimiter.web.core.util.RateLimitProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,37 +13,32 @@ import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.container.DynamicFeature;
 import javax.ws.rs.container.ResourceInfo;
 import javax.ws.rs.core.FeatureContext;
-import java.util.*;
+import java.lang.reflect.Method;
 
 public abstract class ResourceLimitingDynamicFeature implements DynamicFeature,
         ResourceLimiterConfigurer<ContainerRequestContext> {
 
     private static final Logger LOG = LoggerFactory.getLogger(ResourceLimitingDynamicFeature.class);
 
-    private final ContainerRequestFilter containerRequestFilter;
-
-    private final List<Class<?>> resourceClasses;
-
-    private final RateLimitProperties properties;
-
-    private final WebResourceLimiterConfig<ContainerRequestContext> webResourceLimiterConfig;
+    private final ResourceLimiterRegistry resourceLimiterRegistry;
 
     private final ResourceLimiter<ContainerRequestContext> resourceLimiter;
 
+    private final ContainerRequestFilter containerRequestFilter;
+
     protected ResourceLimitingDynamicFeature(RateLimitProperties properties) {
-        this(WebResourceLimiterConfigJaveee.builder().properties(properties));
+        this(ResourceLimiterConfigJaveee.builder().properties(properties));
     }
 
     private ResourceLimitingDynamicFeature(
-            WebResourceLimiterConfig.Builder<ContainerRequestContext> webResourceLimiterConfigBuilder) {
+            ResourceLimiterConfig.Builder<ContainerRequestContext> webResourceLimiterConfigBuilder) {
 
-        this.webResourceLimiterConfig = webResourceLimiterConfigBuilder.configurer(this).build();
+        ResourceLimiterConfig<ContainerRequestContext> resourceLimiterConfig =
+                webResourceLimiterConfigBuilder.configurer(this).build();
 
-        this.properties = webResourceLimiterConfig.getProperties();
+        this.resourceLimiterRegistry = ResourceLimiterRegistry.of(resourceLimiterConfig);
 
-        this.resourceClasses = webResourceLimiterConfig.getResourceClasses();
-
-        this.resourceLimiter = ResourceLimiterRegistry.of(webResourceLimiterConfig).createResourceLimiter();
+        this.resourceLimiter = this.resourceLimiterRegistry.createResourceLimiter();
 
         this.containerRequestFilter = requestContext -> {
             if (!resourceLimiter.tryConsume(requestContext)) {
@@ -109,7 +104,7 @@ public abstract class ResourceLimitingDynamicFeature implements DynamicFeature,
 
     @Override
     public void configure(ResourceInfo resourceInfo, FeatureContext featureContext) {
-        if(isEnabled(properties) && isTargetedResource(resourceInfo.getResourceClass())) {
+        if(resourceLimiterRegistry.isRateLimitingEnabled() && isRateLimited(resourceInfo)) {
             // final int priority = Integer.MIN_VALUE; // Set rate limiting to highest possible priority
             // final int priority = Priorities.AUTHENTICATION - 1; // Set rate limiting just before authentication
             final int priority = -1; // We can easily see a situation where there are multiple zero priority components
@@ -117,20 +112,23 @@ public abstract class ResourceLimitingDynamicFeature implements DynamicFeature,
         }
     }
 
-    private boolean isEnabled(RateLimitProperties properties) {
-        final Boolean disabled = properties.getDisabled();
-        return disabled == null || Boolean.FALSE.equals(disabled);
+    public boolean isRateLimited(ResourceInfo resourceInfo) {
+        Class<?> clazz = resourceInfo.getResourceClass();
+        if (clazz != null && resourceLimiterRegistry.isRateLimited(clazz)) {
+            return true;
+        }
+        Method method = resourceInfo.getResourceMethod();
+        if (method != null && resourceLimiterRegistry.isRateLimited(method)) {
+            return true;
+        }
+        return false;
     }
 
-    public boolean isTargetedResource(Class<?> clazz) {
-        return resourceClasses.contains(clazz);
+    public ResourceLimiterRegistry getResourceLimiterRegistry() {
+        return resourceLimiterRegistry;
     }
 
     public ResourceLimiter<ContainerRequestContext> getResourceLimiter() {
         return resourceLimiter;
-    }
-
-    public WebResourceLimiterConfig<ContainerRequestContext> getWebRequestRateLimiterConfig() {
-        return webResourceLimiterConfig;
     }
 }

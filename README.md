@@ -7,46 +7,7 @@ Please first read the [rate-limiter-web-core documentation](https://github.com/p
 
 ### Usage
 
-__1. Add required rate-limiter properties__
-
-```java
-import com.looseboxes.ratelimiter.annotation.ElementId;
-import com.looseboxes.ratelimiter.annotation.NodeId;
-import com.looseboxes.ratelimiter.util.Rate;
-import com.looseboxes.ratelimiter.util.Rates;
-import com.looseboxes.ratelimiter.web.core.util.RateLimitProperties;
-
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-public class RateLimitPropertiesImpl implements RateLimitProperties {
-
-    // If not using annotations, return an empty list
-    @Override public List<String> getResourcePackages() {
-        return Collections.singletonList("com.myapplicatioon.web.rest");
-    }
-
-    // If not using properties, return an empty map
-    @Override public Map<String, Rates> getRateLimitConfigs() {
-        Map<String, Rates> ratesMap = new HashMap<>();
-
-        // Accept only 2 tasks per second
-        ratesMap.put("task_queue", Rates.of(Rate.ofSeconds(2)));
-
-        // # Cap streaming of video to 5kb per second
-        ratesMap.put("video_download", Rates.of(Rate.ofSeconds(5_000)));
-
-        // # Limit requests to this resource to 10 per minute
-        ratesMap.put(ElementId.of(MyResource.class), Rates.of(Rate.ofMinutes(10)));
-
-        return ratesMap;
-    }
-}
-```
-
-__2. Extend `AbstractRateLimiterDynamicFeature`__
+__1. Extend `ResourceLimitingDynamicFeature`__
 
 This way a rate limiter will be created an automatically applied based on rate limiter related properties and annotations.
 
@@ -67,7 +28,7 @@ public class MyResourceLimiterDynamicFeature extends ResourceLimitingDynamicFeat
 
 At this point, your application is ready to enjoy the benefits of rate limiting.
 
-__3. Annotate classes and/or methods.__
+__2. Annotate classes and/or methods.__
 
 ```java
 
@@ -82,6 +43,24 @@ class MyResource {
   String greet(String name) {
     return "Hello " + name;
   }
+}
+```
+
+__3. (Optional) Implement RateLimitProperties__
+
+```java
+public class RateLimitPropertiesImpl implements RateLimitProperties {
+
+    // If not using annotations, return an empty list
+    @Override public List<String> getResourcePackages() {
+        return Collections.singletonList("com.myapplicatioon.web.rest");
+    }
+
+    // If not using properties, return an empty map
+    @Override public Map<String, Rates> getRateLimitConfigs() {
+        // Accept only 2 tasks per second
+        return Collections.singletonMap("task_queue", Rates.of(Rate.ofSeconds(2)));
+    }
 }
 ```
 

@@ -1,12 +1,10 @@
 package com.looseboxes.ratelimiter.web.javaee.weblayertests;
 
-import com.looseboxes.ratelimiter.web.core.WebResourceLimiterConfig;
 import org.junit.Test;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
-import javax.ws.rs.container.ContainerRequestContext;
 import java.util.Collections;
 import java.util.Set;
 
@@ -38,9 +36,9 @@ public class PropertiesBoundLimitTest extends AbstractResourceTest{
 
     @Test
     public void shouldHaveAMatcher() {
-        WebResourceLimiterConfig<ContainerRequestContext> config = getDynamicFeature().getWebRequestRateLimiterConfig();
-        Object matcher = config.getRegistries().matchers().getOrDefault(
-                TestRateLimitProperties.getResourceBoundToPropertyRates(), null);
+        Object matcher = getDynamicFeature()
+                .getResourceLimiterRegistry()
+                .matchers().getOrDefault(TestRateLimitProperties.getResourceBoundToPropertyRates(), null);
         assertTrue(matcher != null);
     }
 

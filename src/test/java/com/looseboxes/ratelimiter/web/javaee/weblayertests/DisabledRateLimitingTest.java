@@ -1,6 +1,6 @@
 package com.looseboxes.ratelimiter.web.javaee.weblayertests;
 
-import com.looseboxes.ratelimiter.annotations.RateLimit;
+import com.looseboxes.ratelimiter.annotations.Rate;
 import org.junit.Test;
 
 import javax.ws.rs.GET;
@@ -16,7 +16,7 @@ import static com.looseboxes.ratelimiter.web.javaee.Assertions.assertTrue;
 public class DisabledRateLimitingTest extends AbstractResourceTest {
 
     @Path(Resource._ROOT)
-    @RateLimit(permits = 1, duration = 1, timeUnit = TimeUnit.SECONDS)
+    @Rate(permits = 1, duration = 1, timeUnit = TimeUnit.SECONDS)
     public static class Resource { // Has to be public for tests to succeed
 
         private static final String _ROOT = "/disabled-rate-limiting-test";
