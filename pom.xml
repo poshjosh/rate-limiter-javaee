@@ -19,7 +19,7 @@
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
         <javaee.version>7.0</javaee.version>
-        <rate-limiter.version>0.1.1-SNAPSHOT</rate-limiter.version>
+        <rate-limiter.version>0.2.0-SNAPSHOT</rate-limiter.version>
         <bucket4j.version>6.4.1</bucket4j.version>
         <jersey.version>2.34</jersey.version>
         <logback-classic.version>1.2.6</logback-classic.version>
@@ -35,7 +35,7 @@
             <artifactId>rate-limiter-web-core</artifactId>
             <version>${rate-limiter.version}</version>
         </dependency>
-        <!-- Required by com.looseboxes.ratelimiter.web.javaee.uri.PatternMatchers -->
+        <!-- Required by PatternMatchers -->
         <dependency>
             <groupId>org.glassfish.jersey.core</groupId>
             <artifactId>jersey-common</artifactId>

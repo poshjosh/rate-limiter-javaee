@@ -12,16 +12,15 @@ __1. Extend `ResourceLimitingDynamicFeature`__
 This way a rate limiter will be created an automatically applied based on rate limiter related properties and annotations.
 
 ```java
-import com.looseboxes.ratelimiter.web.core.util.RateLimitProperties;
-import com.looseboxes.ratelimiter.web.javaee.ResourceLimitingDynamicFeature;
+import RateLimitProperties;
+import ResourceLimitingDynamicFeature;
 
-@javax.ws.rs.ext.Provider 
-public class MyResourceLimiterDynamicFeature extends ResourceLimitingDynamicFeature {
+@javax.ws.rs.ext.Provider public class MyResourceLimiterDynamicFeature
+        extends ResourceLimitingDynamicFeature {
 
-  @javax.inject.Inject 
-  public MyResourceLimiterDynamicFeature(RateLimitProperties properties) {
-    super(properties);
-  }
+    @javax.inject.Inject public MyResourceLimiterDynamicFeature(RateLimitProperties properties) {
+        super(properties);
+    }
 }
 
 ```
@@ -98,7 +97,7 @@ Usually, you are provided with appropriate `ResourceLimiter`s based on the annot
 and properties you specify. However, you could manually create and use `ResourceLimiters`.
 
 ```java
-import com.looseboxes.ratelimiter.web.javaee.ResourceLimiterRegistryJavaee;
+import ResourceLimiterRegistryJavaee;
 
 public class ResourceLimiterProvider {
 
