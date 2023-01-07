@@ -94,13 +94,16 @@ public class RateLimitPropertiesImpl implements RateLimitProperties {
 
 ### Manually create and use a ResourceLimiter
 
+Usually, you are provided with appropriate `ResourceLimiter`s based on the annotations
+and properties you specify. However, you could manually create and use `ResourceLimiters`.
+
 ```java
-import com.looseboxes.ratelimiter.web.javaee.ResourceLimiterRegistry;
+import com.looseboxes.ratelimiter.web.javaee.ResourceLimiterRegistryJavaee;
 
 public class ResourceLimiterProvider {
 
     public ResourceLimiter createResourceLimiter() {
-        return ResourceLimiterRegistry.ofDefaults().createResourceLimiter();
+        return ResourceLimiterRegistryJavaee.ofDefaults().createResourceLimiter();
     }
 }
 ```
