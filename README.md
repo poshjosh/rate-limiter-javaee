@@ -5,6 +5,16 @@ Light-weight rate limiting library for javaee web resources, based on
 
 Please first read the [rate-limiter-web-core documentation](https://github.com/poshjosh/rate-limiter-web-core).
 
+To add a dependency on `rate-limiter-javaee` using Maven, use the following:
+
+```xml
+        <dependency>
+            <groupId>io.github.poshjosh</groupId>
+            <artifactId>rate-limiter-javaee</artifactId>
+            <version>0.2.0</version> 
+        </dependency>
+```
+
 ### Usage
 
 __1. Extend `ResourceLimitingDynamicFeature`__
