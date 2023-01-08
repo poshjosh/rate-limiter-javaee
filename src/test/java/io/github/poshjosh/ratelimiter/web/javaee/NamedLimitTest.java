@@ -1,6 +1,6 @@
 package io.github.poshjosh.ratelimiter.web.javaee;
 
-import io.github.poshjosh.ratelimiter.annotations.Rate;
+import io.github.poshjosh.ratelimiter.annotation.Rate;
 import io.github.poshjosh.ratelimiter.util.Rates;
 import io.github.poshjosh.ratelimiter.web.core.ResourceLimiterRegistry;
 import io.github.poshjosh.ratelimiter.web.core.util.RateLimitProperties;

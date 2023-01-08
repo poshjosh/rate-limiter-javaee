@@ -12,13 +12,12 @@ __1. Extend `ResourceLimitingDynamicFeature`__
 This way a rate limiter will be created an automatically applied based on rate limiter related properties and annotations.
 
 ```java
-import RateLimitProperties;
-import ResourceLimitingDynamicFeature;
-
-@javax.ws.rs.ext.Provider public class MyResourceLimiterDynamicFeature
+@javax.ws.rs.ext.Provider
+public class MyResourceLimiterDynamicFeature
         extends ResourceLimitingDynamicFeature {
 
-    @javax.inject.Inject public MyResourceLimiterDynamicFeature(RateLimitProperties properties) {
+    @javax.inject.Inject 
+    public MyResourceLimiterDynamicFeature(RateLimitProperties properties) {
         super(properties);
     }
 }
@@ -30,12 +29,12 @@ At this point, your application is ready to enjoy the benefits of rate limiting.
 __2. Annotate classes and/or methods.__
 
 ```java
-
-
 @Path("/api")
 class MyResource {
 
-  // Only 99 calls to this path is allowed per minute
+  // Only 25 calls per second for users in role GUEST
+  @Rate(25)
+  @RateRequestIf(matchType = MatchType.USER_ROLE, values = "GUEST")
   @GET
   @Path("/greet")
   @Produces("text/plain")

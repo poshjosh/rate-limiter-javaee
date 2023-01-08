@@ -84,14 +84,18 @@ public abstract class AbstractResourceTest extends JerseyTest {
     }
 
     private Response request(String endpoint) {
-        final WebTarget webTarget = target(endpoint);
-        final Invocation.Builder invocationBuilder = webTarget.request("text/plain");
-        final Response response = invocationBuilder.get();
+        final Response response = doRequest(endpoint);
         final Response.StatusType statusType = response.getStatusInfo();
         log.info("Request: {}, code: {}, type: {}", endpoint,
                 statusType.getStatusCode(), statusType.getFamily());
         debug(response);
         return response;
+    }
+
+    protected Response doRequest(String endpoint) {
+        final WebTarget webTarget = target(endpoint);
+        final Invocation.Builder invocationBuilder = webTarget.request("text/plain");
+        return invocationBuilder.get();
     }
 
     private void debug(Response response) {

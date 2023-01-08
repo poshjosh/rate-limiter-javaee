@@ -11,6 +11,7 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.Response;
 
+//@javax.inject.Singleton - Works in test. However in actual live server we had to use @Provider
 @javax.ws.rs.ext.Provider
 public class TestResourceLimitingDynamicFeature extends ResourceLimitingDynamicFeature {
 
