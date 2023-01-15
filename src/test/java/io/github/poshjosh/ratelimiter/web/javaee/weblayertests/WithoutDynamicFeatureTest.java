@@ -1,6 +1,6 @@
 package io.github.poshjosh.ratelimiter.web.javaee.weblayertests;
 
-import io.github.poshjosh.ratelimiter.annotation.Rate;
+import io.github.poshjosh.ratelimiter.annotations.Rate;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.junit.Test;
 import org.slf4j.Logger;

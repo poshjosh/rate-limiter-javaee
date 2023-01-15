@@ -1,7 +1,7 @@
 package io.github.poshjosh.ratelimiter.web.javaee.weblayertests;
 
-import io.github.poshjosh.ratelimiter.annotation.Rate;
-import io.github.poshjosh.ratelimiter.annotation.RateGroup;
+import io.github.poshjosh.ratelimiter.annotations.Rate;
+import io.github.poshjosh.ratelimiter.annotations.RateGroup;
 import io.github.poshjosh.ratelimiter.util.Operator;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -12,7 +12,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import java.util.Collections;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 
 public class ResourceWithMethodLimitsTest extends AbstractResourceTest {
 

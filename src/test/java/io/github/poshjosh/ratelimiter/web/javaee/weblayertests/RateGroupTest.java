@@ -1,7 +1,7 @@
 package io.github.poshjosh.ratelimiter.web.javaee.weblayertests;
 
-import io.github.poshjosh.ratelimiter.annotation.Rate;
-import io.github.poshjosh.ratelimiter.annotation.RateGroup;
+import io.github.poshjosh.ratelimiter.annotations.Rate;
+import io.github.poshjosh.ratelimiter.annotations.RateGroup;
 import org.junit.Test;
 
 import javax.ws.rs.GET;

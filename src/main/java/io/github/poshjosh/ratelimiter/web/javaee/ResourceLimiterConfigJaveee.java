@@ -1,10 +1,10 @@
 package io.github.poshjosh.ratelimiter.web.javaee;
 
-import io.github.poshjosh.ratelimiter.util.Matcher;
-import io.github.poshjosh.ratelimiter.web.core.RequestMatcherFactory;
+import io.github.poshjosh.ratelimiter.matcher.Expression;
+import io.github.poshjosh.ratelimiter.web.core.RequestInfo;
+import io.github.poshjosh.ratelimiter.web.core.RequestToIdConverter;
 import io.github.poshjosh.ratelimiter.web.core.ResourceLimiterConfig;
-import io.github.poshjosh.ratelimiter.web.core.util.MatchConfig;
-import io.github.poshjosh.ratelimiter.web.core.util.MatchType;
+import io.github.poshjosh.ratelimiter.web.core.WebExpressionMatcher;
 import io.github.poshjosh.ratelimiter.web.javaee.uri.PathPatternsProviderJavaee;
 
 import javax.ws.rs.container.ContainerRequestContext;
@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 public abstract class ResourceLimiterConfigJaveee
         extends ResourceLimiterConfig<ContainerRequestContext>{
 
-    private static class RequestInfoJavaee implements RequestMatcherFactory.RequestInfo {
+    private static class RequestInfoJavaee implements RequestInfo {
         private final ContainerRequestContext request;
         private RequestInfoJavaee(ContainerRequestContext request) {
             this.request = Objects.requireNonNull(request);
@@ -85,29 +85,32 @@ public abstract class ResourceLimiterConfigJaveee
         }
     }
 
-    private static class RequestMatcherFactoryJavaee
-            implements RequestMatcherFactory<ContainerRequestContext> {
-        private RequestMatcherFactoryJavaee() { }
-        @Override public RequestInfo info(ContainerRequestContext request) {
-            return new RequestInfoJavaee(request);
-        }
+    private static class RequestToIdConverterJavaee
+            implements RequestToIdConverter<ContainerRequestContext, String> {
         @Override public String toId(ContainerRequestContext request) {
             return RequestInfoJavaee.requestUri(request);
         }
-        @Override
-        public Matcher<ContainerRequestContext, ?> of(
-                MatchConfig matchConfig, Matcher<ContainerRequestContext, ?> resultIfNone) {
-            if (MatchType.REMOTE_ADDRESS.equals(matchConfig.getMatchType())) {
-                throw RequestInfoJavaee.notYetImplemented();
+    }
+
+    private static class WebExpressionMatcherJavaee
+            extends WebExpressionMatcher<ContainerRequestContext> {
+        private WebExpressionMatcherJavaee() { }
+        @Override protected RequestInfo info(ContainerRequestContext request) {
+            return new RequestInfoJavaee(request);
+        }
+        @Override public boolean isSupported(Expression<String> expression) {
+            if (REMOTE_ADDRESS.equals(expression.getLeft())){ // Not yet implemented
+                return false;
             }
-            return RequestMatcherFactory.super.of(matchConfig, resultIfNone);
+            return super.isSupported(expression);
         }
     }
 
     public static Builder<ContainerRequestContext> builder() {
         return ResourceLimiterConfig.<ContainerRequestContext>builder()
             .pathPatternsProvider(new PathPatternsProviderJavaee())
-            .requestMatcherFactory(new RequestMatcherFactoryJavaee());
+            .requestToIdConverter(new RequestToIdConverterJavaee())
+            .expressionMatcher(new WebExpressionMatcherJavaee());
 
     }
 }
