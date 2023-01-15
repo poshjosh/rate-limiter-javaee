@@ -33,7 +33,10 @@ public class NamedLimitTest {
     public void setupRateLimiting() {
         RateLimitProperties props = new RateLimitProperties() {
             @Override public List<String> getResourcePackages() {
-                return Collections.singletonList(NamedLimitTest.class.getPackage().getName());
+                return Collections.emptyList();
+            }
+            @Override public List<Class<?>> getResourceClasses() {
+                return Collections.singletonList(NamedLimitTest.Resource.class);
             }
             @Override public Map<String, Rates> getRateLimitConfigs() {
                 return Collections.emptyMap();

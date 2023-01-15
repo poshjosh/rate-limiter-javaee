@@ -8,30 +8,28 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import java.util.Collections;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 
 import static io.github.poshjosh.ratelimiter.web.javaee.Assertions.assertFalse;
 import static io.github.poshjosh.ratelimiter.web.javaee.Assertions.assertTrue;
 
 public class DisabledRateLimitingTest extends AbstractResourceTest {
 
-    @Path(Resource._ROOT)
-    @Rate(permits = 1, timeUnit = TimeUnit.SECONDS)
+    @Path(Resource._BASE)
+    @Rate(permits = 1)
     public static class Resource { // Has to be public for tests to succeed
 
-        private static final String _ROOT = "/disabled-rate-limiting-test";
-        private static final String _HOME = _ROOT + "/home";
+        private static final String _BASE = "/disabled-rate-limiting-test";
+        private static final String _HOME = "/home";
+        private static final String _BASE_HOME = _BASE + _HOME;
 
         interface Endpoints {
-            String HOME = ApiEndpoints.API + _HOME;
+            String HOME = ApiEndpoints.API + _BASE_HOME;
         }
 
         @GET
-        @Path("/home")
+        @Path(_HOME)
         @Produces("text/plain")
-        public String home() {
-            return _HOME;
-        }
+        public String home() { return _BASE_HOME; }
     }
 
     private Boolean originallyDisabled;
@@ -42,23 +40,24 @@ public class DisabledRateLimitingTest extends AbstractResourceTest {
     }
 
     @Override
-    void init() {
-        super.init();
-        originallyDisabled = getDynamicFeature().getProperties().getDisabled();
+    protected TestRateLimitProperties createProperties() {
+        TestRateLimitProperties properties = super.createProperties();
+        originallyDisabled = properties.getDisabled();
         assertFalse(originallyDisabled);
-        getDynamicFeature().getProperties().setDisabled(Boolean.TRUE);
+        properties.setDisabled(Boolean.TRUE);
+        return properties;
     }
 
     @Test
     public void shouldSucceedWhenDisabled() {
         assertFalse(originallyDisabled);
-        assertTrue(getDynamicFeature().getProperties().getDisabled());
+        assertTrue(getProperties().getDisabled());
         try {
             final String endpoint = Resource.Endpoints.HOME;
             shouldReturnDefaultResult(endpoint); // 1 of 1
             shouldReturnDefaultResult(endpoint); // 2 of 1 - Should succeed if rate limiting is disabled
         }finally{
-            getDynamicFeature().getProperties().setDisabled(originallyDisabled);
+            getProperties().setDisabled(originallyDisabled);
         }
     }
 }

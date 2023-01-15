@@ -54,7 +54,7 @@ public class ResourceWithMethodLimitsTest extends AbstractResourceTest {
         @GET
         @Path(LIMIT_1)
         @Produces("text/plain")
-        @Rate(permits = 1, duration = 3, timeUnit = TimeUnit.SECONDS)
+        @Rate(permits = 1, duration = 3)
         public String limit_1() {
             log.debug("limit_1");
             return Endpoints.METHOD_LIMIT_1;
@@ -63,8 +63,8 @@ public class ResourceWithMethodLimitsTest extends AbstractResourceTest {
         @GET
         @Path(LIMIT_1_OR_5)
         @Produces("text/plain")
-        @Rate(permits = 1, duration = 3, timeUnit = TimeUnit.SECONDS)
-        @Rate(permits = LIMIT_5, duration = 3, timeUnit = TimeUnit.SECONDS)
+        @Rate(permits = 1, duration = 3)
+        @Rate(permits = LIMIT_5, duration = 3)
         public String limit_1_or_5() {
             log.debug("limit_1_or_5");
             return Endpoints.METHOD_LIMIT_1_OR_5;
@@ -73,9 +73,9 @@ public class ResourceWithMethodLimitsTest extends AbstractResourceTest {
         @GET
         @Path(LIMIT_1_AND_5)
         @Produces("text/plain")
-        @RateGroup(operator = Operator.AND)
-        @Rate(permits = 1, duration = 3, timeUnit = TimeUnit.SECONDS)
-        @Rate(permits = LIMIT_5, duration = 3, timeUnit = TimeUnit.SECONDS)
+        @RateGroup(name = "test-group", operator = Operator.AND)
+        @Rate(permits = 1, duration = 3)
+        @Rate(permits = LIMIT_5, duration = 3)
         public String limit_1_and_5() {
             log.debug("limit_1_and_5");
             return Endpoints.METHOD_LIMIT_1_AND_5;
@@ -139,7 +139,6 @@ public class ResourceWithMethodLimitsTest extends AbstractResourceTest {
 
     @Test
     public void andLimitGroupShouldFailWhenAllLimitsAreExceeded() throws Exception {
-
         final String endpoint = Resource.Endpoints.METHOD_LIMIT_1_AND_5;
         shouldFailWhenMaxLimitIsExceeded(endpoint, LIMIT_5);
     }

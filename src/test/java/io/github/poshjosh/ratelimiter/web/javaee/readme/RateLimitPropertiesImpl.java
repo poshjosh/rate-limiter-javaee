@@ -12,6 +12,11 @@ import java.util.Map;
 
 public class RateLimitPropertiesImpl implements RateLimitProperties {
 
+    @Override
+    public List<Class<?>> getResourceClasses() {
+        return Collections.emptyList();
+    }
+
     // If not using annotations, return an empty list
     @Override
     public List<String> getResourcePackages() {

@@ -17,12 +17,9 @@ public class TestResourceLimitingDynamicFeature extends ResourceLimitingDynamicF
 
     private static final Logger log = LoggerFactory.getLogger(TestResourceLimitingDynamicFeature.class);
 
-    private final RateLimitProperties properties;
-
     @javax.inject.Inject
     public TestResourceLimitingDynamicFeature(RateLimitProperties properties) {
         super(properties);
-        this.properties = properties;
     }
 
     @Override
@@ -51,9 +48,5 @@ public class TestResourceLimitingDynamicFeature extends ResourceLimitingDynamicF
         //log.warn("onLimitsExceeded, too many requests for: {}", requestContext.getUriInfo());
 
         //requestContext.abortWith(Response.status(Response.Status.TOO_MANY_REQUESTS).build());
-    }
-
-    public TestRateLimitProperties getProperties() {
-        return (TestRateLimitProperties) properties;
     }
 }

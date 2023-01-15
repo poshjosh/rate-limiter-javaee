@@ -1,6 +1,7 @@
 package io.github.poshjosh.ratelimiter.web.javaee.weblayertests;
 
 import io.github.poshjosh.ratelimiter.BandwidthFactory;
+import io.github.poshjosh.ratelimiter.web.core.util.RateLimitProperties;
 import io.github.poshjosh.ratelimiter.web.javaee.Assertions;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.test.JerseyTest;
@@ -12,6 +13,8 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.Response;
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Set;
 
 public abstract class AbstractResourceTest extends JerseyTest {
@@ -29,6 +32,8 @@ public abstract class AbstractResourceTest extends JerseyTest {
 
     protected abstract Set<Class<?>> getResourceOrProviderClasses();
 
+    private TestRateLimitProperties properties;
+
     private TestResourceLimitingDynamicFeature testRateLimiterDynamicFeature;
 
 // Initializing this in the constructor did not work
@@ -39,12 +44,24 @@ public abstract class AbstractResourceTest extends JerseyTest {
     @Override
     protected Application configure() {
         this.init();
-        return ResourceConfig.forApplicationClass(TestApplication.class, getResourceOrProviderClasses())
+        return ResourceConfig
+                .forApplicationClass(TestApplication.class, getResourceOrProviderClasses())
                 .register(this.testRateLimiterDynamicFeature);
     }
 
     void init() {
-        this.testRateLimiterDynamicFeature = new TestResourceLimitingDynamicFeature(new TestRateLimitProperties());
+        this.properties = createProperties();
+        this.properties.setResourcePackages(Collections.emptyList());
+        this.properties.setResourceClasses(new ArrayList<>(getResourceOrProviderClasses()));
+        this.testRateLimiterDynamicFeature = new TestResourceLimitingDynamicFeature(properties);
+    }
+
+    protected TestRateLimitProperties createProperties() {
+        return new TestRateLimitProperties();
+    }
+
+    protected TestRateLimitProperties getProperties() {
+        return properties;
     }
 
     public TestResourceLimitingDynamicFeature getDynamicFeature() {

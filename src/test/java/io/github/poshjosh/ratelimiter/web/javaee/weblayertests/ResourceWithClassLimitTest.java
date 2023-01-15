@@ -8,25 +8,26 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import java.util.Collections;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 
 public class ResourceWithClassLimitTest extends AbstractResourceTest {
 
-    @Path(Resource.ROOT)
-    @Rate(permits = 1, timeUnit = TimeUnit.SECONDS)
+    @Path(Resource._BASE)
+    @Rate(permits = 1)
     public static class Resource { // Has to be public for tests to succeed
 
-        private static final String ROOT = "/resource-with-class-limit-test";
+        private static final String _BASE = "/resource-with-class-limit-test";
+        private static final String _HOME = "/home";
+        private static final String _BASE_HOME = _BASE + _HOME;
 
         interface Endpoints{
-            String HOME = ROOT + "/home";
+            String HOME = ApiEndpoints.API + _BASE_HOME;
         }
 
         @GET
-        @Path("/home")
+        @Path(_HOME)
         @Produces("text/plain")
         public String home() {
-            return Endpoints.HOME;
+            return _BASE_HOME;
         }
     }
 

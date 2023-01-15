@@ -47,7 +47,8 @@ public abstract class ResourceLimitingDynamicFeature implements DynamicFeature,
             }
         };
 
-        LOG.info("Completed automatic setup of rate limiting");
+        LOG.info(resourceLimiterRegistry.isRateLimitingEnabled()
+                ? "Completed setup of automatic rate limiting" : "Rate limiting is disabled");
     }
 
     /**
@@ -109,20 +110,18 @@ public abstract class ResourceLimitingDynamicFeature implements DynamicFeature,
             // final int priority = Integer.MIN_VALUE; // Set rate limiting to highest possible priority
             // final int priority = Priorities.AUTHENTICATION - 1; // Set rate limiting just before authentication
             final int priority = -1; // We can easily see a situation where there are multiple zero priority components
+            LOG.debug("Registering request rate limiting filter for: {}", resourceInfo);
             featureContext.register(containerRequestFilter, priority);
         }
     }
 
     public boolean isRateLimited(ResourceInfo resourceInfo) {
-        Class<?> clazz = resourceInfo.getResourceClass();
-        if (clazz != null && resourceLimiterRegistry.isRateLimited(clazz)) {
-            return true;
+        final Method method = resourceInfo.getResourceMethod();
+        if (method == null) {
+            final Class<?> clazz = resourceInfo.getResourceClass();
+            return clazz != null && resourceLimiterRegistry.isRateLimited(clazz);
         }
-        Method method = resourceInfo.getResourceMethod();
-        if (method != null && resourceLimiterRegistry.isRateLimited(method)) {
-            return true;
-        }
-        return false;
+        return resourceLimiterRegistry.isRateLimited(method);
     }
 
     public ResourceLimiterRegistry<ContainerRequestContext> getResourceLimiterRegistry() {
