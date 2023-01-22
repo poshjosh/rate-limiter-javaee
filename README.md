@@ -19,10 +19,9 @@ class GreetingResource {
     return ":)";
   }
 
-  // We can collectively configure RateLimiters by adding them to a group  
-  @RateGroup("limitBySession")
-  // Only 99 calls to this path is allowed per minute
-  @Rate(permits = 99, timeUnit = TimeUnit.MINUTES)
+  // Only 10 calls per minute to this path, when system available memory < 1GB 
+  @Rate(permits = 10, timeUnit = TimeUnit.MINUTES)
+  @RateCondition("sys.memory.available<1gb")
   @GetMapping("/greet")
   String greet(String name) {
     return "Hello " + name;

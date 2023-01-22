@@ -2,7 +2,7 @@ package io.github.poshjosh.ratelimiter.web.javaee.weblayertests;
 
 import io.github.poshjosh.ratelimiter.annotations.Rate;
 import io.github.poshjosh.ratelimiter.annotations.RateGroup;
-import io.github.poshjosh.ratelimiter.util.Operator;
+import io.github.poshjosh.ratelimiter.Operator;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,12 +10,23 @@ import org.slf4j.LoggerFactory;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import java.util.Collections;
 import java.util.Set;
 
 public class ResourceWithMethodLimitsTest extends AbstractResourceTest {
 
     private static final int LIMIT_5 = 5;
+
+    @Rate(permits = 1, duration = 3)
+    @Rate(permits = LIMIT_5, duration = 3)
+    @RateGroup(name = "test-group", operator = Operator.AND)
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target({ ElementType.TYPE, ElementType.ANNOTATION_TYPE, ElementType.METHOD})
+    private @interface MyRateGroup{ }
 
     @Path(Resource.InternalEndpoints.ROOT)
     public static class Resource { // Has to be public for tests to succeed
@@ -72,9 +83,7 @@ public class ResourceWithMethodLimitsTest extends AbstractResourceTest {
         @GET
         @Path(LIMIT_1_AND_5)
         @Produces("text/plain")
-        @RateGroup(name = "test-group", operator = Operator.AND)
-        @Rate(permits = 1, duration = 3)
-        @Rate(permits = LIMIT_5, duration = 3)
+        @MyRateGroup
         public String limit_1_and_5() {
             log.debug("limit_1_and_5");
             return Endpoints.METHOD_LIMIT_1_AND_5;

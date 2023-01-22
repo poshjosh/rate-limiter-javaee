@@ -7,6 +7,10 @@ import org.junit.Test;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import java.util.*;
 
 public class RateGroupTest extends AbstractResourceTest{
@@ -16,9 +20,14 @@ public class RateGroupTest extends AbstractResourceTest{
         return new HashSet<>(Arrays.asList(Resource1.class, Resource2.class));
     }
 
-    @Path(Resource1._BASE)
     @Rate(1)
     @RateGroup("test-rate-limit-group")
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target({ ElementType.TYPE, ElementType.ANNOTATION_TYPE, ElementType.METHOD})
+    private @interface MyRateGroup{ }
+
+    @Path(Resource1._BASE)
+    @MyRateGroup
     public static class Resource1 { // Has to be public for tests to succeed
 
         private static final String _BASE = "/rate-group-test/resource1";
@@ -51,7 +60,7 @@ public class RateGroupTest extends AbstractResourceTest{
         @GET
         @Path(_HOME)
         @Produces("text/plain")
-        @RateGroup("test-rate-limit-group")
+        @MyRateGroup
         public String home() {
             return Resource2._BASE_HOME;
         }
