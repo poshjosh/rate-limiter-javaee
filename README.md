@@ -12,16 +12,14 @@ We believe that rate limiting should be as simple as:
 class GreetingResource {
 
   // 2 calls per second for users in role GUEST
-  @Rate(2)
-  @RateCondition("web.session.user.role=GUEST")
+  @Rate(permits=2, when="web.session.user.role=GUEST")
   @GetMapping("/smile")
   String smile() {
     return ":)";
   }
 
   // Only 10 calls per minute to this path, when system available memory < 1GB 
-  @Rate(permits = 10, timeUnit = TimeUnit.MINUTES)
-  @RateCondition("sys.memory.available<1gb")
+  @Rate(permits=10, timeUnit=TimeUnit.MINUTES, when="sys.memory.available<1gb")
   @GetMapping("/greet")
   String greet(String name) {
     return "Hello " + name;

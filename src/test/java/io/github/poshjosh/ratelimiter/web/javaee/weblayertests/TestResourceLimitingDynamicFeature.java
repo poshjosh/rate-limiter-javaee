@@ -28,7 +28,7 @@ public class TestResourceLimitingDynamicFeature extends ResourceLimitingDynamicF
         // Option A - here we don't have access to the container request context
         // See Option B below
         //
-        registries.listeners().register(new UsageListener() {
+        registries.registerListener(new UsageListener() {
             @Override
             public void onRejected(Object resource, int hits, Object limit) {
 
