@@ -35,7 +35,7 @@ To add a dependency on `rate-limiter-javaee` using Maven, use the following:
         <dependency>
             <groupId>io.github.poshjosh</groupId>
             <artifactId>rate-limiter-javaee</artifactId>
-            <version>0.3.1</version> 
+            <version>0.3.2</version> 
         </dependency>
 ```
 
