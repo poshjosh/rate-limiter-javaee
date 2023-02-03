@@ -18,7 +18,9 @@ class PathPatternsImpl implements PathPatterns<String> {
         this.patterns = Arrays.asList(patterns);
         this.patternMatchers = this.patterns.stream()
                 .map(pathPatternParser).toArray(PatternMatcher[]::new);
-        LOG.trace("Path patterns: {}", Arrays.toString(patterns));
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Path patterns: {}", Arrays.toString(patterns));
+        }
     }
 
     @Override
@@ -50,11 +52,12 @@ class PathPatternsImpl implements PathPatterns<String> {
         }
         for(PatternMatcher pathPattern : patternMatchers) {
             if(pathPattern.matches(uri)) {
-                LOG.trace("Matches start: true, uri: {}, pathPattern: {}", uri, pathPattern);
                 return true;
             }
         }
-        LOG.trace("Matches start: false, uri: {}", uri);
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Matches start: false, uri: {}", uri);
+        }
         return false;
     }
 

@@ -1,6 +1,6 @@
 package io.github.poshjosh.ratelimiter.web.javaee;
 
-import io.github.poshjosh.ratelimiter.matcher.Expression;
+import io.github.poshjosh.ratelimiter.expression.Expression;
 import io.github.poshjosh.ratelimiter.web.core.RequestInfo;
 import io.github.poshjosh.ratelimiter.web.core.RequestToIdConverter;
 import io.github.poshjosh.ratelimiter.web.core.ResourceLimiterConfig;
@@ -13,8 +13,7 @@ import java.security.Principal;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public abstract class ResourceLimiterConfigJaveee
-        extends ResourceLimiterConfig<ContainerRequestContext>{
+public final class ResourceLimiterConfigJaveee{
 
     private static class RequestInfoJavaee implements RequestInfo {
         private final ContainerRequestContext request;
@@ -106,8 +105,10 @@ public abstract class ResourceLimiterConfigJaveee
         }
     }
 
-    public static Builder<ContainerRequestContext> builder() {
-        return ResourceLimiterConfig.<ContainerRequestContext>builder()
+    private ResourceLimiterConfigJaveee() { }
+
+    public static ResourceLimiterConfig.Builder<ContainerRequestContext> builder() {
+        return ResourceLimiterConfig.builder(ContainerRequestContext.class)
             .pathPatternsProvider(new PathPatternsProviderJavaee())
             .requestToIdConverter(new RequestToIdConverterJavaee())
             .expressionMatcher(new WebExpressionMatcherJavaee());

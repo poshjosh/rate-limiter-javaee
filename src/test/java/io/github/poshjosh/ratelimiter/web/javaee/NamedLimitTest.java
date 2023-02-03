@@ -47,11 +47,12 @@ public class NamedLimitTest {
                 .properties(props)
                 .build();
         registries = ResourceLimiterRegistryJavaee.of(config);
+        registries.createResourceLimiter();
     }
 
     @Test
     public void shouldHaveAMatcherRegisteredForCustomName() {
-        assertNotNull(registries.matchers().getOrDefault(NAME, null));
+        assertTrue(registries.hasMatching(NAME));
     }
 
     @Test

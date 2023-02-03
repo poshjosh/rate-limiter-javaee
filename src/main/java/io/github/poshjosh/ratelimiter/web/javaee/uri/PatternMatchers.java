@@ -1,6 +1,7 @@
 package io.github.poshjosh.ratelimiter.web.javaee.uri;
 
 import org.glassfish.jersey.uri.PathPattern;
+import org.glassfish.jersey.uri.PatternWithGroups;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -67,8 +68,8 @@ final class PatternMatchers {
     private static final class ZeroOrMorePathSegmentsMatcher implements PatternMatcher {
         private final String rawPattern;
         private final boolean hasLeadingSlash;
-        private final PathPattern pathPattern;
-        private ZeroOrMorePathSegmentsMatcher(String rawPattern, PathPattern pathPattern) {
+        private final PatternWithGroups pathPattern;
+        private ZeroOrMorePathSegmentsMatcher(String rawPattern, PatternWithGroups pathPattern) {
             this.rawPattern = Objects.requireNonNull(rawPattern);
             this.hasLeadingSlash = rawPattern.startsWith("/");
             this.pathPattern = Objects.requireNonNull(pathPattern);

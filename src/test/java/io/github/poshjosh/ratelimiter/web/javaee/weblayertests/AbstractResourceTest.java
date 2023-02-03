@@ -125,5 +125,6 @@ public abstract class AbstractResourceTest extends JerseyTest {
         log.debug("Response headers: {}", response.getHeaders());
         final URI responseLocation = response.getLocation();
         log.debug("Response location: {}", responseLocation);
+        log.debug("Response entity: {}", response.getEntity());
     }
 }

@@ -63,10 +63,10 @@ public class PropertiesBoundLimitTest extends AbstractResourceTest{
 
     @Test
     public void shouldHaveAMatcher() {
-        Object matcher = getDynamicFeature()
+        boolean hasMatching = getDynamicFeature()
                 .getResourceLimiterRegistry()
-                .matchers().getOrDefault(Resource.getMethodLimitedViaProperties(), null);
-        Assertions.assertTrue(matcher != null);
+                .hasMatching(Resource.getMethodLimitedViaProperties());
+        Assertions.assertTrue(hasMatching);
     }
 
     @Test
