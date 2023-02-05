@@ -13,24 +13,24 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-public class RateConditionSessionTest extends AbstractResourceTest {
+public class RateConditionRequestTest extends AbstractResourceTest {
 
-    private static final String ROOT = "/rate-condition-session-test";
+    private static final String ROOT = "/rate-condition-request-test";
 
     @Path(ROOT)
     @Produces("text/plain")
     public static class Resource { // Has to be public for tests to succeed
 
         interface Endpoints{
-            String SESSION_ID_EXISTS = ROOT + "/session-id-exists";
+            String REQUEST_URI_EXISTS = ROOT + "/request-uri-exists";
         }
 
         @GET
-        @Path("/session-id-exists")
+        @Path("/request-uri-exists")
         @Rate(1)
-        @RateCondition(WebExpressionKey.SESSION_ID+"!=0") // TODO - Change this to:  !=null
-        public String sessionIdExists() {
-            return Endpoints.SESSION_ID_EXISTS;
+        @RateCondition(WebExpressionKey.REQUEST_URI+"!=")
+        public String requestUriExists() {
+            return Endpoints.REQUEST_URI_EXISTS;
         }
     }
 
@@ -40,8 +40,8 @@ public class RateConditionSessionTest extends AbstractResourceTest {
     }
 
     @Test
-    public void shouldNotBeRateLimitedWhenHeaderNoMatch() {
-        final String endpoint = Resource.Endpoints.SESSION_ID_EXISTS;
+    public void shouldBeRateLimitedWhenRequestUriExists() {
+        final String endpoint = Resource.Endpoints.REQUEST_URI_EXISTS;
         shouldReturnDefaultResult(endpoint);
         shouldReturnStatusOfTooManyRequests(endpoint);
     }

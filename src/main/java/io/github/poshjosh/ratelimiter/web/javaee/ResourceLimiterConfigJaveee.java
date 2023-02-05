@@ -98,7 +98,7 @@ public final class ResourceLimiterConfigJaveee{
             return new RequestInfoJavaee(request);
         }
         @Override public boolean isSupported(Expression<String> expression) {
-            if (REMOTE_ADDRESS.equals(expression.getLeft())){ // Not yet implemented
+            if (REMOTE_ADDRESS.equals(expression.requireLeft())){ // Not yet implemented
                 return false;
             }
             return super.isSupported(expression);
