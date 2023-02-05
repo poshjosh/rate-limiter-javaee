@@ -1,6 +1,6 @@
 package io.github.poshjosh.ratelimiter.web.javaee.uri;
 
-import io.github.poshjosh.ratelimiter.annotation.Element;
+import io.github.poshjosh.ratelimiter.annotation.RateSource;
 import io.github.poshjosh.ratelimiter.web.core.util.PathPatterns;
 import io.github.poshjosh.ratelimiter.web.core.util.PathPatternsProvider;
 
@@ -10,14 +10,14 @@ import java.util.Optional;
 public class PathPatternsProviderJavaee implements PathPatternsProvider {
 
     @Override
-    public PathPatterns<String> get(Element source) {
+    public PathPatterns<String> get(RateSource source) {
         if (source.isOwnDeclarer()) {
             return getClassPatterns(source).orElse(PathPatterns.none());
         }
         return getMethodPatterns(source);
     }
 
-    private Optional<PathPatterns<String>> getClassPatterns(Element source) {
+    private Optional<PathPatterns<String>> getClassPatterns(RateSource source) {
 
         final Path pathAnnotation = source.getAnnotation(Path.class).orElse(null);
 
@@ -35,10 +35,10 @@ public class PathPatternsProviderJavaee implements PathPatternsProvider {
         return Optional.of(new ClassLevelPathPatterns(path));
     }
 
-    private PathPatterns<String> getMethodPatterns(Element method) {
+    private PathPatterns<String> getMethodPatterns(RateSource method) {
 
-        final PathPatterns<String> classLevelPathPatterns =
-                getClassPatterns(method.getDeclarer()).orElse(PathPatterns.none());
+        final PathPatterns<String> classLevelPathPatterns = method.getDeclarer()
+                .flatMap(this::getClassPatterns).orElse(PathPatterns.none());
 
         return method.getAnnotation(Path.class)
                 .map(annotation -> composePathPatterns(classLevelPathPatterns, annotation.value()))
