@@ -47,11 +47,10 @@ This way a rate limiter will be created an automatically applied based on rate l
 
 ```java
 @javax.ws.rs.ext.Provider
-public class MyResourceLimiterDynamicFeature
-        extends ResourceLimitingDynamicFeature {
+public class DynamicFeatureImpl extends ResourceLimitingDynamicFeature {
 
     @javax.inject.Inject 
-    public MyResourceLimiterDynamicFeature(RateLimitProperties properties) {
+    public DynamicFeatureImpl(RateLimitProperties properties) {
         super(properties);
     }
 }
@@ -84,12 +83,14 @@ __3. (Optional) Implement RateLimitProperties__
 public class RateLimitPropertiesImpl implements RateLimitProperties {
 
     // If not using annotations, return an empty list
-    @Override public List<String> getResourcePackages() {
+    @Override 
+    public List<String> getResourcePackages() {
         return Collections.singletonList("com.myapplicatioon.web.rest");
     }
 
     // If not using properties, return an empty map
-    @Override public Map<String, Rates> getRateLimitConfigs() {
+    @Override 
+    public Map<String, Rates> getRateLimitConfigs() {
         // Accept only 2 tasks per second
         return Collections.singletonMap("task_queue", Rates.of(Rate.ofSeconds(2)));
     }
