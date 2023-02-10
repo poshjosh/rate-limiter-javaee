@@ -1,20 +1,43 @@
 package io.github.poshjosh.ratelimiter.web.javaee.uri;
 
 import io.github.poshjosh.ratelimiter.annotation.RateSource;
+import io.github.poshjosh.ratelimiter.util.StringUtils;
 import io.github.poshjosh.ratelimiter.web.core.util.PathPatterns;
-import io.github.poshjosh.ratelimiter.web.core.util.PathPatternsProvider;
+import io.github.poshjosh.ratelimiter.web.core.util.ResourceInfoProvider;
 
-import javax.ws.rs.Path;
-import java.util.Optional;
+import javax.ws.rs.*;
+import java.lang.annotation.Annotation;
+import java.util.*;
 
-public class PathPatternsProviderJavaee implements PathPatternsProvider {
+public class ResourceInfoProviderJavaee implements ResourceInfoProvider {
+
+    private static final Class<? extends Annotation> [] httpMethodClasses =
+            new Class[]{GET.class, POST.class, PUT.class, DELETE.class,
+                    PATCH.class, HEAD.class, OPTIONS.class};
 
     @Override
-    public PathPatterns<String> get(RateSource source) {
+    public ResourceInfoProvider.ResourceInfo get(RateSource source) {
+        return ResourceInfo.of(getPathPatterns(source), getMethods(source));
+    }
+
+    private PathPatterns<String> getPathPatterns(RateSource source) {
         if (source.isOwnDeclarer()) {
             return getClassPatterns(source).orElse(PathPatterns.none());
         }
         return getMethodPatterns(source);
+    }
+
+    private String [] getMethods(RateSource rateSource) {
+        List<String> httpMethods = new ArrayList<>();
+        for(Class<? extends Annotation> httpMethodClass : httpMethodClasses) {
+            rateSource.getAnnotation(httpMethodClass)
+                    .ifPresent(httpMethod -> {
+                        // This returned class com.sun.proxy.$Proxy6
+                        //httpMethods.add(httpMethod.getClass().getName());
+                        httpMethods.add(httpMethodClass.getSimpleName());
+                    });
+        }
+        return httpMethods.toArray(new String[0]);
     }
 
     private Optional<PathPatterns<String>> getClassPatterns(RateSource source) {
@@ -27,7 +50,7 @@ public class PathPatternsProviderJavaee implements PathPatternsProvider {
 
         final String path = pathAnnotation.value();
 
-        if(path.isEmpty()) {
+        if(!StringUtils.hasText(path)) {
 
             return Optional.of(PathPatterns.none());
         }
@@ -46,7 +69,7 @@ public class PathPatternsProviderJavaee implements PathPatternsProvider {
     }
 
     private PathPatterns<String> composePathPatterns(PathPatterns<String> pathPatterns, String subPathPattern) {
-        if(subPathPattern == null || subPathPattern.isEmpty()) {
+        if(!StringUtils.hasText(subPathPattern)) {
             return pathPatterns;
         }
         return pathPatterns.combine(new MethodLevelPathPatterns(subPathPattern));

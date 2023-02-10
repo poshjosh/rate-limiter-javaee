@@ -30,9 +30,8 @@ public class PropertiesBoundLimitTest extends AbstractResourceTest{
         @GET
         @Path(_HOME)
         @Produces("text/plain")
-        public String home() {
-            return Resource._BASE_HOME;
-        }
+        public String home() { return Resource._BASE_HOME; }
+
         private static String getMethodLimitedViaProperties() {
             try {
                 return ElementId.of(Resource.class.getMethod("home"));
@@ -63,8 +62,7 @@ public class PropertiesBoundLimitTest extends AbstractResourceTest{
 
     @Test
     public void shouldHaveAMatcher() {
-        boolean hasMatching = getDynamicFeature()
-                .getResourceLimiterRegistry()
+        boolean hasMatching = getResourceLimiterRegistry()
                 .hasMatching(Resource.getMethodLimitedViaProperties());
         Assertions.assertTrue(hasMatching);
     }

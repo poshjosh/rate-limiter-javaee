@@ -9,8 +9,6 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.client.Invocation;
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.Response;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
@@ -149,10 +147,7 @@ public class RateConditionHeaderTest extends AbstractResourceTest {
     }
 
     @Override
-    protected Response doRequest(String endpoint) {
-        final WebTarget webTarget = target(endpoint);
-        Invocation.Builder invocationBuilder = webTarget.request("text/plain");
-        invocationBuilder = invocationBuilder.header(headerName, headerValue);
-        return invocationBuilder.get();
+    protected Invocation.Builder buildRequest(String endpoint) {
+        return super.buildRequest(endpoint).header(headerName, headerValue);
     }
 }

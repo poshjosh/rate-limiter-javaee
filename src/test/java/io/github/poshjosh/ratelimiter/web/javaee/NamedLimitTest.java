@@ -9,7 +9,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import javax.ws.rs.Path;
-import javax.ws.rs.container.ContainerRequestContext;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -42,7 +41,7 @@ public class NamedLimitTest {
                 return Collections.emptyMap();
             }
         };
-        ResourceLimiterConfig<ContainerRequestContext> config =
+        ResourceLimiterConfig config =
                 ResourceLimiterConfigJaveee.builder()
                 .properties(props)
                 .build();

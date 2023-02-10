@@ -1,21 +1,28 @@
 package io.github.poshjosh.ratelimiter.web.javaee.weblayertests;
 
 import io.github.poshjosh.ratelimiter.BandwidthFactory;
-import io.github.poshjosh.ratelimiter.web.core.util.RateLimitProperties;
+import io.github.poshjosh.ratelimiter.web.core.ResourceLimiterRegistry;
 import io.github.poshjosh.ratelimiter.web.javaee.Assertions;
 import org.glassfish.jersey.server.ResourceConfig;
+import org.glassfish.jersey.servlet.ServletContainer;
+import org.glassfish.jersey.test.DeploymentContext;
 import org.glassfish.jersey.test.JerseyTest;
+import org.glassfish.jersey.test.ServletDeploymentContext;
+import org.glassfish.jersey.test.grizzly.GrizzlyWebTestContainerFactory;
+import org.glassfish.jersey.test.spi.TestContainerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.inject.Inject;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.client.Invocation;
 import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.Application;
+import javax.ws.rs.core.NewCookie;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.ext.ExceptionMapper;
+import javax.ws.rs.ext.Provider;
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Set;
+import java.util.*;
 
 public abstract class AbstractResourceTest extends JerseyTest {
 
@@ -26,34 +33,55 @@ public abstract class AbstractResourceTest extends JerseyTest {
         System.setProperty("bandwidth-factory-class", bandwidthFactoryClass);
     }
 
-    private final boolean debugResponse = false;
+    private static final Logger LOG = LoggerFactory.getLogger(AbstractResourceTest.class);
 
-    private final Logger log = LoggerFactory.getLogger(AbstractResourceTest.class);
+    private static TestRateLimitProperties testRateLimitProperties;
+    private static ResourceLimiterRegistry resourceLimiterRegistry;
+
+    @Provider
+    public static class TestDynamicFeature extends TestResourceLimitingDynamicFeature{
+        @Inject
+        public TestDynamicFeature() {
+            super(Objects.requireNonNull(testRateLimitProperties));
+            resourceLimiterRegistry = getResourceLimiterRegistry();
+        }
+    }
+
+    private final boolean debugResponse = false;
 
     protected abstract Set<Class<?>> getResourceOrProviderClasses();
 
-    private TestRateLimitProperties properties;
-
-    private TestResourceLimitingDynamicFeature testRateLimiterDynamicFeature;
-
-// Initializing this in the constructor did not work
-//    public AbstractResourceTest() {
-//        this.testRateLimiterDynamicFeature = new TestResourceLimitingDynamicFeature();
-//    }
-
     @Override
-    protected Application configure() {
-        this.init();
+    protected ResourceConfig configure() {
+        testRateLimitProperties = null;
+        TestRateLimitProperties properties = createProperties();
+        properties.setResourcePackages(Collections.emptyList());
+        properties.setResourceClasses(new ArrayList<>(getResourceOrProviderClasses()));
+        testRateLimitProperties = properties;
+        Set<Class<?>> classes = new HashSet<>(getResourceOrProviderClasses());
+        classes.add(TestDynamicFeature.class);
         return ResourceConfig
-                .forApplicationClass(TestApplication.class, getResourceOrProviderClasses())
-                .register(this.testRateLimiterDynamicFeature);
+                .forApplicationClass(TestApplication.class, classes)
+                .register(new ExceptionMapper<Throwable>() {
+                    @Override
+                    public Response toResponse(Throwable ex) {
+                        if (ex instanceof WebApplicationException) {
+                            return ((WebApplicationException)ex).getResponse();
+                        }
+                        ex.printStackTrace();
+                        return Response.serverError().entity(ex.getMessage()).build();
+                    }
+                });
     }
 
-    void init() {
-        this.properties = createProperties();
-        this.properties.setResourcePackages(Collections.emptyList());
-        this.properties.setResourceClasses(new ArrayList<>(getResourceOrProviderClasses()));
-        this.testRateLimiterDynamicFeature = new TestResourceLimitingDynamicFeature(properties);
+    @Override
+    public TestContainerFactory getTestContainerFactory() {
+        return new GrizzlyWebTestContainerFactory();
+    }
+
+    @Override
+    public DeploymentContext configureDeployment() {
+        return ServletDeploymentContext.forServlet(new ServletContainer(configure())).build();
     }
 
     protected TestRateLimitProperties createProperties() {
@@ -61,14 +89,14 @@ public abstract class AbstractResourceTest extends JerseyTest {
     }
 
     protected TestRateLimitProperties getProperties() {
-        return properties;
+        return testRateLimitProperties;
     }
 
-    public TestResourceLimitingDynamicFeature getDynamicFeature() {
-        return this.testRateLimiterDynamicFeature;
+    public ResourceLimiterRegistry getResourceLimiterRegistry() {
+        return resourceLimiterRegistry;
     }
 
-    void shouldFailWhenMaxLimitIsExceeded(String endpoint, int maxLimit) throws Exception {
+    void shouldFailWhenMaxLimitIsExceeded(String endpoint, int maxLimit) {
         for(int i=0; i<maxLimit + 1; i++) {
             if(i == maxLimit) {
                 shouldReturnStatusOfTooManyRequests(endpoint);
@@ -79,52 +107,71 @@ public abstract class AbstractResourceTest extends JerseyTest {
     }
 
     void shouldReturnDefaultResult(String endpoint) {
-        shouldReturnResult(endpoint, endpoint);
+        shouldReturnDefaultResult("GET", endpoint);
+    }
+
+    void shouldReturnDefaultResult(String method, String endpoint) {
+        shouldReturnResult(method, endpoint, endpoint);
     }
 
     void shouldReturnStatusOfTooManyRequests(String endpoint) {
-        shouldReturnStatus(endpoint, Response.Status.TOO_MANY_REQUESTS);
+        shouldReturnStatusOfTooManyRequests("GET", endpoint);
     }
 
-    void shouldReturnStatus(String endpoint, Response.Status expectedStatus) {
-        final Response response = request(endpoint);
+    void shouldReturnStatusOfTooManyRequests(String method, String endpoint) {
+        shouldReturnStatus(method, endpoint, Response.Status.TOO_MANY_REQUESTS);
+    }
+
+    void shouldReturnStatus(String method, String endpoint, Response.Status expectedStatus) {
+        final Response response = request(method, endpoint);
         final Response.StatusType statusType = response.getStatusInfo();
         Assertions.assertEqual(statusType.toEnum(), expectedStatus);
     }
 
-    void shouldReturnResult(String endpoint, Object expectedResult) {
-        final Response response = request(endpoint);
+    void shouldReturnResult(String method, String endpoint, Object expectedResult) {
+        final Response response = request(method, endpoint);
         final Response.StatusType statusType = response.getStatusInfo();
         Assertions.assertEqual(statusType.getFamily(), Response.Status.Family.SUCCESSFUL);
         final Object responseEntity = response.readEntity(expectedResult.getClass());
         Assertions.assertEqual(responseEntity, expectedResult);
     }
 
-    private Response request(String endpoint) {
-        final Response response = doRequest(endpoint);
+    private NewCookie sessionCookieFromLastResponse;
+
+    private Response request(String method, String endpoint) {
+        final Response response = sendRequest(method, endpoint);
+        sessionCookieFromLastResponse = response.getCookies().get("JSESSIONID");
         final Response.StatusType statusType = response.getStatusInfo();
-        log.info("Request: {}, code: {}, type: {}", endpoint,
+        LOG.info("Request: {}, code: {}, type: {}", endpoint,
                 statusType.getStatusCode(), statusType.getFamily());
         debug(response);
         return response;
     }
 
-    protected Response doRequest(String endpoint) {
+    public NewCookie getSessionCookieFromLastResponse() {
+        return sessionCookieFromLastResponse;
+    }
+
+    private Response sendRequest(String method, String endpoint) {
+        final Invocation.Builder invocationBuilder = buildRequest(endpoint);
+        return invocationBuilder.build(method).invoke();
+    }
+
+    protected Invocation.Builder buildRequest(String endpoint) {
         final WebTarget webTarget = target(endpoint);
-        final Invocation.Builder invocationBuilder = webTarget.request("text/plain");
-        return invocationBuilder.get();
+        return webTarget.request("text/plain");
     }
 
     private void debug(Response response) {
         if(!debugResponse) {
             return;
         }
-        log.debug("Response type: {}, response: {}", response.getClass(), response);
-        log.debug("Response status: {}", response.getStatusInfo());
-        log.debug("Response links: {}", response.getLinks());
-        log.debug("Response headers: {}", response.getHeaders());
-        final URI responseLocation = response.getLocation();
-        log.debug("Response location: {}", responseLocation);
-        log.debug("Response entity: {}", response.getEntity());
+        LOG.debug("Response type: {}, response: {}", response.getClass(), response);
+        LOG.debug("Response status: {}", response.getStatusInfo());
+        LOG.debug("Response cookies: {}", response.getCookies().get("JSESSIONID"));
+        LOG.debug("Response links: {}", response.getLinks());
+        LOG.debug("Response headers: {}", response.getHeaders());
+        LOG.debug("Response location: {}", response.getLocation());
+        LOG.debug("Response entity: {}", response.getEntity());
     }
 }

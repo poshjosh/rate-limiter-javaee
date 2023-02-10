@@ -43,7 +43,7 @@ public class WithoutDynamicFeatureTest extends AbstractResourceTest {
     }
 
     @Override
-    protected Application configure() {
+    public ResourceConfig configure() {
         return ResourceConfig.forApplicationClass(TestApplication.class, getResourceOrProviderClasses());
     }
 

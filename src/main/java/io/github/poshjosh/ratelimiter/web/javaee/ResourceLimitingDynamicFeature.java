@@ -9,46 +9,53 @@ import io.github.poshjosh.ratelimiter.web.core.ResourceLimiterConfigurer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.container.DynamicFeature;
 import javax.ws.rs.container.ResourceInfo;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.FeatureContext;
 import java.lang.reflect.Method;
+import java.util.Objects;
 
-public abstract class ResourceLimitingDynamicFeature implements DynamicFeature,
-        ResourceLimiterConfigurer<ContainerRequestContext> {
+public abstract class ResourceLimitingDynamicFeature
+        implements DynamicFeature, ResourceLimiterConfigurer {
 
     private static final Logger LOG = LoggerFactory.getLogger(ResourceLimitingDynamicFeature.class);
 
-    private final ResourceLimiterRegistry<ContainerRequestContext> resourceLimiterRegistry;
+    private final ResourceLimiterRegistry resourceLimiterRegistry;
 
-    private final ResourceLimiter<ContainerRequestContext> resourceLimiter;
+    private final ResourceLimiter<HttpServletRequest> resourceLimiter;
 
     private final ContainerRequestFilter containerRequestFilter;
 
+    @Context
+    private HttpServletRequest httpServletRequest;
+
     protected ResourceLimitingDynamicFeature(RateLimitProperties properties) {
-        this(ResourceLimiterConfigJaveee.builder().properties(properties));
-    }
 
-    private ResourceLimitingDynamicFeature(
-            ResourceLimiterConfig.Builder<ContainerRequestContext> webResourceLimiterConfigBuilder) {
-
-        ResourceLimiterConfig<ContainerRequestContext> resourceLimiterConfig =
-                webResourceLimiterConfigBuilder.configurer(this).build();
+        ResourceLimiterConfig resourceLimiterConfig = ResourceLimiterConfigJaveee.builder()
+                .properties(properties).configurer(this).build();
 
         this.resourceLimiterRegistry = ResourceLimiterRegistryJavaee.of(resourceLimiterConfig);
 
         this.resourceLimiter = this.resourceLimiterRegistry.createResourceLimiter();
 
-        this.containerRequestFilter = requestContext -> {
-            if (!resourceLimiter.tryConsume(requestContext)) {
-                ResourceLimitingDynamicFeature.this.onLimitExceeded(requestContext);
+        this.containerRequestFilter = reqContext -> {
+            HttpServletRequest req = ResourceLimitingDynamicFeature.this.getHttpServletRequest();
+            Objects.requireNonNull(req, "Injected HttpServletRequest is null");
+            if (!resourceLimiter.tryConsume(req)) {
+                ResourceLimitingDynamicFeature.this.onLimitExceeded(req, reqContext);
             }
         };
 
         LOG.info(resourceLimiterRegistry.isRateLimitingEnabled()
                 ? "Completed setup of automatic rate limiting" : "Rate limiting is disabled");
+    }
+
+    public HttpServletRequest getHttpServletRequest() {
+        return httpServletRequest;
     }
 
     /**
@@ -77,7 +84,7 @@ public abstract class ResourceLimitingDynamicFeature implements DynamicFeature,
      *     // Identify resources to rate-limit by the presence of request parameter "utm_source"
      *     registries.matchers().register("limitByUtmSource", request -> request.getParameter("utm_source"));
      *
-     *     // Rate limit users from a specific utm_source e.g facebook
+     *     // Rate limit users from a specific utm_source e.g. facebook
      *     registries.matchers().register("limitByUtmSourceIsFacebook",
      *             request -> "facebook".equals(request.getParameter("utm_source")));
      *
@@ -95,24 +102,32 @@ public abstract class ResourceLimitingDynamicFeature implements DynamicFeature,
      *                   rate limiting
      */
     @Override
-    public abstract void configure(Registries<ContainerRequestContext> registries);
+    public abstract void configure(Registries registries);
 
     /**
      * Called when a limit is exceeded.
      *
+     * @param httpServletRequest the http servlet request
      * @param requestContext the request context
      */
-    protected void onLimitExceeded(ContainerRequestContext requestContext) { }
+    protected void onLimitExceeded(
+            HttpServletRequest httpServletRequest, ContainerRequestContext requestContext) { }
 
     @Override
     public void configure(ResourceInfo resourceInfo, FeatureContext featureContext) {
-        if(resourceLimiterRegistry.isRateLimitingEnabled() && isRateLimited(resourceInfo)) {
-            // final int priority = Integer.MIN_VALUE; // Set rate limiting to highest possible priority
-            // final int priority = Priorities.AUTHENTICATION - 1; // Set rate limiting just before authentication
-            final int priority = -1; // We can easily see a situation where there are multiple zero priority components
+        if(isRateLimitingEnabledFor(resourceInfo)) {
             LOG.debug("Registering request rate limiting filter for: {}", resourceInfo);
-            featureContext.register(containerRequestFilter, priority);
+            featureContext.register(containerRequestFilter, getPriority());
         }
+    }
+
+    public boolean isRateLimitingEnabledFor(ResourceInfo resourceInfo) {
+        return resourceLimiterRegistry.isRateLimitingEnabled() && isRateLimited(resourceInfo);
+    }
+
+    public int getPriority() {
+        // return Priorities.AUTHENTICATION - 1;    // Priority just before authentication
+        return 0;                                   // As early as possible
     }
 
     public boolean isRateLimited(ResourceInfo resourceInfo) {
@@ -124,11 +139,11 @@ public abstract class ResourceLimitingDynamicFeature implements DynamicFeature,
         return resourceLimiterRegistry.isRateLimited(method);
     }
 
-    public ResourceLimiterRegistry<ContainerRequestContext> getResourceLimiterRegistry() {
+    public ResourceLimiterRegistry getResourceLimiterRegistry() {
         return resourceLimiterRegistry;
     }
 
-    public ResourceLimiter<ContainerRequestContext> getResourceLimiter() {
+    public ResourceLimiter<HttpServletRequest> getResourceLimiter() {
         return resourceLimiter;
     }
 }

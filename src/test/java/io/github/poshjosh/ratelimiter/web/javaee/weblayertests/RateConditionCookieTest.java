@@ -4,13 +4,10 @@ import io.github.poshjosh.ratelimiter.annotations.Rate;
 import io.github.poshjosh.ratelimiter.annotations.RateCondition;
 import io.github.poshjosh.ratelimiter.web.core.WebExpressionKey;
 import org.junit.Test;
-
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.client.Invocation;
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.Response;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
@@ -134,10 +131,7 @@ public class RateConditionCookieTest extends AbstractResourceTest {
     }
 
     @Override
-    protected Response doRequest(String endpoint) {
-        final WebTarget webTarget = target(endpoint);
-        Invocation.Builder invocationBuilder = webTarget.request("text/plain");
-        invocationBuilder = invocationBuilder.cookie(cookieName, cookieValue);
-        return invocationBuilder.get();
+    protected Invocation.Builder buildRequest(String endpoint) {
+        return super.buildRequest(endpoint).cookie(cookieName, cookieValue);
     }
 }
