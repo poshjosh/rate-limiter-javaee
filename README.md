@@ -6,23 +6,27 @@ Light-weight rate limiting library for javaee web resources, based on
 We believe that rate limiting should be as simple as:
 
 ```java
-@Rate(10) // 10 permits per second for all methods collectively
-@Controller
-@RequestMapping("/api")
-class GreetingResource {
+@Rate(10) // 10 permits per second for all methods in this class
+@Path("/api")
+public class GreetingResource {
 
-  // 2 calls per second for users in role GUEST
-  @Rate(permits=2, when="web.request.user.role=GUEST")
-  @GetMapping("/smile")
-  String smile() {
+  // GUESTs - 1 call per second, USERs - 3 calls per second 
+  @Rate(permits=1, when="web.request.user.role=GUEST")
+  @Rate(permits=3, when="web.request.user.role=USER")
+  @GET
+  @Path("/smile")
+  public String smile() {
     return ":)";
   }
 
-  // Only 10 calls per minute to this path, when system available memory < 1GB 
+  // When system available memory < 1GB - 10 calls per minute
   @Rate(permits=10, timeUnit=TimeUnit.MINUTES, when="sys.memory.available<1gb")
-  @GetMapping("/greet")
-  String greet(String name) {
-    return "Hello " + name;
+  // When request parameter `who` has value of either ALICE or BOB - 1 permit per second
+  @Rate(permits=1, when="web.request.parameter={who=[ALICE|BOB]}")
+  @GET
+  @Path("/greet")
+  public String greet(@QueryParam("who") String who) {
+    return "Hello " + who;
   }
 }
 ```
@@ -133,16 +137,16 @@ The expression language allows us to write expressive rate conditions, e.g:
 
 `@RateCondition("sys.memory.free<1GB")`
 
-format          | example                                  | description
-----------------|------------------------------------------|------------
-LHS=RHS         | web.request.header=X-RateLimit-Limit     | true, when the X-RateLimit-Limit header exists
-LHS={key=val}   | web.request.parameter={limited=true}     | true, when request parameter limited equals true
-LHS=[A!B]       | web.request.user.role=[GUEST!RESTRICTED] | true, when the user role is either GUEST or RESTRICTED
-LHS=[A&B]       | web.request.user.role=[GUEST&RESTRICTED] | true, when the user role is either GUEST and RESTRICTED
-LHS={key=[A!B]} | web.request.header={name=[val_0!val_1]}  | true, when either val_0 or val_1 is set a header
-LHS={key=[A&B]} | web.request.header={name=[val_0&val_1]}  | true, when both val_0 and val_1 are set as headers
+| format          | example                                  | description |
+|-----------------|------------------------------------------|-------------|
+| LHS=RHS         | web.request.header=X-RateLimit-Limit     | true, when the X-RateLimit-Limit header exists |
+| LHS={key=val}   | web.request.parameter={limited=true}     | true, when request parameter limited equals true |
+| LHS=[AlB]       | web.request.user.role=[GUESTlRESTRICTED] | true, when the user role is either GUEST or RESTRICTED |
+| LHS=[A&B]       | web.request.user.role=[GUEST&RESTRICTED] | true, when the user role is either GUEST and RESTRICTED |
+| LHS={key=[AlB]} | web.request.header={name=[val_0lval_1]}  | true, when either val_0 or val_1 is set a header |
+| LHS={key=[A&B]} | web.request.header={name=[val_0&val_1]}  | true, when both val_0 and val_1 are set as headers |
 
-__Note:__ `|` equals OR. `!` is used above for OR because markdown does not support `|` in tables
+__Note:__ `|` represents OR, while `&` represents AND
 
 A rich set of conditions may be expressed as detailed in the 
 [web specification](https://github.com/poshjosh/rate-limiter-web-core/blob/master/docs/RATE-CONDITION-EXPRESSION-LANGUAGE.md).
