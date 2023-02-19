@@ -1,7 +1,6 @@
 package io.github.poshjosh.ratelimiter.web.javaee;
 
 import io.github.poshjosh.ratelimiter.ResourceLimiter;
-import io.github.poshjosh.ratelimiter.web.core.Registries;
 import io.github.poshjosh.ratelimiter.web.core.ResourceLimiterConfig;
 import io.github.poshjosh.ratelimiter.web.core.ResourceLimiterRegistry;
 import io.github.poshjosh.ratelimiter.web.core.util.RateLimitProperties;
@@ -19,8 +18,7 @@ import javax.ws.rs.core.FeatureContext;
 import java.lang.reflect.Method;
 import java.util.Objects;
 
-public abstract class ResourceLimitingDynamicFeature
-        implements DynamicFeature, ResourceLimiterConfigurer {
+public abstract class ResourceLimitingDynamicFeature implements DynamicFeature {
 
     private static final Logger LOG = LoggerFactory.getLogger(ResourceLimitingDynamicFeature.class);
 
@@ -34,11 +32,15 @@ public abstract class ResourceLimitingDynamicFeature
     private HttpServletRequest httpServletRequest;
 
     protected ResourceLimitingDynamicFeature(RateLimitProperties properties) {
+        this(properties, registries -> {});
+    }
 
-        ResourceLimiterConfig resourceLimiterConfig = ResourceLimiterConfigJaveee.builder()
-                .properties(properties).configurer(this).build();
+    protected ResourceLimitingDynamicFeature(
+            RateLimitProperties properties, ResourceLimiterConfigurer configurer) {
 
-        this.resourceLimiterRegistry = ResourceLimiterRegistryJavaee.of(resourceLimiterConfig);
+        ResourceLimiterConfig resourceLimiterConfig = resourceLimiterConfig(properties, configurer);
+
+        this.resourceLimiterRegistry = resourceLimiterRegistry(resourceLimiterConfig);
 
         this.resourceLimiter = this.resourceLimiterRegistry.createResourceLimiter();
 
@@ -54,64 +56,25 @@ public abstract class ResourceLimitingDynamicFeature
                 ? "Completed setup of automatic rate limiting" : "Rate limiting is disabled");
     }
 
-    public HttpServletRequest getHttpServletRequest() {
-        return httpServletRequest;
+
+    protected ResourceLimiterRegistry resourceLimiterRegistry(ResourceLimiterConfig config) {
+        return ResourceLimiterRegistryJavaee.of(config);
     }
 
-    /**
-     * Overried this method for find-grained configuration of rate limiting.
-     * <p>Below is some basic examples of configuraing rate limiting</p>
-     * <pre>
-     * <code>
-     * @Component
-     * public class MyResourceLimiterConfigurer implements ResourceLimiterConfigurer<HttpServletRequest>{
-     *   public void configure(Registries<HttpServletRequest> registries) {
-     *     // Register consumption listeners
-     *     // ------------------------------
-     *
-     *     registries.listeners().register((context, resourceId, hits, limit) -> {
-     *
-     *       // For example, log the limit that was exceeded
-     *       System.out.println("For " + resourceId + ", the following limits are exceeded: " + limit);
-     *     });
-     *
-     *     // Register request matchers
-     *     // -------------------------
-     *
-     *     // Identify resources to rate-limit by session id
-     *     registries.matchers().register("limitBySession", request -> request.getSession().getId());
-     *
-     *     // Identify resources to rate-limit by the presence of request parameter "utm_source"
-     *     registries.matchers().register("limitByUtmSource", request -> request.getParameter("utm_source"));
-     *
-     *     // Rate limit users from a specific utm_source e.g. facebook
-     *     registries.matchers().register("limitByUtmSourceIsFacebook",
-     *             request -> "facebook".equals(request.getParameter("utm_source")));
-     *
-     *     // You could use a variety of Cache flavours
-     *     // -----------------------------------------
-     *
-     *     javax.cache.Cache javaxCache = null; // PROVIDE THIS
-     *     registries.caches().register("limitBySession", new JavaRateCache<>(javaxCache));
-     *   }
-     * }
-     * </code>
-     * </pre>
-     *
-     * @param registries provide various registries which expose register methods for configuring
-     *                   rate limiting
-     */
-    @Override
-    public abstract void configure(Registries registries);
+    protected ResourceLimiterConfig resourceLimiterConfig(
+            RateLimitProperties properties, ResourceLimiterConfigurer configurer) {
+        return ResourceLimiterConfigJavaee.builder()
+                .properties(properties).configurer(configurer).build();
+    }
 
     /**
      * Called when a limit is exceeded.
      *
-     * @param httpServletRequest the http servlet request
+     * @param request the http servlet request
      * @param requestContext the request context
      */
     protected void onLimitExceeded(
-            HttpServletRequest httpServletRequest, ContainerRequestContext requestContext) { }
+            HttpServletRequest request, ContainerRequestContext requestContext) { }
 
     @Override
     public void configure(ResourceInfo resourceInfo, FeatureContext featureContext) {
@@ -139,11 +102,11 @@ public abstract class ResourceLimitingDynamicFeature
         return resourceLimiterRegistry.isRateLimited(method);
     }
 
-    public ResourceLimiterRegistry getResourceLimiterRegistry() {
-        return resourceLimiterRegistry;
+    public HttpServletRequest getHttpServletRequest() {
+        return httpServletRequest;
     }
 
-    public ResourceLimiter<HttpServletRequest> getResourceLimiter() {
-        return resourceLimiter;
+    public ResourceLimiterRegistry getResourceLimiterRegistry() {
+        return resourceLimiterRegistry;
     }
 }

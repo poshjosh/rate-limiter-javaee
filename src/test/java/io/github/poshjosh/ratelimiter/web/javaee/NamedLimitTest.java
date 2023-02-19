@@ -37,12 +37,9 @@ public class NamedLimitTest {
             @Override public List<Class<?>> getResourceClasses() {
                 return Collections.singletonList(NamedLimitTest.Resource.class);
             }
-            @Override public Map<String, Rates> getRateLimitConfigs() {
-                return Collections.emptyMap();
-            }
         };
         ResourceLimiterConfig config =
-                ResourceLimiterConfigJaveee.builder()
+                ResourceLimiterConfigJavaee.builder()
                 .properties(props)
                 .build();
         registries = ResourceLimiterRegistryJavaee.of(config);

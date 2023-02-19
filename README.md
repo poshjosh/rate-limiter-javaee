@@ -1,6 +1,6 @@
 # rate limiter javaee
 
-Light-weight rate limiting library for javaee web resources, based on
+Enterprise rate limiter for javaee web applications, based on
 [rate-limiter-web-core](https://github.com/poshjosh/rate-limiter-web-core).
 
 We believe that rate limiting should be as simple as:
@@ -61,27 +61,7 @@ public class DynamicFeatureImpl extends ResourceLimitingDynamicFeature {
 
 ```
 
-At this point, your application is ready to enjoy the benefits of rate limiting.
-
-__2. Annotate classes and/or methods.__
-
-```java
-@Path("/api")
-class MyResource {
-
-  // Only 25 calls per second for users in role GUEST
-  @Rate(25)
-  @RateCondition("web.request.user.role=GUEST")
-  @GET
-  @Path("/greet")
-  @Produces("text/plain")
-  String greet(String name) {
-    return "Hello " + name;
-  }
-}
-```
-
-__3. (Optional) Implement RateLimitProperties__
+__2. Implement `RateLimitProperties`__
 
 ```java
 public class RateLimitPropertiesImpl implements RateLimitProperties {
@@ -98,6 +78,26 @@ public class RateLimitPropertiesImpl implements RateLimitProperties {
         // Accept only 2 tasks per second
         return Collections.singletonMap("task_queue", Rates.of(Rate.ofSeconds(2)));
     }
+}
+```
+
+At this point, your application is ready to enjoy the benefits of rate limiting.
+
+__3. Annotate classes and/or methods.__
+
+```java
+@Path("/api")
+class MyResource {
+
+  // Only 25 calls per second for users in role GUEST
+  @Rate(25)
+  @RateCondition("web.request.user.role=GUEST")
+  @GET
+  @Path("/greet")
+  @Produces("text/plain")
+  String greet(String name) {
+    return "Hello " + name;
+  }
 }
 ```
 

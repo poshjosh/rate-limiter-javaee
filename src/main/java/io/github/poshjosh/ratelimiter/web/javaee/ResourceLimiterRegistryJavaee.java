@@ -6,7 +6,7 @@ import io.github.poshjosh.ratelimiter.web.core.ResourceLimiterRegistry;
 public final class ResourceLimiterRegistryJavaee {
 
     public static ResourceLimiterRegistry ofDefaults() {
-        return of(ResourceLimiterConfigJaveee.builder().build());
+        return of(ResourceLimiterConfigJavaee.builder().build());
     }
 
     public static ResourceLimiterRegistry of(

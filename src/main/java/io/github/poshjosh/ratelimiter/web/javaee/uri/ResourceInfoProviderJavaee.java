@@ -22,7 +22,7 @@ public class ResourceInfoProviderJavaee implements ResourceInfoProvider {
 
     private PathPatterns<String> getPathPatterns(RateSource source) {
         if (source.isOwnDeclarer()) {
-            return getClassPatterns(source).orElse(PathPatterns.none());
+            return getClassPatterns(source).orElse(PathPatterns.matchNone());
         }
         return getMethodPatterns(source);
     }
@@ -52,7 +52,7 @@ public class ResourceInfoProviderJavaee implements ResourceInfoProvider {
 
         if(!StringUtils.hasText(path)) {
 
-            return Optional.of(PathPatterns.none());
+            return Optional.of(PathPatterns.matchNone());
         }
 
         return Optional.of(new ClassLevelPathPatterns(path));
@@ -61,7 +61,7 @@ public class ResourceInfoProviderJavaee implements ResourceInfoProvider {
     private PathPatterns<String> getMethodPatterns(RateSource method) {
 
         final PathPatterns<String> classLevelPathPatterns = method.getDeclarer()
-                .flatMap(this::getClassPatterns).orElse(PathPatterns.none());
+                .flatMap(this::getClassPatterns).orElse(PathPatterns.matchNone());
 
         return method.getAnnotation(Path.class)
                 .map(annotation -> composePathPatterns(classLevelPathPatterns, annotation.value()))

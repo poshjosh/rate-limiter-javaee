@@ -3,6 +3,7 @@ package io.github.poshjosh.ratelimiter.web.javaee.weblayertests;
 import io.github.poshjosh.ratelimiter.BandwidthFactory;
 import io.github.poshjosh.ratelimiter.web.core.ResourceLimiterRegistry;
 import io.github.poshjosh.ratelimiter.web.javaee.Assertions;
+import io.github.poshjosh.ratelimiter.web.javaee.ResourceLimitingDynamicFeature;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.servlet.ServletContainer;
 import org.glassfish.jersey.test.DeploymentContext;
@@ -21,7 +22,6 @@ import javax.ws.rs.core.NewCookie;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
-import java.net.URI;
 import java.util.*;
 
 public abstract class AbstractResourceTest extends JerseyTest {
@@ -39,10 +39,10 @@ public abstract class AbstractResourceTest extends JerseyTest {
     private static ResourceLimiterRegistry resourceLimiterRegistry;
 
     @Provider
-    public static class TestDynamicFeature extends TestResourceLimitingDynamicFeature{
+    public static class TestDynamicFeature extends ResourceLimitingDynamicFeature {
         @Inject
         public TestDynamicFeature() {
-            super(Objects.requireNonNull(testRateLimitProperties));
+            super(Objects.requireNonNull(testRateLimitProperties), new TestResourceLimiterConfigurer());
             resourceLimiterRegistry = getResourceLimiterRegistry();
         }
     }

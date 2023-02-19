@@ -3,9 +3,9 @@ package io.github.poshjosh.ratelimiter.web.javaee;
 import io.github.poshjosh.ratelimiter.web.core.ResourceLimiterConfig;
 import io.github.poshjosh.ratelimiter.web.javaee.uri.ResourceInfoProviderJavaee;
 
-public final class ResourceLimiterConfigJaveee{
+public final class ResourceLimiterConfigJavaee {
 
-    private ResourceLimiterConfigJaveee() { }
+    private ResourceLimiterConfigJavaee() { }
 
     public static ResourceLimiterConfig.Builder builder() {
         return ResourceLimiterConfig.builder()
