@@ -45,23 +45,7 @@ To add a dependency on `rate-limiter-javaee` using Maven, use the following:
 
 ### Usage
 
-__1. Extend `ResourceLimitingDynamicFeature`__
-
-This way a rate limiter will be created an automatically applied based on rate limiter related properties and annotations.
-
-```java
-@javax.ws.rs.ext.Provider
-public class DynamicFeatureImpl extends ResourceLimitingDynamicFeature {
-
-    @javax.inject.Inject 
-    public DynamicFeatureImpl(RateLimitProperties properties) {
-        super(properties);
-    }
-}
-
-```
-
-__2. Implement `RateLimitProperties`__
+__1. Implement `RateLimitProperties`__
 
 ```java
 public class RateLimitPropertiesImpl implements RateLimitProperties {
@@ -79,6 +63,22 @@ public class RateLimitPropertiesImpl implements RateLimitProperties {
         return Collections.singletonMap("task_queue", Rates.of(Rate.ofSeconds(2)));
     }
 }
+```
+
+__2. Extend `ResourceLimitingDynamicFeature`__
+
+This way a rate limiter will be created an automatically applied based on rate limiter related properties and annotations.
+
+```java
+@javax.ws.rs.ext.Provider
+public class DynamicFeatureImpl extends ResourceLimitingDynamicFeature {
+
+    @javax.inject.Inject 
+    public DynamicFeatureImpl(RateLimitProperties properties) {
+        super(properties);
+    }
+}
+
 ```
 
 At this point, your application is ready to enjoy the benefits of rate limiting.

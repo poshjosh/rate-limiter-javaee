@@ -1,7 +1,12 @@
 package io.github.poshjosh.ratelimiter.web.javaee.weblayertests;
 
 import io.github.poshjosh.ratelimiter.BandwidthFactory;
+import io.github.poshjosh.ratelimiter.UsageListener;
+import io.github.poshjosh.ratelimiter.util.LimiterConfig;
+import io.github.poshjosh.ratelimiter.web.core.ResourceLimiterConfig;
+import io.github.poshjosh.ratelimiter.web.core.ResourceLimiterConfigurer;
 import io.github.poshjosh.ratelimiter.web.core.ResourceLimiterRegistry;
+import io.github.poshjosh.ratelimiter.web.core.util.RateLimitProperties;
 import io.github.poshjosh.ratelimiter.web.javaee.Assertions;
 import io.github.poshjosh.ratelimiter.web.javaee.ResourceLimitingDynamicFeature;
 import org.glassfish.jersey.server.ResourceConfig;
@@ -42,8 +47,19 @@ public abstract class AbstractResourceTest extends JerseyTest {
     public static class TestDynamicFeature extends ResourceLimitingDynamicFeature {
         @Inject
         public TestDynamicFeature() {
-            super(Objects.requireNonNull(testRateLimitProperties), new TestResourceLimiterConfigurer());
+            super(Objects.requireNonNull(testRateLimitProperties));
             resourceLimiterRegistry = getResourceLimiterRegistry();
+        }
+        @Override protected ResourceLimiterConfig.Builder resourceLimiterConfigBuilder(
+                RateLimitProperties properties, ResourceLimiterConfigurer configurer) {
+            return super.resourceLimiterConfigBuilder(properties, configurer)
+                    .addUsageListener(new UsageListener() {
+                @Override
+                public void onRejected(Object request, String resourceId, int permits, LimiterConfig<?> config) {
+                    LOG.warn("onRejected, too many requests for: {}, limits: {}", resourceId, config.getRates());
+                    throw new WebApplicationException(Response.Status.TOO_MANY_REQUESTS);
+                }
+            });
         }
     }
 

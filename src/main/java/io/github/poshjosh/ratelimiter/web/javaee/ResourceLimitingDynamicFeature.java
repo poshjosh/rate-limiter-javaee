@@ -38,7 +38,8 @@ public abstract class ResourceLimitingDynamicFeature implements DynamicFeature {
     protected ResourceLimitingDynamicFeature(
             RateLimitProperties properties, ResourceLimiterConfigurer configurer) {
 
-        ResourceLimiterConfig resourceLimiterConfig = resourceLimiterConfig(properties, configurer);
+        ResourceLimiterConfig resourceLimiterConfig =
+                resourceLimiterConfigBuilder(properties, configurer).build();
 
         this.resourceLimiterRegistry = resourceLimiterRegistry(resourceLimiterConfig);
 
@@ -61,10 +62,10 @@ public abstract class ResourceLimitingDynamicFeature implements DynamicFeature {
         return ResourceLimiterRegistryJavaee.of(config);
     }
 
-    protected ResourceLimiterConfig resourceLimiterConfig(
+    protected ResourceLimiterConfig.Builder resourceLimiterConfigBuilder(
             RateLimitProperties properties, ResourceLimiterConfigurer configurer) {
         return ResourceLimiterConfigJavaee.builder()
-                .properties(properties).configurer(configurer).build();
+                .properties(properties).configurer(configurer);
     }
 
     /**
