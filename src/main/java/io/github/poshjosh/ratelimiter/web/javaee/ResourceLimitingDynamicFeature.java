@@ -48,7 +48,7 @@ public abstract class ResourceLimitingDynamicFeature implements DynamicFeature {
         this.containerRequestFilter = reqContext -> {
             HttpServletRequest req = ResourceLimitingDynamicFeature.this.getHttpServletRequest();
             Objects.requireNonNull(req, "Injected HttpServletRequest is null");
-            if (!resourceLimiter.tryConsume(req)) {
+            if (!tryConsume(req)) {
                 ResourceLimitingDynamicFeature.this.onLimitExceeded(req, reqContext);
             }
         };
@@ -57,6 +57,9 @@ public abstract class ResourceLimitingDynamicFeature implements DynamicFeature {
                 ? "Completed setup of automatic rate limiting" : "Rate limiting is disabled");
     }
 
+    protected boolean tryConsume(HttpServletRequest httpRequest) {
+        return getResourceLimiter().tryConsume(httpRequest);
+    }
 
     protected ResourceLimiterRegistry resourceLimiterRegistry(ResourceLimiterConfig config) {
         return ResourceLimiterRegistryJavaee.of(config);
@@ -90,8 +93,7 @@ public abstract class ResourceLimitingDynamicFeature implements DynamicFeature {
     }
 
     public int getPriority() {
-        // return Priorities.AUTHENTICATION - 1;    // Priority just before authentication
-        return 0;                                   // As early as possible
+        return 0; // As early as possible
     }
 
     public boolean isRateLimited(ResourceInfo resourceInfo) {
@@ -110,4 +112,6 @@ public abstract class ResourceLimitingDynamicFeature implements DynamicFeature {
     public ResourceLimiterRegistry getResourceLimiterRegistry() {
         return resourceLimiterRegistry;
     }
+
+    public ResourceLimiter<HttpServletRequest> getResourceLimiter() { return resourceLimiter; }
 }
