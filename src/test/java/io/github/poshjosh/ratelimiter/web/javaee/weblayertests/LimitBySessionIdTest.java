@@ -29,7 +29,7 @@ public class LimitBySessionIdTest extends AbstractResourceTest {
 
         @GET
         @Path("/books")
-        @Rate(permits=1, when=WebExpressionKey.SESSION_ID+"!=")
+        @Rate(permits=1, condition=WebExpressionKey.SESSION_ID+"!=")
         public String getAll() {
             System.out.println("LimitBySessionTest#getAll");
             return Endpoints.BOOKS;
@@ -37,7 +37,7 @@ public class LimitBySessionIdTest extends AbstractResourceTest {
 
         @GET
         @Path("/books/{id}")
-        @Rate(permits=1, when=WebExpressionKey.SESSION_ID+"!=")
+        @Rate(permits=1, condition=WebExpressionKey.SESSION_ID+"!=")
         public String getOne(@PathParam("id") String id) {
             System.out.println("LimitBySessionIdTest.Resource#getOne");
             return Endpoints.BOOKS + "/" + id;
@@ -45,7 +45,7 @@ public class LimitBySessionIdTest extends AbstractResourceTest {
 
         @DELETE
         @Path("/books/{id}")
-        @Rate(permits=1, when=WebExpressionKey.SESSION_ID+"!=")
+        @Rate(permits=1, condition=WebExpressionKey.SESSION_ID+"!=")
         public String deleteOne(@PathParam("id") String id) {
             System.out.println("LimitBySessionIdTest.Resource#deleteOne");
             return Endpoints.BOOKS + "/" + id;
