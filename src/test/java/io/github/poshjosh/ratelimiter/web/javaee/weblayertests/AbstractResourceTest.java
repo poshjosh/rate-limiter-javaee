@@ -1,6 +1,6 @@
 package io.github.poshjosh.ratelimiter.web.javaee.weblayertests;
 
-import io.github.poshjosh.ratelimiter.BandwidthFactory;
+import io.github.poshjosh.ratelimiter.bandwidths.BandwidthFactory;
 import io.github.poshjosh.ratelimiter.UsageListener;
 import io.github.poshjosh.ratelimiter.util.LimiterConfig;
 import io.github.poshjosh.ratelimiter.web.core.ResourceLimiterConfig;

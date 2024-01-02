@@ -1,7 +1,6 @@
 package io.github.poshjosh.ratelimiter.web.javaee;
 
 import io.github.poshjosh.ratelimiter.annotations.Rate;
-import io.github.poshjosh.ratelimiter.util.Rates;
 import io.github.poshjosh.ratelimiter.web.core.ResourceLimiterRegistry;
 import io.github.poshjosh.ratelimiter.web.core.util.RateLimitProperties;
 import io.github.poshjosh.ratelimiter.web.core.ResourceLimiterConfig;
@@ -11,7 +10,6 @@ import org.junit.Test;
 import javax.ws.rs.Path;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import static org.junit.Assert.*;
 

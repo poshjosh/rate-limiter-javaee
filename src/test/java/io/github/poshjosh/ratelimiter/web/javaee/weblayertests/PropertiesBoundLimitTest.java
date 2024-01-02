@@ -2,8 +2,8 @@ package io.github.poshjosh.ratelimiter.web.javaee.weblayertests;
 
 import io.github.poshjosh.ratelimiter.annotation.ElementId;
 import io.github.poshjosh.ratelimiter.util.Operator;
-import io.github.poshjosh.ratelimiter.util.Rate;
-import io.github.poshjosh.ratelimiter.util.Rates;
+import io.github.poshjosh.ratelimiter.model.Rate;
+import io.github.poshjosh.ratelimiter.model.Rates;
 import io.github.poshjosh.ratelimiter.web.javaee.Assertions;
 import org.junit.Test;
 
