@@ -2,7 +2,7 @@ package io.github.poshjosh.ratelimiter.web.javaee.weblayertests;
 
 import io.github.poshjosh.ratelimiter.bandwidths.BandwidthFactory;
 import io.github.poshjosh.ratelimiter.UsageListener;
-import io.github.poshjosh.ratelimiter.util.LimiterConfig;
+import io.github.poshjosh.ratelimiter.util.LimiterContext;
 import io.github.poshjosh.ratelimiter.web.core.ResourceLimiterConfig;
 import io.github.poshjosh.ratelimiter.web.core.ResourceLimiterConfigurer;
 import io.github.poshjosh.ratelimiter.web.core.ResourceLimiterRegistry;
@@ -55,7 +55,7 @@ public abstract class AbstractResourceTest extends JerseyTest {
             return super.resourceLimiterConfigBuilder(properties, configurer)
                     .addUsageListener(new UsageListener() {
                 @Override
-                public void onRejected(Object request, String resourceId, int permits, LimiterConfig<?> config) {
+                public void onRejected(Object request, String resourceId, int permits, LimiterContext<?> config) {
                     LOG.warn("onRejected, too many requests for: {}, limits: {}", resourceId, config.getRates());
                     throw new WebApplicationException(Response.Status.TOO_MANY_REQUESTS);
                 }
