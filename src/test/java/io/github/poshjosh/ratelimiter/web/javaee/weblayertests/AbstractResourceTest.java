@@ -1,14 +1,9 @@
 package io.github.poshjosh.ratelimiter.web.javaee.weblayertests;
 
 import io.github.poshjosh.ratelimiter.bandwidths.BandwidthFactory;
-import io.github.poshjosh.ratelimiter.UsageListener;
-import io.github.poshjosh.ratelimiter.model.RateConfig;
-import io.github.poshjosh.ratelimiter.web.core.ResourceLimiterConfig;
-import io.github.poshjosh.ratelimiter.web.core.ResourceLimiterConfigurer;
-import io.github.poshjosh.ratelimiter.web.core.ResourceLimiterRegistry;
-import io.github.poshjosh.ratelimiter.web.core.util.RateLimitProperties;
+import io.github.poshjosh.ratelimiter.web.core.RateLimiterRegistry;
 import io.github.poshjosh.ratelimiter.web.javaee.Assertions;
-import io.github.poshjosh.ratelimiter.web.javaee.ResourceLimitingDynamicFeature;
+import io.github.poshjosh.ratelimiter.web.javaee.RateLimitingDynamicFeature;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.servlet.ServletContainer;
 import org.glassfish.jersey.test.DeploymentContext;
@@ -20,9 +15,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.client.Invocation;
 import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.NewCookie;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
@@ -41,29 +38,26 @@ public abstract class AbstractResourceTest extends JerseyTest {
     private static final Logger LOG = LoggerFactory.getLogger(AbstractResourceTest.class);
 
     private static TestRateLimitProperties testRateLimitProperties;
-    private static ResourceLimiterRegistry resourceLimiterRegistry;
+    private static RateLimiterRegistry rateLimiterRegistry;
 
     @Provider
-    public static class TestDynamicFeature extends ResourceLimitingDynamicFeature {
+    public static class TestDynamicFeature extends RateLimitingDynamicFeature {
         @Inject
         public TestDynamicFeature() {
             super(Objects.requireNonNull(testRateLimitProperties));
-            resourceLimiterRegistry = getResourceLimiterRegistry();
+            rateLimiterRegistry = getRateLimiterRegistry();
         }
-        @Override protected ResourceLimiterConfig.Builder resourceLimiterConfigBuilder(
-                RateLimitProperties properties, ResourceLimiterConfigurer configurer) {
-            return super.resourceLimiterConfigBuilder(properties, configurer)
-                    .addUsageListener(new UsageListener() {
-                @Override
-                public void onRejected(Object request, String resourceId, int permits, RateConfig config) {
-                    LOG.warn("onRejected, too many requests for: {}, limits: {}", resourceId, config.getRates());
-                    throw new WebApplicationException(Response.Status.TOO_MANY_REQUESTS);
-                }
-            });
+
+        @Override
+        protected void onLimitExceeded(HttpServletRequest request,
+                ContainerRequestContext requestContext) {
+            super.onLimitExceeded(request, requestContext);
+            LOG.warn("onRejected, too many requests for: {}", request);
+            throw new WebApplicationException(Response.Status.TOO_MANY_REQUESTS);
         }
     }
 
-    private final boolean debugResponse = false;
+    private final boolean debugResponse = true;
 
     protected abstract Set<Class<?>> getResourceOrProviderClasses();
 
@@ -81,10 +75,15 @@ public abstract class AbstractResourceTest extends JerseyTest {
                 .register(new ExceptionMapper<Throwable>() {
                     @Override
                     public Response toResponse(Throwable ex) {
+                        if (debugResponse) {
+                            ex.printStackTrace();
+                        }
                         if (ex instanceof WebApplicationException) {
                             return ((WebApplicationException)ex).getResponse();
                         }
-                        ex.printStackTrace();
+                        if (!debugResponse) {
+                            ex.printStackTrace();;
+                        }
                         return Response.serverError().entity(ex.getMessage()).build();
                     }
                 });
@@ -108,8 +107,8 @@ public abstract class AbstractResourceTest extends JerseyTest {
         return testRateLimitProperties;
     }
 
-    public ResourceLimiterRegistry getResourceLimiterRegistry() {
-        return resourceLimiterRegistry;
+    public RateLimiterRegistry getRateLimiterRegistry() {
+        return rateLimiterRegistry;
     }
 
     void shouldFailWhenMaxLimitIsExceeded(String endpoint, int maxLimit) {

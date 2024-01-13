@@ -58,13 +58,13 @@ public class RateLimitPropertiesImpl implements RateLimitProperties {
 }
 ```
 
-__2. Extend `ResourceLimitingDynamicFeature`__
+__2. Extend `RateLimitingDynamicFeature`__
 
 This way a rate limiter will be created an automatically applied based on rate limiter related properties and annotations.
 
 ```java
 @javax.ws.rs.ext.Provider
-public class DynamicFeatureImpl extends ResourceLimitingDynamicFeature {
+public class DynamicFeatureImpl extends RateLimitingDynamicFeature {
 
     @javax.inject.Inject 
     public DynamicFeatureImpl(RateLimitProperties properties) {
@@ -144,22 +144,23 @@ __Note:__ `|` represents OR, while `&` represents AND
 A rich set of conditions may be expressed as detailed in the 
 [web specification](https://github.com/poshjosh/rate-limiter-web-core/blob/master/docs/RATE-CONDITION-EXPRESSION-LANGUAGE.md).
 
-### Manually create and use a ResourceLimiter
+### Manually create and use a RateLimiter
 
-Usually, you are provided with appropriate `ResourceLimiter`s based on the annotations
-and properties you specify. However, you could manually create and use `ResourceLimiters`.
+Usually, you are provided with appropriate `RateLimiter`s based on the annotations
+and properties you specify. However, you could manually create and use `RateLimiters`.
 
 ```java
-import ResourceLimiterRegistryJavaee;
-
-public class ResourceLimiterProvider {
-
-    public ResourceLimiter createResourceLimiter() {
-        return ResourceLimiterRegistryJavaee.ofDefaults().createResourceLimiter();
+class MyResource {
+    
+    RateLimiter rateLimiter = RateLimiterFactory.of(MyResource.class, "smile");
+    
+    @Rate(name = "smile", permits = 2)
+    String smile() {
+        return ":)";
     }
 }
 ```
-This way you use the `ResourceLimiter` as you see fit.
+This way you use the `RateLimiter` as you see fit.
 
 ### Annotation Specifications
 
