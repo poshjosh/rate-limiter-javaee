@@ -1,7 +1,7 @@
 package io.github.poshjosh.ratelimiter.web.javaee.weblayertests;
 
 import io.github.poshjosh.ratelimiter.bandwidths.BandwidthFactory;
-import io.github.poshjosh.ratelimiter.web.core.RateLimiterRegistry;
+import io.github.poshjosh.ratelimiter.web.core.WebRateLimiterRegistry;
 import io.github.poshjosh.ratelimiter.web.javaee.Assertions;
 import io.github.poshjosh.ratelimiter.web.javaee.RateLimitingDynamicFeature;
 import org.glassfish.jersey.server.ResourceConfig;
@@ -38,14 +38,14 @@ public abstract class AbstractResourceTest extends JerseyTest {
     private static final Logger LOG = LoggerFactory.getLogger(AbstractResourceTest.class);
 
     private static TestRateLimitProperties testRateLimitProperties;
-    private static RateLimiterRegistry rateLimiterRegistry;
+    private static WebRateLimiterRegistry webRateLimiterRegistry;
 
     @Provider
     public static class TestDynamicFeature extends RateLimitingDynamicFeature {
         @Inject
         public TestDynamicFeature() {
             super(Objects.requireNonNull(testRateLimitProperties));
-            rateLimiterRegistry = getRateLimiterRegistry();
+            webRateLimiterRegistry = getRateLimiterRegistry();
         }
 
         @Override
@@ -107,8 +107,8 @@ public abstract class AbstractResourceTest extends JerseyTest {
         return testRateLimitProperties;
     }
 
-    public RateLimiterRegistry getRateLimiterRegistry() {
-        return rateLimiterRegistry;
+    public WebRateLimiterRegistry getRateLimiterRegistry() {
+        return webRateLimiterRegistry;
     }
 
     void shouldFailWhenMaxLimitIsExceeded(String endpoint, int maxLimit) {

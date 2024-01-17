@@ -2,9 +2,9 @@ package io.github.poshjosh.ratelimiter.web.javaee;
 
 import io.github.poshjosh.ratelimiter.RateLimiterFactory;
 import io.github.poshjosh.ratelimiter.web.core.RateLimiterConfigurer;
-import io.github.poshjosh.ratelimiter.web.core.RateLimiterContext;
-import io.github.poshjosh.ratelimiter.web.core.RateLimiterRegistry;
-import io.github.poshjosh.ratelimiter.web.core.util.RateLimitProperties;
+import io.github.poshjosh.ratelimiter.web.core.WebRateLimiterContext;
+import io.github.poshjosh.ratelimiter.web.core.WebRateLimiterRegistry;
+import io.github.poshjosh.ratelimiter.util.RateLimitProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,7 +22,7 @@ public abstract class RateLimitingDynamicFeature implements DynamicFeature {
 
     private static final Logger LOG = LoggerFactory.getLogger(RateLimitingDynamicFeature.class);
 
-    private final RateLimiterRegistry rateLimiterRegistry;
+    private final WebRateLimiterRegistry webRateLimiterRegistry;
 
     private final RateLimiterFactory<HttpServletRequest> rateLimiterFactory;
 
@@ -38,15 +38,15 @@ public abstract class RateLimitingDynamicFeature implements DynamicFeature {
     protected RateLimitingDynamicFeature(
             RateLimitProperties properties, RateLimiterConfigurer configurer) {
 
-        RateLimiterContext config =
+        WebRateLimiterContext context =
                 rateLimiterContextBuilder(properties, configurer).build();
 
-        this.rateLimiterRegistry = rateLimiterRegistry(config);
+        this.webRateLimiterRegistry = rateLimiterRegistry(context);
 
-        if (config.getResourceClassesSupplier().get().isEmpty()) {
+        if (!context.hasRateSources()) {
             this.rateLimiterFactory = RateLimiterFactory.noop();
         } else {
-            this.rateLimiterFactory = this.rateLimiterRegistry.createRateLimiterFactory();
+            this.rateLimiterFactory = this.webRateLimiterRegistry.createRateLimiterFactory();
         }
 
         this.containerRequestFilter = reqContext -> {
@@ -57,7 +57,7 @@ public abstract class RateLimitingDynamicFeature implements DynamicFeature {
             }
         };
 
-        LOG.info(rateLimiterRegistry.isRateLimitingEnabled()
+        LOG.info(webRateLimiterRegistry.isRateLimitingEnabled()
                 ? "Completed setup of automatic rate limiting" : "Rate limiting is disabled");
     }
 
@@ -65,13 +65,13 @@ public abstract class RateLimitingDynamicFeature implements DynamicFeature {
         return rateLimiterFactory.getRateLimiter(httpRequest).tryAcquire();
     }
 
-    protected RateLimiterRegistry rateLimiterRegistry(RateLimiterContext config) {
+    protected WebRateLimiterRegistry rateLimiterRegistry(WebRateLimiterContext config) {
         return RateLimiterRegistryJavaee.of(config);
     }
 
-    protected RateLimiterContext.Builder rateLimiterContextBuilder(
+    protected WebRateLimiterContext.Builder rateLimiterContextBuilder(
             RateLimitProperties properties, RateLimiterConfigurer configurer) {
-        return RateLimiterContextJavaee.builder()
+        return RateLimiterWebContextJavaee.builder()
                 .properties(properties).configurer(configurer);
     }
 
@@ -93,7 +93,7 @@ public abstract class RateLimitingDynamicFeature implements DynamicFeature {
     }
 
     public boolean isRateLimitingEnabledFor(ResourceInfo resourceInfo) {
-        return rateLimiterRegistry.isRateLimitingEnabled() && isRateLimited(resourceInfo);
+        return webRateLimiterRegistry.isRateLimitingEnabled() && isRateLimited(resourceInfo);
     }
 
     public int getPriority() {
@@ -104,17 +104,17 @@ public abstract class RateLimitingDynamicFeature implements DynamicFeature {
         final Method method = resourceInfo.getResourceMethod();
         if (method == null) {
             final Class<?> clazz = resourceInfo.getResourceClass();
-            return clazz != null && rateLimiterRegistry.isRateLimited(clazz);
+            return clazz != null && webRateLimiterRegistry.isRegistered(clazz);
         }
-        return rateLimiterRegistry.isRateLimited(method);
+        return webRateLimiterRegistry.isRegistered(method);
     }
 
     public HttpServletRequest getHttpServletRequest() {
         return httpServletRequest;
     }
 
-    public RateLimiterRegistry getRateLimiterRegistry() {
-        return rateLimiterRegistry;
+    public WebRateLimiterRegistry getRateLimiterRegistry() {
+        return webRateLimiterRegistry;
     }
 
     public RateLimiterFactory<HttpServletRequest> getRateLimiterFactory() { return rateLimiterFactory; }

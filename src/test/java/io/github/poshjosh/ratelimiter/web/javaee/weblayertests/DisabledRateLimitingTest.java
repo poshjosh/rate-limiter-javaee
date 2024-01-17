@@ -9,7 +9,6 @@ import javax.ws.rs.Produces;
 import java.util.Collections;
 import java.util.Set;
 
-import static io.github.poshjosh.ratelimiter.web.javaee.Assertions.assertFalse;
 import static io.github.poshjosh.ratelimiter.web.javaee.Assertions.assertTrue;
 
 public class DisabledRateLimitingTest extends AbstractResourceTest {
@@ -32,32 +31,23 @@ public class DisabledRateLimitingTest extends AbstractResourceTest {
         public String home() { return _BASE_HOME; }
     }
 
-    private Boolean originallyDisabled;
-
     @Override
     protected Set<Class<?>> getResourceOrProviderClasses() {
-        return Collections.singleton(Resource.class);
+        return Collections.singleton(DisabledRateLimitingTest.Resource.class);
     }
 
     @Override
     protected TestRateLimitProperties createProperties() {
         TestRateLimitProperties properties = super.createProperties();
-        originallyDisabled = properties.getDisabled();
-        assertFalse(originallyDisabled);
         properties.setDisabled(Boolean.TRUE);
         return properties;
     }
 
     @Test
     public void shouldSucceedWhenDisabled() {
-        assertFalse(originallyDisabled);
         assertTrue(getProperties().getDisabled());
-        try {
-            final String endpoint = Resource.Endpoints.HOME;
-            shouldReturnDefaultResult(endpoint); // 1 of 1
-            shouldReturnDefaultResult(endpoint); // 2 of 1 - Should succeed if rate limiting is disabled
-        }finally{
-            getProperties().setDisabled(originallyDisabled);
-        }
+        final String endpoint = Resource.Endpoints.HOME;
+        shouldReturnDefaultResult(endpoint); // 1 of 1
+        shouldReturnDefaultResult(endpoint); // 2 of 1 - Should succeed if rate limiting is disabled
     }
 }

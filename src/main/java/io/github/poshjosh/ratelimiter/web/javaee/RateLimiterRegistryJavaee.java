@@ -1,17 +1,17 @@
 package io.github.poshjosh.ratelimiter.web.javaee;
 
-import io.github.poshjosh.ratelimiter.web.core.RateLimiterContext;
-import io.github.poshjosh.ratelimiter.web.core.RateLimiterRegistry;
+import io.github.poshjosh.ratelimiter.web.core.WebRateLimiterContext;
+import io.github.poshjosh.ratelimiter.web.core.WebRateLimiterRegistry;
 
 public final class RateLimiterRegistryJavaee {
 
-    public static RateLimiterRegistry ofDefaults() {
-        return of(RateLimiterContextJavaee.builder().build());
+    public static WebRateLimiterRegistry ofDefaults() {
+        return of(RateLimiterWebContextJavaee.builder().build());
     }
 
-    public static RateLimiterRegistry of(
-            RateLimiterContext rateLimiterContext) {
-        return RateLimiterRegistry.of(rateLimiterContext);
+    public static WebRateLimiterRegistry of(
+            WebRateLimiterContext webRateLimiterContext) {
+        return WebRateLimiterRegistry.of(webRateLimiterContext);
     }
 
     private RateLimiterRegistryJavaee() {}

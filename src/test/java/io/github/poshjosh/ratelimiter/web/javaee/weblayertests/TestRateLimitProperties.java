@@ -1,7 +1,7 @@
 package io.github.poshjosh.ratelimiter.web.javaee.weblayertests;
 
 import io.github.poshjosh.ratelimiter.model.Rates;
-import io.github.poshjosh.ratelimiter.web.core.util.RateLimitProperties;
+import io.github.poshjosh.ratelimiter.util.RateLimitProperties;
 
 import java.util.Collections;
 import java.util.List;
