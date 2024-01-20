@@ -1,6 +1,6 @@
 package io.github.poshjosh.ratelimiter.web.javaee.readme;
 
-import io.github.poshjosh.ratelimiter.annotation.ElementId;
+import io.github.poshjosh.ratelimiter.annotation.RateId;
 import io.github.poshjosh.ratelimiter.model.Rate;
 import io.github.poshjosh.ratelimiter.model.Rates;
 import io.github.poshjosh.ratelimiter.util.RateLimitProperties;
@@ -35,7 +35,7 @@ public class RateLimitPropertiesImpl implements RateLimitProperties {
         ratesMap.put("video_download", Rates.of(Rate.ofSeconds(5_000)));
 
         // # Limit requests to this resource to 10 per minute
-        ratesMap.put(ElementId.of(MyResource.class), Rates.of(Rate.ofMinutes(10)));
+        ratesMap.put(RateId.of(MyResource.class), Rates.of(Rate.ofMinutes(10)));
 
         return ratesMap;
     }

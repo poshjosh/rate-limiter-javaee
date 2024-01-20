@@ -69,7 +69,9 @@ public class RateGroupTest extends AbstractResourceTest{
     @Test
     public void groupMember_whenNoRateDefined_shouldBeRateLimitedByGroupRate() {
         final String endpoint = Resource2.Endpoints.HOME;
+        System.out.println();
         shouldReturnDefaultResult(endpoint);
+        System.out.println();
         shouldReturnStatusOfTooManyRequests(endpoint);
     }
 }

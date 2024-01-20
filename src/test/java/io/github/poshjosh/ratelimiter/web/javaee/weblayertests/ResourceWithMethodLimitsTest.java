@@ -23,7 +23,7 @@ public class ResourceWithMethodLimitsTest extends AbstractResourceTest {
 
     @Rate(permits = 1, duration = 3)
     @Rate(permits = LIMIT_5, duration = 3)
-    @RateGroup(name = "test-group", operator = Operator.AND)
+    @RateGroup(id = "test-group", operator = Operator.AND)
     @Retention(RetentionPolicy.RUNTIME)
     @Target({ ElementType.TYPE, ElementType.ANNOTATION_TYPE, ElementType.METHOD})
     private @interface MyRateGroup{ }
