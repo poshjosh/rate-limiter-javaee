@@ -43,11 +43,7 @@ public abstract class RateLimitingDynamicFeature implements DynamicFeature {
 
         this.webRateLimiterRegistry = rateLimiterRegistry(context);
 
-        if (!context.hasRateSources()) {
-            this.rateLimiterFactory = RateLimiterFactory.noop();
-        } else {
-            this.rateLimiterFactory = this.webRateLimiterRegistry.createRateLimiterFactory();
-        }
+        this.rateLimiterFactory = this.webRateLimiterRegistry.createRateLimiterFactory();
 
         this.containerRequestFilter = reqContext -> {
             HttpServletRequest req = RateLimitingDynamicFeature.this.getHttpServletRequest();
