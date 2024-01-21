@@ -66,12 +66,12 @@ public abstract class RateLimitingDynamicFeature implements DynamicFeature {
     }
 
     protected WebRateLimiterRegistry rateLimiterRegistry(WebRateLimiterContext config) {
-        return RateLimiterRegistryJavaee.of(config);
+        return WebRateLimiterRegistryJavaee.of(config);
     }
 
     protected WebRateLimiterContext.Builder rateLimiterContextBuilder(
             RateLimitProperties properties, RateLimiterConfigurer configurer) {
-        return RateLimiterWebContextJavaee.builder()
+        return WebRateLimiterContextJavaee.builder()
                 .properties(properties).configurer(configurer);
     }
 

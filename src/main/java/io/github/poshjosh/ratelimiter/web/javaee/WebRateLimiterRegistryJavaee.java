@@ -3,10 +3,10 @@ package io.github.poshjosh.ratelimiter.web.javaee;
 import io.github.poshjosh.ratelimiter.web.core.WebRateLimiterContext;
 import io.github.poshjosh.ratelimiter.web.core.WebRateLimiterRegistry;
 
-public final class RateLimiterRegistryJavaee {
+public final class WebRateLimiterRegistryJavaee {
 
     public static WebRateLimiterRegistry ofDefaults() {
-        return of(RateLimiterWebContextJavaee.builder().build());
+        return of(WebRateLimiterContextJavaee.builder().build());
     }
 
     public static WebRateLimiterRegistry of(
@@ -14,5 +14,5 @@ public final class RateLimiterRegistryJavaee {
         return WebRateLimiterRegistry.of(webRateLimiterContext);
     }
 
-    private RateLimiterRegistryJavaee() {}
+    private WebRateLimiterRegistryJavaee() {}
 }

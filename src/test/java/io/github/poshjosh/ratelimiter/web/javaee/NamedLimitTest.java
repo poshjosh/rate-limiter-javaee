@@ -37,10 +37,10 @@ public class NamedLimitTest {
             }
         };
         WebRateLimiterContext config =
-                RateLimiterWebContextJavaee.builder()
+                WebRateLimiterContextJavaee.builder()
                 .properties(props)
                 .build();
-        registries = RateLimiterRegistryJavaee.of(config);
+        registries = WebRateLimiterRegistryJavaee.of(config);
         registries.createRateLimiterFactory();
     }
 
