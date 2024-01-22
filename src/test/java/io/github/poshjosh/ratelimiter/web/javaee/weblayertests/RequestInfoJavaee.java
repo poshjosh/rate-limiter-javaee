@@ -3,7 +3,6 @@ package io.github.poshjosh.ratelimiter.web.javaee.weblayertests;
 import io.github.poshjosh.ratelimiter.web.core.RequestInfo;
 
 import javax.ws.rs.container.ContainerRequestContext;
-import javax.ws.rs.core.Cookie;
 import javax.ws.rs.core.MultivaluedMap;
 import java.security.Principal;
 import java.util.*;

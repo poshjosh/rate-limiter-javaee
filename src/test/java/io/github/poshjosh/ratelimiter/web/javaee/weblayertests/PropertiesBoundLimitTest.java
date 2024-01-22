@@ -63,7 +63,7 @@ public class PropertiesBoundLimitTest extends AbstractResourceTest{
     @Test
     public void shouldHaveAMatcher() {
         boolean hasMatching = getRateLimiterRegistry()
-                .hasMatching(Resource.getMethodLimitedViaProperties());
+                .hasMatcher(Resource.getMethodLimitedViaProperties());
         Assertions.assertTrue(hasMatching);
     }
 
