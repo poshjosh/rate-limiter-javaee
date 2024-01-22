@@ -22,6 +22,7 @@ public abstract class RateLimitingDynamicFeature implements DynamicFeature {
 
     private static final Logger LOG = LoggerFactory.getLogger(RateLimitingDynamicFeature.class);
 
+    private final boolean rateLimitingEnabled;
     private final WebRateLimiterRegistry webRateLimiterRegistry;
 
     private final RateLimiterFactory<HttpServletRequest> rateLimiterFactory;
@@ -38,6 +39,8 @@ public abstract class RateLimitingDynamicFeature implements DynamicFeature {
     protected RateLimitingDynamicFeature(
             RateLimitProperties properties, RateLimiterConfigurer configurer) {
 
+        this.rateLimitingEnabled = properties.isRateLimitingEnabled();
+
         WebRateLimiterContext context =
                 rateLimiterContextBuilder(properties, configurer).build();
 
@@ -53,7 +56,7 @@ public abstract class RateLimitingDynamicFeature implements DynamicFeature {
             }
         };
 
-        LOG.info(webRateLimiterRegistry.isRateLimitingEnabled()
+        LOG.info(rateLimitingEnabled
                 ? "Completed setup of automatic rate limiting" : "Rate limiting is disabled");
     }
 
@@ -89,7 +92,7 @@ public abstract class RateLimitingDynamicFeature implements DynamicFeature {
     }
 
     public boolean isRateLimitingEnabledFor(ResourceInfo resourceInfo) {
-        return webRateLimiterRegistry.isRateLimitingEnabled() && isRateLimited(resourceInfo);
+        return rateLimitingEnabled && isRateLimited(resourceInfo);
     }
 
     public int getPriority() {
