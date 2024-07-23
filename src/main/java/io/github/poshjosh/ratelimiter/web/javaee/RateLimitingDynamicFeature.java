@@ -1,6 +1,6 @@
 package io.github.poshjosh.ratelimiter.web.javaee;
 
-import io.github.poshjosh.ratelimiter.RateLimiterFactory;
+import io.github.poshjosh.ratelimiter.RateLimiter;
 import io.github.poshjosh.ratelimiter.web.core.RateLimiterConfigurer;
 import io.github.poshjosh.ratelimiter.web.core.WebRateLimiterContext;
 import io.github.poshjosh.ratelimiter.web.core.WebRateLimiterRegistry;
@@ -25,8 +25,6 @@ public abstract class RateLimitingDynamicFeature implements DynamicFeature {
     private final boolean rateLimitingEnabled;
     private final WebRateLimiterRegistry webRateLimiterRegistry;
 
-    private final RateLimiterFactory<HttpServletRequest> rateLimiterFactory;
-
     private final ContainerRequestFilter containerRequestFilter;
 
     @Context
@@ -46,8 +44,6 @@ public abstract class RateLimitingDynamicFeature implements DynamicFeature {
 
         this.webRateLimiterRegistry = rateLimiterRegistry(context);
 
-        this.rateLimiterFactory = this.webRateLimiterRegistry.createRateLimiterFactory();
-
         this.containerRequestFilter = reqContext -> {
             HttpServletRequest req = RateLimitingDynamicFeature.this.getHttpServletRequest();
             Objects.requireNonNull(req, "Injected HttpServletRequest is null");
@@ -61,7 +57,7 @@ public abstract class RateLimitingDynamicFeature implements DynamicFeature {
     }
 
     protected boolean tryConsume(HttpServletRequest httpRequest) {
-        return rateLimiterFactory.getRateLimiter(httpRequest).tryAcquire();
+        return getRateLimiter(httpRequest).tryAcquire();
     }
 
     protected WebRateLimiterRegistry rateLimiterRegistry(WebRateLimiterContext config) {
@@ -112,9 +108,11 @@ public abstract class RateLimitingDynamicFeature implements DynamicFeature {
         return httpServletRequest;
     }
 
+    public RateLimiter getRateLimiter(HttpServletRequest httpRequest) {
+        return webRateLimiterRegistry.getRateLimiterOrUnlimited(httpRequest);
+    }
+
     public WebRateLimiterRegistry getRateLimiterRegistry() {
         return webRateLimiterRegistry;
     }
-
-    public RateLimiterFactory<HttpServletRequest> getRateLimiterFactory() { return rateLimiterFactory; }
 }

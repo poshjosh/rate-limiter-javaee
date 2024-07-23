@@ -24,7 +24,7 @@ public class NamedLimitTest {
         public void home() {}
     }
 
-    WebRateLimiterRegistry registries;
+    WebRateLimiterRegistry rateLimiterRegistry;
 
     @Before
     public void setupRateLimiting() {
@@ -40,17 +40,16 @@ public class NamedLimitTest {
                 WebRateLimiterContextJavaee.builder()
                 .properties(props)
                 .build();
-        registries = WebRateLimiterRegistryJavaee.of(config);
-        registries.createRateLimiterFactory();
+        rateLimiterRegistry = WebRateLimiterRegistryJavaee.of(config);
     }
 
     @Test
     public void shouldHaveAMatcherRegisteredForCustomName() {
-        assertTrue(registries.hasMatcher(NAME));
+        assertTrue(rateLimiterRegistry.hasMatcher(NAME));
     }
 
     @Test
     public void shouldBeRateLimited() {
-        assertTrue(registries.isRegistered(NAME));
+        assertTrue(rateLimiterRegistry.isRegistered(NAME));
     }
 }
