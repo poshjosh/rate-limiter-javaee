@@ -1,6 +1,7 @@
 package io.github.poshjosh.ratelimiter.web.javaee;
 
 import io.github.poshjosh.ratelimiter.annotations.Rate;
+import io.github.poshjosh.ratelimiter.web.core.WebRateLimiterRegistries;
 import io.github.poshjosh.ratelimiter.web.core.WebRateLimiterRegistry;
 import io.github.poshjosh.ratelimiter.util.RateLimitProperties;
 import io.github.poshjosh.ratelimiter.web.core.WebRateLimiterContext;
@@ -36,11 +37,11 @@ public class NamedLimitTest {
                 return Collections.singletonList(NamedLimitTest.Resource.class);
             }
         };
-        WebRateLimiterContext config =
+        WebRateLimiterContext context =
                 WebRateLimiterContextJavaee.builder()
                 .properties(props)
                 .build();
-        rateLimiterRegistry = WebRateLimiterRegistryJavaee.of(config);
+        rateLimiterRegistry = WebRateLimiterRegistries.of(context);
     }
 
     @Test

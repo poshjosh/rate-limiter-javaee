@@ -1,20 +1,20 @@
 package io.github.poshjosh.ratelimiter.web.javaee.uri;
 
-import io.github.poshjosh.ratelimiter.web.core.util.PathPatterns;
+import io.github.poshjosh.ratelimiter.web.core.util.ResourcePath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 import java.util.List;
 
-class PathPatternsImpl implements PathPatterns<String> {
+class ResourcePathImpl implements ResourcePath<String> {
 
-    private static final Logger LOG = LoggerFactory.getLogger(PathPatternsImpl.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ResourcePathImpl.class);
 
     private final List<String> patterns;
     private final PatternMatcher [] patternMatchers;
 
-    PathPatternsImpl(PathPatternParser pathPatternParser, String... patterns) {
+    ResourcePathImpl(PathPatternParser pathPatternParser, String... patterns) {
         this.patterns = Arrays.asList(patterns);
         this.patternMatchers = this.patterns.stream()
                 .map(pathPatternParser).toArray(PatternMatcher[]::new);
@@ -24,9 +24,9 @@ class PathPatternsImpl implements PathPatterns<String> {
     }
 
     @Override
-    public PathPatterns<String> combine(PathPatterns<String> other) {
+    public ResourcePath<String> combine(ResourcePath<String> other) {
         // issue #001 For now Parent patterns must always return a child type from combine method
-        return new PathPatternsImpl(
+        return new ResourcePathImpl(
                 PatternMatchers::child, // Always return a child from combination
                 combine(getPatterns(), other.getPatterns()));
     }
@@ -69,7 +69,7 @@ class PathPatternsImpl implements PathPatterns<String> {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        PathPatternsImpl that = (PathPatternsImpl) o;
+        ResourcePathImpl that = (ResourcePathImpl) o;
         return Arrays.equals(patternMatchers, that.patternMatchers);
     }
 
@@ -80,6 +80,6 @@ class PathPatternsImpl implements PathPatterns<String> {
 
     @Override
     public String toString() {
-        return "PathPatternsImpl{" + Arrays.toString(patternMatchers) + '}';
+        return "ResourcePathImpl{" + Arrays.toString(patternMatchers) + '}';
     }
 }

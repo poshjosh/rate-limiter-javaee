@@ -3,6 +3,7 @@ package io.github.poshjosh.ratelimiter.web.javaee;
 import io.github.poshjosh.ratelimiter.RateLimiter;
 import io.github.poshjosh.ratelimiter.web.core.RateLimiterConfigurer;
 import io.github.poshjosh.ratelimiter.web.core.WebRateLimiterContext;
+import io.github.poshjosh.ratelimiter.web.core.WebRateLimiterRegistries;
 import io.github.poshjosh.ratelimiter.web.core.WebRateLimiterRegistry;
 import io.github.poshjosh.ratelimiter.util.RateLimitProperties;
 import org.slf4j.Logger;
@@ -60,8 +61,8 @@ public abstract class RateLimitingDynamicFeature implements DynamicFeature {
         return getRateLimiter(httpRequest).tryAcquire();
     }
 
-    protected WebRateLimiterRegistry rateLimiterRegistry(WebRateLimiterContext config) {
-        return WebRateLimiterRegistryJavaee.of(config);
+    protected WebRateLimiterRegistry rateLimiterRegistry(WebRateLimiterContext context) {
+        return WebRateLimiterRegistries.of(context);
     }
 
     protected WebRateLimiterContext.Builder rateLimiterContextBuilder(

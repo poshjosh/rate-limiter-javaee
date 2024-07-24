@@ -2,8 +2,7 @@ package io.github.poshjosh.ratelimiter.web.javaee.uri;
 
 import io.github.poshjosh.ratelimiter.model.RateSource;
 import io.github.poshjosh.ratelimiter.util.StringUtils;
-import io.github.poshjosh.ratelimiter.web.core.util.PathPatterns;
-import io.github.poshjosh.ratelimiter.web.core.util.ResourceInfoProvider;
+import io.github.poshjosh.ratelimiter.web.core.util.*;
 
 import javax.ws.rs.*;
 import java.lang.annotation.Annotation;
@@ -16,15 +15,15 @@ public class ResourceInfoProviderJavaee implements ResourceInfoProvider {
                     PATCH.class, HEAD.class, OPTIONS.class};
 
     @Override
-    public ResourceInfoProvider.ResourceInfo get(RateSource source) {
-        return ResourceInfo.of(getPathPatterns(source), getMethods(source));
+    public ResourceInfo get(RateSource source) {
+        return ResourceInfos.of(getResourcePath(source), getMethods(source));
     }
 
-    private PathPatterns<String> getPathPatterns(RateSource source) {
+    private ResourcePath<String> getResourcePath(RateSource source) {
         if (source.isOwnDeclarer()) {
-            return getClassPatterns(source).orElse(PathPatterns.matchNone());
+            return getClassResourcePath(source).orElse(ResourcePaths.matchNone());
         }
-        return getMethodPatterns(source);
+        return getMethodResourcePath(source);
     }
 
     private String [] getMethods(RateSource rateSource) {
@@ -40,7 +39,7 @@ public class ResourceInfoProviderJavaee implements ResourceInfoProvider {
         return httpMethods.toArray(new String[0]);
     }
 
-    private Optional<PathPatterns<String>> getClassPatterns(RateSource source) {
+    private Optional<ResourcePath<String>> getClassResourcePath(RateSource source) {
 
         final Path pathAnnotation = source.getAnnotation(Path.class).orElse(null);
 
@@ -52,26 +51,26 @@ public class ResourceInfoProviderJavaee implements ResourceInfoProvider {
 
         if(!StringUtils.hasText(path)) {
 
-            return Optional.of(PathPatterns.matchNone());
+            return Optional.of(ResourcePaths.matchNone());
         }
 
-        return Optional.of(new ClassLevelPathPatterns(path));
+        return Optional.of(new ClassLevelResourcePath(path));
     }
 
-    private PathPatterns<String> getMethodPatterns(RateSource method) {
+    private ResourcePath<String> getMethodResourcePath(RateSource method) {
 
-        final PathPatterns<String> classLevelPathPatterns = method.getDeclarer()
-                .flatMap(this::getClassPatterns).orElse(PathPatterns.matchNone());
+        final ResourcePath<String> classLevelResourcePath = method.getDeclarer()
+                .flatMap(this::getClassResourcePath).orElse(ResourcePaths.matchNone());
 
         return method.getAnnotation(Path.class)
-                .map(annotation -> composePathPatterns(classLevelPathPatterns, annotation.value()))
-                .orElse(classLevelPathPatterns);
+                .map(annotation -> composeResourcePath(classLevelResourcePath, annotation.value()))
+                .orElse(classLevelResourcePath);
     }
 
-    private PathPatterns<String> composePathPatterns(PathPatterns<String> pathPatterns, String subPathPattern) {
+    private ResourcePath<String> composeResourcePath(ResourcePath<String> resourcePath, String subPathPattern) {
         if(!StringUtils.hasText(subPathPattern)) {
-            return pathPatterns;
+            return resourcePath;
         }
-        return pathPatterns.combine(new MethodLevelPathPatterns(subPathPattern));
+        return resourcePath.combine(new MethodLevelResourcePath(subPathPattern));
     }
 }
