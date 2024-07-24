@@ -15,7 +15,7 @@ public class MethodLevelResourcePathTest extends AbstractResourcePathTestBase {
     @Test
     public void shouldMatchSinglePathVariable() {
         LOG.debug("#shouldMatchSinglePathVariable()");
-        ResourcePath<String> resourcePath = pathPatterns("/{id}");
+        ResourcePath resourcePath = pathPatterns("/{id}");
         assertTrue( resourcePath.matches("/1"));
         assertFalse( resourcePath.matches("/1/fake"));
     }
@@ -23,7 +23,7 @@ public class MethodLevelResourcePathTest extends AbstractResourcePathTestBase {
     @Test
     public void shouldMatchMultiplePathVariables() {
         LOG.debug("#shouldMatchSinglePathVariable()");
-        ResourcePath<String> resourcePath = pathPatterns("/before/{id}/{name}");
+        ResourcePath resourcePath = pathPatterns("/before/{id}/{name}");
         assertTrue( resourcePath.matches("/before/1/jane"));
         assertFalse( resourcePath.matches("/1/jane"));
         assertFalse( resourcePath.matches("/before/1"));
@@ -33,7 +33,7 @@ public class MethodLevelResourcePathTest extends AbstractResourcePathTestBase {
     @Test
     public void shouldMatchSingleAsterix() {
         LOG.debug("#shouldMatchSingleAsterix()");
-        ResourcePath<String> resourcePath = pathPatterns("/*");
+        ResourcePath resourcePath = pathPatterns("/*");
         // TODO Issue #1 - Make this test case pass
         //assertTrue( resourcePath.matches("/"));
         assertTrue( resourcePath.matches("/numbers"));
@@ -44,7 +44,7 @@ public class MethodLevelResourcePathTest extends AbstractResourcePathTestBase {
     @Test
     public void shouldMatchSingleQuestionMark() {
         LOG.debug("#shouldMatchSingleQuestionMark()");
-        ResourcePath<String> resourcePath = pathPatterns("/?");
+        ResourcePath resourcePath = pathPatterns("/?");
         assertTrue( resourcePath.matches("/a"));
         assertFalse( resourcePath.matches("/"));
         assertFalse( resourcePath.matches("/numbers"));
@@ -53,12 +53,12 @@ public class MethodLevelResourcePathTest extends AbstractResourcePathTestBase {
     @Test
     public void shouldMatchDoubleAsterix() {
         LOG.debug("shouldMatchDoubleAsterix()");
-        ResourcePath<String> resourcePath = pathPatterns("/**");
+        ResourcePath resourcePath = pathPatterns("/**");
         assertTrue( resourcePath.matches("/numbers"));
         assertTrue( resourcePath.matches("/numbers/1"));
     }
 
-    ResourcePath<String> pathPatterns(String... uris) {
+    ResourcePath pathPatterns(String... uris) {
         return new MethodLevelResourcePath(uris);
     }
 }

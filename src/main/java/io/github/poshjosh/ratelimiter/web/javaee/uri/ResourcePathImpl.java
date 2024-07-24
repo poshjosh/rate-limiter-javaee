@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory;
 import java.util.Arrays;
 import java.util.List;
 
-class ResourcePathImpl implements ResourcePath<String> {
+class ResourcePathImpl implements ResourcePath {
 
     private static final Logger LOG = LoggerFactory.getLogger(ResourcePathImpl.class);
 
@@ -24,7 +24,7 @@ class ResourcePathImpl implements ResourcePath<String> {
     }
 
     @Override
-    public ResourcePath<String> combine(ResourcePath<String> other) {
+    public ResourcePath combine(ResourcePath other) {
         // issue #001 For now Parent patterns must always return a child type from combine method
         return new ResourcePathImpl(
                 PatternMatchers::child, // Always return a child from combination

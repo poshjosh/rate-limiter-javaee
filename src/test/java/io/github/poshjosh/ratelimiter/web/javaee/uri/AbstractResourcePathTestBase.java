@@ -11,14 +11,14 @@ abstract class AbstractResourcePathTestBase {
 
     private static final Logger LOG = LoggerFactory.getLogger(AbstractResourcePathTestBase.class);
 
-    abstract ResourcePath<String> pathPatterns(String... uris);
+    abstract ResourcePath pathPatterns(String... uris);
 
     @Test
     public void shouldCombine() {
         LOG.debug("shouldCombine()");
-        ResourcePath<String> resourcePath = pathPatterns("/numbers");
-        ResourcePath<String> result =  resourcePath.combine(new MethodLevelResourcePath("/1/**", "/2/*"));
-        ResourcePath<String> expected = new MethodLevelResourcePath("/numbers/1/**", "/numbers/2/*");
+        ResourcePath resourcePath = pathPatterns("/numbers");
+        ResourcePath result =  resourcePath.combine(new MethodLevelResourcePath("/1/**", "/2/*"));
+        ResourcePath expected = new MethodLevelResourcePath("/numbers/1/**", "/numbers/2/*");
         assertEqual(result.getPatterns(), expected.getPatterns());
     }
 }

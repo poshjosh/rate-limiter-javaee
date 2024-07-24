@@ -19,7 +19,7 @@ public class ResourceInfoProviderJavaee implements ResourceInfoProvider {
         return ResourceInfos.of(getResourcePath(source), getMethods(source));
     }
 
-    private ResourcePath<String> getResourcePath(RateSource source) {
+    private ResourcePath getResourcePath(RateSource source) {
         if (source.isOwnDeclarer()) {
             return getClassResourcePath(source).orElse(ResourcePaths.matchNone());
         }
@@ -39,7 +39,7 @@ public class ResourceInfoProviderJavaee implements ResourceInfoProvider {
         return httpMethods.toArray(new String[0]);
     }
 
-    private Optional<ResourcePath<String>> getClassResourcePath(RateSource source) {
+    private Optional<ResourcePath> getClassResourcePath(RateSource source) {
 
         final Path pathAnnotation = source.getAnnotation(Path.class).orElse(null);
 
@@ -57,9 +57,9 @@ public class ResourceInfoProviderJavaee implements ResourceInfoProvider {
         return Optional.of(new ClassLevelResourcePath(path));
     }
 
-    private ResourcePath<String> getMethodResourcePath(RateSource method) {
+    private ResourcePath getMethodResourcePath(RateSource method) {
 
-        final ResourcePath<String> classLevelResourcePath = method.getDeclarer()
+        final ResourcePath classLevelResourcePath = method.getDeclarer()
                 .flatMap(this::getClassResourcePath).orElse(ResourcePaths.matchNone());
 
         return method.getAnnotation(Path.class)
@@ -67,7 +67,7 @@ public class ResourceInfoProviderJavaee implements ResourceInfoProvider {
                 .orElse(classLevelResourcePath);
     }
 
-    private ResourcePath<String> composeResourcePath(ResourcePath<String> resourcePath, String subPathPattern) {
+    private ResourcePath composeResourcePath(ResourcePath resourcePath, String subPathPattern) {
         if(!StringUtils.hasText(subPathPattern)) {
             return resourcePath;
         }
