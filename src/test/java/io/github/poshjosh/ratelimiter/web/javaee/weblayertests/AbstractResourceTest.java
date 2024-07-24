@@ -1,6 +1,6 @@
 package io.github.poshjosh.ratelimiter.web.javaee.weblayertests;
 
-import io.github.poshjosh.ratelimiter.bandwidths.BandwidthFactory;
+import io.github.poshjosh.ratelimiter.bandwidths.BandwidthFactories;
 import io.github.poshjosh.ratelimiter.web.core.WebRateLimiterRegistry;
 import io.github.poshjosh.ratelimiter.web.javaee.Assertions;
 import io.github.poshjosh.ratelimiter.web.javaee.RateLimitingDynamicFeature;
@@ -29,7 +29,7 @@ import java.util.*;
 public abstract class AbstractResourceTest extends JerseyTest {
 
     static {
-        final String bandwidthFactoryClass = BandwidthFactory.AllOrNothing.class.getName();
+        final String bandwidthFactoryClass = BandwidthFactories.AllOrNothing.class.getName();
         System.out.printf("%s [%s] INFO  AbstractResourceTest - Using BandwidthFactory: %s\n",
                 java.time.LocalTime.now(), Thread.currentThread().getName(), bandwidthFactoryClass);
         System.setProperty("bandwidth-factory-class", bandwidthFactoryClass);
