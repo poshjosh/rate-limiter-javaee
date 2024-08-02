@@ -37,25 +37,25 @@ public class RateConditionLocaleTest extends AbstractResourceTest {
         @GET
         @Path("/lang-no-match-or")
         @Rate(1)
-        @RateCondition(WebExpressionKey.LOCALE + "=[" + noAcceptLang1 + "|" + noAcceptLang2 + "]")
+        @RateCondition(WebExpressionKey.LOCALE + " = [" + noAcceptLang1 + " | " + noAcceptLang2 + "]")
         public String langNoMatch_or() { return Endpoints.LANG_NO_MATCH_OR; }
 
         @GET
         @Path("/lang-match-or")
         @Rate(1)
-        @RateCondition(WebExpressionKey.LOCALE + "=[" + acceptLang1 + "|" + noAcceptLang1 + "]")
+        @RateCondition(WebExpressionKey.LOCALE + " = [" + acceptLang1 + " | " + noAcceptLang1 + "]")
         public String langMatch_or() { return Endpoints.LANG_MATCH_OR; }
 
         @GET
         @Path("/lang-no-match-and")
         @Rate(1)
-        @RateCondition(WebExpressionKey.LOCALE + "=[" + acceptLang1 + "&" + noAcceptLang1 + "]")
+        @RateCondition(WebExpressionKey.LOCALE + " = [" + acceptLang1 + " & " + noAcceptLang1 + "]")
         public String langNoMatch_and() { return Endpoints.LANG_NO_MATCH_AND; }
 
         @GET
         @Path("/lang-match-and")
         @Rate(1)
-        @RateCondition(WebExpressionKey.LOCALE + "=[" + acceptLang1 + "&" + acceptLang1 + "]")
+        @RateCondition(WebExpressionKey.LOCALE + " = [" + acceptLang1 + " & " + acceptLang1 + "]")
         public String langMatch_and() { return Endpoints.LANG_MATCH_AND; }
     }
 

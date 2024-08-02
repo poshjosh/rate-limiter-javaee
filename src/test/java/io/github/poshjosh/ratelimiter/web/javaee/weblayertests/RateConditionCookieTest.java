@@ -36,7 +36,7 @@ public class RateConditionCookieTest extends AbstractResourceTest {
         @GET
         @Path("/cookie-no-match")
         @Rate(1)
-        @RateCondition(WebExpressionKey.COOKIE + "={"+cookieName+"=invalid-value}")
+        @RateCondition(WebExpressionKey.COOKIE + " = {"+cookieName+" = invalid-value}")
         public String cookieNoMatch() {
             return Endpoints.COOKIE_NO_MATCH;
         }
@@ -44,7 +44,7 @@ public class RateConditionCookieTest extends AbstractResourceTest {
         @GET
         @Path("/cookie-match")
         @Rate(1)
-        @RateCondition(WebExpressionKey.COOKIE + "={"+cookieName+"="+cookieValue+"}")
+        @RateCondition(WebExpressionKey.COOKIE + " = {"+cookieName+" = "+cookieValue+"}")
         public String cookieMatch() {
             return Endpoints.COOKIE_MATCH;
         }
@@ -52,7 +52,7 @@ public class RateConditionCookieTest extends AbstractResourceTest {
         @GET
         @Path("/cookie-match-name-only")
         @Rate(1)
-        @RateCondition(WebExpressionKey.COOKIE + "=" + cookieName)
+        @RateCondition(WebExpressionKey.COOKIE + " = " + cookieName)
         public String cookieMatchNameOnly() {
             return Endpoints.COOKIE_MATCH_NAME_ONLY;
         }
@@ -60,7 +60,7 @@ public class RateConditionCookieTest extends AbstractResourceTest {
         @GET
         @Path("/cookie-negate-match-name-only")
         @Rate(1)
-        @RateCondition(WebExpressionKey.COOKIE + "!=" + cookieName)
+        @RateCondition(WebExpressionKey.COOKIE + " != " + cookieName)
         public String cookieNegateMatchNameOnly() {
             return Endpoints.COOKIE_NEGATE_MATCH_NAME_ONLY;
         }
@@ -68,7 +68,7 @@ public class RateConditionCookieTest extends AbstractResourceTest {
         @GET
         @Path("/cookie-match-or")
         @Rate(1)
-        @RateCondition(WebExpressionKey.COOKIE + "={" + cookieName + "=[invalid-cookie-value|" + cookieValue + "]}")
+        @RateCondition(WebExpressionKey.COOKIE + " = {" + cookieName + " = [invalid-cookie-value | " + cookieValue + "]}")
         public String cookieMatchOr() {
             return Endpoints.COOKIE_MATCH_OR;
         }
@@ -77,7 +77,7 @@ public class RateConditionCookieTest extends AbstractResourceTest {
         @Path("/cookie-no-match-bad-or")
         @Rate(1)
         // Badly formatted, should be {cookie={name=[A|B]}}, but the second equals sign is missing
-        @RateCondition(WebExpressionKey.COOKIE + "={" + cookieName + "[invalid-cookie-value|" + cookieValue + "]}")
+        @RateCondition(WebExpressionKey.COOKIE + " = {" + cookieName + "[invalid-cookie-value | " + cookieValue + "]}")
         public String cookieNoMatchBarOr() {
             return Endpoints.COOKIE_NO_MATCH_BAD_OR;
         }
