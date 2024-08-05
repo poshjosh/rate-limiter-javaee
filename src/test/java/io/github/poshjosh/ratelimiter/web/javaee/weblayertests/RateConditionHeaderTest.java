@@ -9,6 +9,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.client.Invocation;
+import javax.ws.rs.core.Response;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
@@ -30,7 +31,6 @@ public class RateConditionHeaderTest extends AbstractResourceTest {
             String HEADER_NEGATE_NO_MATCH = ROOT + "/header-negate-no-match";
             String HEADER_MATCH = ROOT + "/header-match";
             String HEADER_MATCH_NAME_ONLY = ROOT + "/header-match-name-only";
-            String HEADER_NEGATE_MATCH_NAME_ONLY = ROOT + "/header-negate-match-name-only";
             String HEADER_MATCH_OR = ROOT + "/header-match-or";
             String HEADER_NO_MATCH_BAD_OR = ROOT + "/header-no-match-bad-or";
         }
@@ -38,7 +38,7 @@ public class RateConditionHeaderTest extends AbstractResourceTest {
         @GET
         @Path("/header-no-match")
         @Rate(1)
-        @RateCondition(WebExpressionKey.HEADER+" = {invalid-header-name = invalid-header-value}")
+        @RateCondition(WebExpressionKey.HEADER+"[invalid-header-name] = invalid-header-value")
         public String headerNoMatch() {
             return Endpoints.HEADER_NO_MATCH;
         }
@@ -46,7 +46,7 @@ public class RateConditionHeaderTest extends AbstractResourceTest {
         @GET
         @Path("/header-negate-no-match")
         @Rate(1)
-        @RateCondition(WebExpressionKey.HEADER+" != {invalid-header-name = invalid-header-value}")
+        @RateCondition(WebExpressionKey.HEADER+"[invalid-header-name] != invalid-header-value")
         public String headerNegateNoMatch() {
             return Endpoints.HEADER_NEGATE_NO_MATCH;
         }
@@ -54,7 +54,7 @@ public class RateConditionHeaderTest extends AbstractResourceTest {
         @GET
         @Path("/header-match")
         @Rate(1)
-        @RateCondition(WebExpressionKey.HEADER + " = {"+headerName+" = "+headerValue+"}")
+        @RateCondition(WebExpressionKey.HEADER + "["+headerName+"] = "+headerValue)
         public String headerMatch() {
             return Endpoints.HEADER_MATCH;
         }
@@ -62,23 +62,15 @@ public class RateConditionHeaderTest extends AbstractResourceTest {
         @GET
         @Path("/header-match-name-only")
         @Rate(1)
-        @RateCondition(WebExpressionKey.HEADER + " = " + headerName)
-        public String headerMatchNameOnly() {
-            return Endpoints.HEADER_MATCH_NAME_ONLY;
-        }
-
-        @GET
-        @Path("/header-negate-match-name-only")
-        @Rate(1)
-        @RateCondition(WebExpressionKey.HEADER + " != " + headerName)
+        @RateCondition(WebExpressionKey.HEADER + "[" + headerName + "] !=")
         public String headerNegateMatchNameOnly() {
-            return Endpoints.HEADER_NEGATE_MATCH_NAME_ONLY;
+            return Endpoints.HEADER_MATCH_NAME_ONLY;
         }
 
         @GET
         @Path("/header-match-or")
         @Rate(1)
-        @RateCondition(WebExpressionKey.HEADER + " = {" + headerName + " = [invalid-cookie-value | " + headerValue + "]}")
+        @RateCondition(WebExpressionKey.HEADER + "[" + headerName + "] = [invalid-cookie-value | " + headerValue + "]")
         public String headerMatchOr() {
             return Endpoints.HEADER_MATCH_OR;
         }
@@ -86,8 +78,8 @@ public class RateConditionHeaderTest extends AbstractResourceTest {
         @GET
         @Path("/header-no-match-bad-or")
         @Rate(1)
-        // Badly formatted, should be {header={name=[A|B]}}, but the second equals sign is missing
-        @RateCondition(WebExpressionKey.HEADER + " = {" + headerName + "[invalid-cookie-value | " + headerValue + "]}")
+        // Badly formatted
+        @RateCondition(WebExpressionKey.HEADER + " = " + headerName + "[invalid-cookie-value | " + headerValue + "]")
         public String headerNoMatchBadOr() {
             return Endpoints.HEADER_NO_MATCH_BAD_OR;
         }
@@ -127,23 +119,15 @@ public class RateConditionHeaderTest extends AbstractResourceTest {
     }
 
     @Test
-    public void shouldNotBeRateLimitedWhenHeaderNegateMatchNameOnly() {
-        final String endpoint = Resource.Endpoints.HEADER_NEGATE_MATCH_NAME_ONLY;
-        shouldReturnDefaultResult(endpoint);
-        shouldReturnDefaultResult(endpoint);
-    }
-
-    @Test
     public void shouldBeRateLimitedWhenHeaderMatchOr() {
         final String endpoint = Resource.Endpoints.HEADER_MATCH_OR;
         shouldReturnDefaultResult(endpoint);
         shouldReturnStatusOfTooManyRequests(endpoint);
     }
     @Test
-    public void shouldNotBeRateLimitedWhenHeaderNoMatch_givenBadOr() {
+    public void shouldReturnServerError_givenBadCondition() {
         final String endpoint = Resource.Endpoints.HEADER_NO_MATCH_BAD_OR;
-        shouldReturnDefaultResult(endpoint);
-        shouldReturnDefaultResult(endpoint);
+        shouldReturnStatus("GET", endpoint, Response.Status.INTERNAL_SERVER_ERROR);
     }
 
     @Override

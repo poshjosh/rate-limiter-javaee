@@ -8,6 +8,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.client.Invocation;
+import javax.ws.rs.core.Response;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
@@ -28,7 +29,6 @@ public class RateConditionCookieTest extends AbstractResourceTest {
             String COOKIE_NO_MATCH = ROOT + "/cookie-no-match";
             String COOKIE_MATCH = ROOT + "/cookie-match";
             String COOKIE_MATCH_NAME_ONLY = ROOT + "/cookie-match-name-only";
-            String COOKIE_NEGATE_MATCH_NAME_ONLY = ROOT + "/cookie-negate-match-name-only";
             String COOKIE_MATCH_OR = ROOT + "/cookie-match-or";
             String COOKIE_NO_MATCH_BAD_OR = ROOT + "/cookie-no-match-bad-or";
         }
@@ -36,7 +36,7 @@ public class RateConditionCookieTest extends AbstractResourceTest {
         @GET
         @Path("/cookie-no-match")
         @Rate(1)
-        @RateCondition(WebExpressionKey.COOKIE + " = {"+cookieName+" = invalid-value}")
+        @RateCondition(WebExpressionKey.COOKIE + "["+cookieName+"] = invalid-value")
         public String cookieNoMatch() {
             return Endpoints.COOKIE_NO_MATCH;
         }
@@ -44,7 +44,7 @@ public class RateConditionCookieTest extends AbstractResourceTest {
         @GET
         @Path("/cookie-match")
         @Rate(1)
-        @RateCondition(WebExpressionKey.COOKIE + " = {"+cookieName+" = "+cookieValue+"}")
+        @RateCondition(WebExpressionKey.COOKIE + "["+cookieName+"] = "+cookieValue)
         public String cookieMatch() {
             return Endpoints.COOKIE_MATCH;
         }
@@ -52,23 +52,15 @@ public class RateConditionCookieTest extends AbstractResourceTest {
         @GET
         @Path("/cookie-match-name-only")
         @Rate(1)
-        @RateCondition(WebExpressionKey.COOKIE + " = " + cookieName)
-        public String cookieMatchNameOnly() {
-            return Endpoints.COOKIE_MATCH_NAME_ONLY;
-        }
-
-        @GET
-        @Path("/cookie-negate-match-name-only")
-        @Rate(1)
-        @RateCondition(WebExpressionKey.COOKIE + " != " + cookieName)
+        @RateCondition(WebExpressionKey.COOKIE + "[" + cookieName + "] !=")
         public String cookieNegateMatchNameOnly() {
-            return Endpoints.COOKIE_NEGATE_MATCH_NAME_ONLY;
+            return Endpoints.COOKIE_MATCH_NAME_ONLY;
         }
 
         @GET
         @Path("/cookie-match-or")
         @Rate(1)
-        @RateCondition(WebExpressionKey.COOKIE + " = {" + cookieName + " = [invalid-cookie-value | " + cookieValue + "]}")
+        @RateCondition(WebExpressionKey.COOKIE + "[" + cookieName + "] = [invalid-cookie-value | " + cookieValue + "]")
         public String cookieMatchOr() {
             return Endpoints.COOKIE_MATCH_OR;
         }
@@ -76,8 +68,8 @@ public class RateConditionCookieTest extends AbstractResourceTest {
         @GET
         @Path("/cookie-no-match-bad-or")
         @Rate(1)
-        // Badly formatted, should be {cookie={name=[A|B]}}, but the second equals sign is missing
-        @RateCondition(WebExpressionKey.COOKIE + " = {" + cookieName + "[invalid-cookie-value | " + cookieValue + "]}")
+        // Badly formatted expression
+        @RateCondition(WebExpressionKey.COOKIE + " = " + cookieName + " = [invalid-cookie-value | " + cookieValue + "]}")
         public String cookieNoMatchBarOr() {
             return Endpoints.COOKIE_NO_MATCH_BAD_OR;
         }
@@ -92,7 +84,7 @@ public class RateConditionCookieTest extends AbstractResourceTest {
     public void shouldNotBeRateLimitedWhenCookieNoMatch() {
         final String endpoint = Resource.Endpoints.COOKIE_NO_MATCH;
         shouldReturnDefaultResult(endpoint);
-        shouldReturnStatusOfTooManyRequests(endpoint);
+        shouldReturnDefaultResult(endpoint);
     }
 
     @Test
@@ -110,13 +102,6 @@ public class RateConditionCookieTest extends AbstractResourceTest {
     }
 
     @Test
-    public void shouldNotBeRateLimitedWhenCookieNegateMatchNameOnly() {
-        final String endpoint = Resource.Endpoints.COOKIE_NEGATE_MATCH_NAME_ONLY;
-        shouldReturnDefaultResult(endpoint);
-        shouldReturnDefaultResult(endpoint);
-    }
-
-    @Test
     public void shouldBeRateLimitedWhenCookieMatchOr() {
         final String endpoint = Resource.Endpoints.COOKIE_MATCH_OR;
         shouldReturnDefaultResult(endpoint);
@@ -124,10 +109,9 @@ public class RateConditionCookieTest extends AbstractResourceTest {
     }
 
     @Test
-    public void shouldNotBeRateLimitedWhenCookieNoMatch_givenBadOr() {
+    public void shouldReturnServerError_givenBadCondition() {
         final String endpoint = Resource.Endpoints.COOKIE_NO_MATCH_BAD_OR;
-        shouldReturnDefaultResult(endpoint);
-        shouldReturnDefaultResult(endpoint);
+        shouldReturnStatus("GET", endpoint, Response.Status.INTERNAL_SERVER_ERROR);
     }
 
     @Override
