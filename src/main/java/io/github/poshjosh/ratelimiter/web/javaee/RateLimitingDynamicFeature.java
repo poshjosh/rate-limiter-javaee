@@ -58,7 +58,7 @@ public abstract class RateLimitingDynamicFeature implements DynamicFeature {
     }
 
     protected boolean tryConsume(HttpServletRequest httpRequest) {
-        return getRateLimiter(httpRequest).tryAcquire();
+        return webRateLimiterRegistry.tryAcquire(httpRequest, 1);
     }
 
     protected WebRateLimiterRegistry rateLimiterRegistry(WebRateLimiterContext context) {
