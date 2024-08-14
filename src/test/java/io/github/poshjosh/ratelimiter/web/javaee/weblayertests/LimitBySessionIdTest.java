@@ -5,10 +5,8 @@ import io.github.poshjosh.ratelimiter.web.core.WebExpressionKey;
 import org.junit.Before;
 import org.junit.Test;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
 import javax.ws.rs.client.Invocation;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Cookie;
 import java.util.*;
 
@@ -23,9 +21,6 @@ public class LimitBySessionIdTest extends AbstractResourceTest {
         interface Endpoints{
             String BOOKS = ROOT + "/books";
         }
-
-        @Context
-        private HttpServletRequest request;
 
         @GET
         @Path("/books")

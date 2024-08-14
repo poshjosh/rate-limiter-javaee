@@ -1,10 +1,7 @@
 package io.github.poshjosh.ratelimiter.web.javaee;
 
 import io.github.poshjosh.ratelimiter.RateLimiter;
-import io.github.poshjosh.ratelimiter.web.core.RateLimiterConfigurer;
-import io.github.poshjosh.ratelimiter.web.core.WebRateLimiterContext;
-import io.github.poshjosh.ratelimiter.web.core.WebRateLimiterRegistries;
-import io.github.poshjosh.ratelimiter.web.core.WebRateLimiterRegistry;
+import io.github.poshjosh.ratelimiter.web.core.*;
 import io.github.poshjosh.ratelimiter.util.RateLimitProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,7 +55,7 @@ public abstract class RateLimitingDynamicFeature implements DynamicFeature {
     }
 
     protected boolean tryConsume(HttpServletRequest httpRequest) {
-        return webRateLimiterRegistry.tryAcquire(httpRequest, 1);
+        return webRateLimiterRegistry.tryAcquire(RequestInfos.of(httpRequest), 1);
     }
 
     protected WebRateLimiterRegistry rateLimiterRegistry(WebRateLimiterContext context) {
@@ -110,7 +107,7 @@ public abstract class RateLimitingDynamicFeature implements DynamicFeature {
     }
 
     public RateLimiter getRateLimiter(HttpServletRequest httpRequest) {
-        return webRateLimiterRegistry.getRateLimiterOrUnlimited(httpRequest);
+        return webRateLimiterRegistry.getRateLimiterOrUnlimited(RequestInfos.of(httpRequest));
     }
 
     public WebRateLimiterRegistry getRateLimiterRegistry() {
