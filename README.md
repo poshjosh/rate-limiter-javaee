@@ -46,14 +46,14 @@ public class RateLimitPropertiesImpl implements RateLimitProperties {
     // If not using annotations, return an empty list
     @Override 
     public List<String> getResourcePackages() {
-        return Collections.singletonList("com.myapplicatioon.web.rest");
+        return Collections.singletonList("com.myapp.web.rest");
     }
 
     // If not using properties, return an empty map
     @Override 
-    public Map<String, Rates> getRateLimitConfigs() {
+    public List<Rates> getRateLimitConfigs() {
         // Accept only 2 tasks per second
-        return Collections.singletonMap("task_queue", Rates.of(Rate.ofSeconds(2)));
+        return Collections.singletonList(Rates.of("task_queue", Rate.ofSeconds(2)));
     }
 }
 ```
@@ -106,19 +106,21 @@ When you configure rate limiting using properties, you could:
 
 ```java
 public class RateLimitPropertiesImpl implements RateLimitProperties {
-  @Override
-  public Map<String, Rates> getRateLimitConfigs() {
-    
-    Map<String, Rates> ratesMap = new HashMap<>();
-    
-    // Rate limit a class
-    ratesMap.put(RateId.of(MyResource.class), Rates.of(Rate.ofMinutes(10)));
-    
-    // Rate limit a method
-    ratesMap.put(RateId.of(MyResource.class.getMethod("greet", String.class)), Rates.of(Rate.ofMinutes(10)));
-    
-    return ratesMap;
-  }
+    @Override
+    public List<Rates> getRateLimitConfigs() {
+
+        List<Rates> ratesList = new ArrayList<>();
+
+        // Rate limit a class
+        String classId = RateId.of(MyResource.class);
+        ratesList.add(Rates.of(classId, Rate.ofMinutes(10)));
+
+        // Rate limit a method
+        String methodId = RateId.of(MyResource.class.getMethod("greet", String.class));
+        ratesList.add(Rates.of(methodId, Rate.ofMinutes(10)));
+
+        return ratesList;
+    }
 }
 ```
 

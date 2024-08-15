@@ -5,7 +5,6 @@ import io.github.poshjosh.ratelimiter.util.RateLimitProperties;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 public class TestRateLimitProperties implements RateLimitProperties {
     private List<Class<?>> resourceClasses;
@@ -13,13 +12,13 @@ public class TestRateLimitProperties implements RateLimitProperties {
 
     private Boolean disabled;
 
-    private Map<String, Rates> rateLimitConfigs;
+    private List<Rates> rateLimitConfigs;
 
     public TestRateLimitProperties() {
         this.resourceClasses = Collections.emptyList();
         this.resourcePackages = Collections.singletonList(AbstractResourceTest.class.getPackage().getName());
         this.disabled = Boolean.FALSE;
-        this.rateLimitConfigs = Collections.emptyMap();
+        this.rateLimitConfigs = Collections.emptyList();
     }
 
     @Override public List<Class<?>> getResourceClasses() {
@@ -46,11 +45,11 @@ public class TestRateLimitProperties implements RateLimitProperties {
         this.disabled = disabled;
     }
 
-    @Override public Map<String, Rates> getRateLimitConfigs() {
+    @Override public List<Rates> getRateLimitConfigs() {
         return rateLimitConfigs;
     }
 
-    public void setRateLimitConfigs(Map<String, Rates> rateLimitConfigs) {
+    public void setRateLimitConfigs(List<Rates> rateLimitConfigs) {
         this.rateLimitConfigs = rateLimitConfigs;
     }
 

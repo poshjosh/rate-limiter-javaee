@@ -5,10 +5,9 @@ import io.github.poshjosh.ratelimiter.model.Rate;
 import io.github.poshjosh.ratelimiter.model.Rates;
 import io.github.poshjosh.ratelimiter.util.RateLimitProperties;
 
+import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class RateLimitPropertiesImpl implements RateLimitProperties {
 
@@ -20,23 +19,23 @@ public class RateLimitPropertiesImpl implements RateLimitProperties {
     // If not using annotations, return an empty list
     @Override
     public List<String> getResourcePackages() {
-        return Collections.singletonList("com.myapplicatioon.web.rest");
+        return Collections.singletonList("com.myapp.web.rest");
     }
 
     // If not using properties, return an empty map
     @Override
-    public Map<String, Rates> getRateLimitConfigs() {
-        Map<String, Rates> ratesMap = new HashMap<>();
+    public List<Rates> getRateLimitConfigs() {
+        List<Rates> ratesList = new ArrayList<>();
 
         // Accept only 2 tasks per second
-        ratesMap.put("task_queue", Rates.of(Rate.ofSeconds(2)));
+        ratesList.add(Rates.of("task_queue", Rate.ofSeconds(2)));
 
         // # Cap streaming of video to 5kb per second
-        ratesMap.put("video_download", Rates.of(Rate.ofSeconds(5_000)));
+        ratesList.add(Rates.of("video_download", Rate.ofSeconds(5_000)));
 
         // # Limit requests to this resource to 10 per minute
-        ratesMap.put(RateId.of(MyResource.class), Rates.of(Rate.ofMinutes(10)));
+        ratesList.add(Rates.of(RateId.of(MyResource.class), Rate.ofMinutes(10)));
 
-        return ratesMap;
+        return ratesList;
     }
 }

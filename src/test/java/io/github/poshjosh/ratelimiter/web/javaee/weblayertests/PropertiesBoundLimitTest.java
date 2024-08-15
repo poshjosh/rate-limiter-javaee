@@ -49,12 +49,11 @@ public class PropertiesBoundLimitTest extends AbstractResourceTest{
     @Override
     protected TestRateLimitProperties createProperties() {
         TestRateLimitProperties properties = super.createProperties();
-        properties.setRateLimitConfigs(
-                Collections.singletonMap(Resource.getMethodLimitedViaProperties(), getRateLimitConfigList()));
+        properties.setRateLimitConfigs(Collections.singletonList(getRateLimitConfigList()));
         return properties;
     }
     private Rates getRateLimitConfigList() {
-        return Rates.of(Operator.OR, getRateLimits());
+        return Rates.of(Resource.getMethodLimitedViaProperties(), Operator.OR, "", getRateLimits());
     }
     private Rate[] getRateLimits() {
         return new Rate[]{Rate.ofSeconds(LIMIT)};
