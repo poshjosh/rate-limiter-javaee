@@ -20,7 +20,7 @@ public class RateGroupTest extends AbstractResourceTest{
         return new HashSet<>(Arrays.asList(Resource1.class, Resource2.class));
     }
 
-    @Rate(1)
+    @Rate("1/s")
     @RateGroup("test-rate-limit-group")
     @Retention(RetentionPolicy.RUNTIME)
     @Target({ ElementType.TYPE, ElementType.ANNOTATION_TYPE, ElementType.METHOD})

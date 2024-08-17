@@ -37,7 +37,7 @@ public class RateConditionHeaderTest extends AbstractResourceTest {
 
         @GET
         @Path("/header-no-match")
-        @Rate(1)
+        @Rate("1/s")
         @RateCondition(WebExpressionKey.HEADER+"[invalid-header-name] = invalid-header-value")
         public String headerNoMatch() {
             return Endpoints.HEADER_NO_MATCH;
@@ -45,7 +45,7 @@ public class RateConditionHeaderTest extends AbstractResourceTest {
 
         @GET
         @Path("/header-negate-no-match")
-        @Rate(1)
+        @Rate("1/s")
         @RateCondition(WebExpressionKey.HEADER+"[invalid-header-name] != invalid-header-value")
         public String headerNegateNoMatch() {
             return Endpoints.HEADER_NEGATE_NO_MATCH;
@@ -53,7 +53,7 @@ public class RateConditionHeaderTest extends AbstractResourceTest {
 
         @GET
         @Path("/header-match")
-        @Rate(1)
+        @Rate("1/s")
         @RateCondition(WebExpressionKey.HEADER + "["+headerName+"] = "+headerValue)
         public String headerMatch() {
             return Endpoints.HEADER_MATCH;
@@ -61,7 +61,7 @@ public class RateConditionHeaderTest extends AbstractResourceTest {
 
         @GET
         @Path("/header-match-name-only")
-        @Rate(1)
+        @Rate("1/s")
         @RateCondition(WebExpressionKey.HEADER + "[" + headerName + "] !=")
         public String headerNegateMatchNameOnly() {
             return Endpoints.HEADER_MATCH_NAME_ONLY;
@@ -69,7 +69,7 @@ public class RateConditionHeaderTest extends AbstractResourceTest {
 
         @GET
         @Path("/header-match-or")
-        @Rate(1)
+        @Rate("1/s")
         @RateCondition(WebExpressionKey.HEADER + "[" + headerName + "] = [invalid-cookie-value | " + headerValue + "]")
         public String headerMatchOr() {
             return Endpoints.HEADER_MATCH_OR;
@@ -77,7 +77,7 @@ public class RateConditionHeaderTest extends AbstractResourceTest {
 
         @GET
         @Path("/header-no-match-bad-or")
-        @Rate(1)
+        @Rate("1/s")
         // Badly formatted
         @RateCondition(WebExpressionKey.HEADER + " = " + headerName + "[invalid-cookie-value | " + headerValue + "]")
         public String headerNoMatchBadOr() {

@@ -1,7 +1,7 @@
 package io.github.poshjosh.ratelimiter.web.javaee.weblayertests;
 
 import io.github.poshjosh.ratelimiter.annotation.RateId;
-import io.github.poshjosh.ratelimiter.util.Operator;
+import io.github.poshjosh.ratelimiter.model.Operator;
 import io.github.poshjosh.ratelimiter.model.Rate;
 import io.github.poshjosh.ratelimiter.model.Rates;
 import io.github.poshjosh.ratelimiter.web.javaee.Assertions;

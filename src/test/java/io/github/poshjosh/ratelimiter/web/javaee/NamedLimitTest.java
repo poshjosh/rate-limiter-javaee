@@ -19,7 +19,7 @@ public class NamedLimitTest {
     final static String NAME = "rate-limiter-name";
 
     @Path("/named-resource-limiter-test")
-    @Rate(id = NAME)
+    @Rate(id=NAME, rate="1/s")
     public static class Resource{
         @Path("/home")
         public void home() {}

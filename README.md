@@ -6,7 +6,7 @@ Enterprise rate limiter for javaee web applications, based on
 We believe that rate limiting should be as simple as:
 
 ```java
-@Rate(10) // 10 permits per second for all methods in this class
+@Rate("10/s") // 10 permits per second for all methods in this class
 @Path("/api")
 public class GreetingResource {
 
@@ -82,8 +82,8 @@ __3. Annotate classes and/or methods.__
 @Path("/api")
 class MyResource {
 
-  // Only 25 calls per second for users in role GUEST
-  @Rate(25)
+  // Only 10 calls per second for users in role GUEST
+  @Rate("10/s")
   @RateCondition("web.request.user.role = GUEST")
   @GET
   @Path("/greet")

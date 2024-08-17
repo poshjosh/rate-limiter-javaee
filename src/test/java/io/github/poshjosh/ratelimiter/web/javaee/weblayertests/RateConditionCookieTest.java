@@ -35,7 +35,7 @@ public class RateConditionCookieTest extends AbstractResourceTest {
 
         @GET
         @Path("/cookie-no-match")
-        @Rate(1)
+        @Rate("1/s")
         @RateCondition(WebExpressionKey.COOKIE + "["+cookieName+"] = invalid-value")
         public String cookieNoMatch() {
             return Endpoints.COOKIE_NO_MATCH;
@@ -43,7 +43,7 @@ public class RateConditionCookieTest extends AbstractResourceTest {
 
         @GET
         @Path("/cookie-match")
-        @Rate(1)
+        @Rate("1/s")
         @RateCondition(WebExpressionKey.COOKIE + "["+cookieName+"] = "+cookieValue)
         public String cookieMatch() {
             return Endpoints.COOKIE_MATCH;
@@ -51,7 +51,7 @@ public class RateConditionCookieTest extends AbstractResourceTest {
 
         @GET
         @Path("/cookie-match-name-only")
-        @Rate(1)
+        @Rate("1/s")
         @RateCondition(WebExpressionKey.COOKIE + "[" + cookieName + "] !=")
         public String cookieNegateMatchNameOnly() {
             return Endpoints.COOKIE_MATCH_NAME_ONLY;
@@ -59,7 +59,7 @@ public class RateConditionCookieTest extends AbstractResourceTest {
 
         @GET
         @Path("/cookie-match-or")
-        @Rate(1)
+        @Rate("1/s")
         @RateCondition(WebExpressionKey.COOKIE + "[" + cookieName + "] = [invalid-cookie-value | " + cookieValue + "]")
         public String cookieMatchOr() {
             return Endpoints.COOKIE_MATCH_OR;
@@ -67,7 +67,7 @@ public class RateConditionCookieTest extends AbstractResourceTest {
 
         @GET
         @Path("/cookie-no-match-bad-or")
-        @Rate(1)
+        @Rate("1/s")
         // Badly formatted expression
         @RateCondition(WebExpressionKey.COOKIE + " = " + cookieName + " = [invalid-cookie-value | " + cookieValue + "]}")
         public String cookieNoMatchBarOr() {
