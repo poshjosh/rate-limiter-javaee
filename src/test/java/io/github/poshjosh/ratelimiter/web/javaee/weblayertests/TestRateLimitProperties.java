@@ -45,7 +45,7 @@ public class TestRateLimitProperties implements RateLimitProperties {
         this.disabled = disabled;
     }
 
-    @Override public List<Rates> getRateLimitConfigs() {
+    @Override public List<Rates> getRates() {
         return rateLimitConfigs;
     }
 

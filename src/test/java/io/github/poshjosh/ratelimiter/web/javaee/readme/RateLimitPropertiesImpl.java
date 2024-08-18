@@ -24,7 +24,7 @@ public class RateLimitPropertiesImpl implements RateLimitProperties {
 
     // If not using properties, return an empty map
     @Override
-    public List<Rates> getRateLimitConfigs() {
+    public List<Rates> getRates() {
         List<Rates> ratesList = new ArrayList<>();
 
         // Accept only 2 tasks per second
