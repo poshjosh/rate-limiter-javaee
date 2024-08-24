@@ -3,7 +3,6 @@ package io.github.poshjosh.ratelimiter.web.javaee.weblayertests;
 import io.github.poshjosh.ratelimiter.annotations.Rate;
 import io.github.poshjosh.ratelimiter.web.core.WebExpressionKey;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import javax.ws.rs.*;
@@ -61,7 +60,6 @@ public class LimitBySessionIdTest extends AbstractResourceTest {
     }
 
     @Test
-    @Ignore("TODO: Fix this test. It works when we use spring framework, but not with javaee.")
     public void givenSameSessionIdAndEndpoint_differentHttpMethodsShouldBeRateLimitedSeparately() {
         final String endpoint = Resource.Endpoints.BOOKS + "/1";
         shouldReturnDefaultResult(HttpMethod.GET, endpoint);
